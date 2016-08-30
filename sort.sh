@@ -18,6 +18,7 @@ else
 	echo 'read downloading.txt' >> $SORT/log.txt
 	while read line; do
 		FILEN=${line%:*:*:*:*:*}
+		Basename="${FILEN##*/}"
 		echo $line >> $SORT/log.txt
 		MALID=${line#*:*:*:*:*:}
 		VALUES=${line#*:}
@@ -41,13 +42,17 @@ else
 				fi
 			done
 		else
-			if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]]; then
+			echo "\n" >> $SORT/log.txt
+			
+			if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]]; then
 				echo "file $FILEN" >> $SORT/log.txt
 				if [[ -f $FILEN ]]; then
 					echo 'match!' >> $SORT/log.txt
+					echo "$FILEN"
+					echo "match!"
 					echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 					#mediainfo --fullscan "$FILEN"
-					if [[ $TR_TORRENT_NAME == *".mkv" ]]; then
+					if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $Basename == *".mkv" ]]; then
 						if [[ $file == *"|"* ]]; then
 							mv "${FILEN}" "${FILEN/|/}"; file=${file//|/};
 						fi
@@ -60,8 +65,6 @@ else
 			sleep 2
 			else
 				echo "directory" >> $SORT/log.txt
-				# Replace illegal folder name
-				Basename="${FILEN##*/}"
 				echo $Basename >> $SORT/log.txt
 				FILEN1=${Basename//[^a-zA-Z_0-9]/_}
 				if [ -d "$FILEN" ]; then
@@ -69,6 +72,8 @@ else
 					mv "$FILEN" "$SORT/$RENAME"
 					cd "$SORT/$FILEN1"
 					if [ ! $(pwd) == $SORT ]; then
+					echo "match!"
+					echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 						for file in *mkv; do
 							echo Current directory $(pwd) >> $SORT/log.txt
 							if [[ $file == *".mkv" ]]; then
@@ -86,7 +91,7 @@ else
 					mkdir -p "$TRASH/$MALID"
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
 				else
-					echo "directory illegal $SORT$FILEN" >> $SORT/log.txt
+					echo "file $FILEN" >> $SORT/log.txt
 				fi # dir not exist
 			fi #files
 		fi #:
