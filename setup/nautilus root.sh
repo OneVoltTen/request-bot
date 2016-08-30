@@ -1,0 +1,1 @@
+gksu nautilus /etc/apt/
