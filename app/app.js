@@ -57,7 +57,7 @@ getTorrentsToDL(function(err, torrents) {
 			//foreach link
 			var index;
 			for (index = 0; index < torarray.length; ++index) {
-				console.log(torarray[index]);
+				//console.log(torarray[index]);
 				getTorrentFile(torarray[index], function(err, torrentFileUrl) {
 					var urlt = torrentFileUrl;
 					console.log('id: ' + torrent.id + ' title: ' + torrent.title + ' fansub: ' + torrent.fansub + ' audio: ' + torrent.audio + ' sub: ' + torrent.sub + ' url: ' + urlt);
@@ -73,5 +73,7 @@ getTorrentsToDL(function(err, torrents) {
 	});
     if(count==0){
 		process.stdout.write("oyasumi\n");
+	}else{
+		process.stdout.write("\n");
 	}
 });
