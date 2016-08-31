@@ -14,10 +14,10 @@ if(isset($argv[1])){
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }else{
-	#define('DB_HOST', '209.58.180.26');
-	#define('DB_PASS', 'y@nGsu5ah2o16');
-	define('DB_HOST', '185.52.2.96');
-	define('DB_PASS', 'MaxumX8208G1!');
+	define('DB_HOST', '209.58.180.26');
+	define('DB_PASS', 'y@nGsu5ah2o16');
+	#define('DB_HOST', '185.52.2.96');
+	#define('DB_PASS', 'MaxumX8208G1!');
 }
 
 function urlExists($url=NULL){  
@@ -223,6 +223,8 @@ final class GwshareUploader
 		$_SESSION['source']=$source;
 		$_SESSION['basename']=$basename;
 		
+		
+		$filesize = filesize($source);
 		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			// Don't move to crc32 folder
 			$source="/var/www/encoded/".$basename;
@@ -269,7 +271,6 @@ final class GwshareUploader
 			$shortUrl = $this->shorten($uploadUrl);
 			
 			$shortUrl = str_replace("https://lnjt.in/", "", $shortUrl);
-			$filesize = filesize($source);
 		}
 		
 		$disc = "";
@@ -430,50 +431,50 @@ final class GwshareUploader
 			echo "resolution - ".$resolution."\n";
 			echo "disc - ".$disc."\n";
 		}else{
-		$data = [
-			'filename'		=> $basename,
-			'filesize'		=> $filesize,
-			'crc32'			=> $crc32,
-			'anime'			=> $anime,
-			'episode'		=> $episode,
-			'revision'		=> $revision,
-			'fansub'		=> $fansub,
-			'resolution'	=> $resolution,
-			'upload_url'	=> $uploadUrl,
-			'short_url'		=> $shortUrl,
-			'disc'			=> $disc,
-		];
-		// save to db
-		$this->saveToDb($data);
-		$this->updateAnime($data);
-		
-		
-		if (UPLOADED) {
-			if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
-				throw new Exception('Directory for move file doesn\'t exists or readable');
-			}
-
-			if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-				@rename($source, '/var/www/downloads/'.$basename);
-				$_SESSION["test"]="";
-			}else{
-				if(isset($anime) && !empty($anime)){
-					mkdir(UPLOADED.'/'.$anime);
-					echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename;
-					@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
-				}else{
-					@rename($source, UPLOADED.'/'.$anime.''.$basename);
+			$data = [
+				'filename'		=> $basename,
+				'filesize'		=> $filesize,
+				'crc32'			=> $crc32,
+				'anime'			=> $anime,
+				'episode'		=> $episode,
+				'revision'		=> $revision,
+				'fansub'		=> $fansub,
+				'resolution'	=> $resolution,
+				'upload_url'	=> $uploadUrl,
+				'short_url'		=> $shortUrl,
+				'disc'			=> $disc,
+			];
+			// save to db
+			$this->saveToDb($data);
+			$this->updateAnime($data);
+			
+			
+			if (UPLOADED) {
+				if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
+					throw new Exception('Directory for move file doesn\'t exists or readable');
 				}
+
+				if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
+					@rename($source, '/var/www/downloads/'.$basename);
+					$_SESSION["test"]="";
+				}else{
+					if(isset($anime) && !empty($anime)){
+						mkdir(UPLOADED.'/'.$anime);
+						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename;
+						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
+					}else{
+						@rename($source, UPLOADED.'/'.$anime.''.$basename);
+					}
+				}
+				rmdir('/var/www/encoded/'.$crc32);
+			} else {
+				// delete file
+				@unlink($source);
 			}
-			rmdir('/var/www/encoded/'.$crc32);
-		} else {
-			// delete file
-			@unlink($source);
-		}
 
-		return $data;
+			return $data;
 
-		sleep(4);
+			sleep(4);
 		}
 	}
 
