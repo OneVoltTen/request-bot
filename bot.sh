@@ -10,12 +10,12 @@ countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`
 countsource=`ls -1 $SOURCE/*.mkv 2>/dev/null | wc -l`
 countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
 
-if [[ -z "$1" && "$1"=="sort" ]];then
+if [[ -z "$1" && "$1"=="sort" ]]; then
 	echo "execute retieve worker..."
 	nohup /root/retrieve.sh &
 fi
 
-if [ $countencoded != 0 ];then
+if [ $countencoded != 0 ]; then
 	echo "execute upload worker..."
 	nohup php /root/NodefilesUploader.php &
 fi
@@ -37,7 +37,9 @@ elif [ $countqueue == 0 ]; then
 	#	mv $(ls -1tr $SECOND/*.{mkv,mp4,avi} | grep -E '^[^d]' | head -1) ${QUEUE}; sleep 2
 	#	echo "Process the queue..."
 	#	nohup /root/encode.sh &
+	else
+		echo "oyasumi..."
 	fi
 else
-	echo "isogashii desu...";
+	echo "isogashii desu..."
 fi
