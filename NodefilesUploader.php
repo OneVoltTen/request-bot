@@ -16,8 +16,6 @@ if(isset($argv[1])){
 }else{
 	define('DB_HOST', '209.58.180.26');
 	define('DB_PASS', 'y@nGsu5ah2o16');
-	#define('DB_HOST', '185.52.2.96');
-	#define('DB_PASS', 'MaxumX8208G1!');
 }
 
 function urlExists($url=NULL){  
@@ -281,7 +279,7 @@ final class GwshareUploader
 		} elseif (strpos($basename, 'OVA') !== false) {
 			$episode = "OVA";
 		}
-		
+		$end=".";
 		$resmatch = array("BD_720p", "DVD_720p", "BD_692p","BD_690p","BD_688p","BD_544p","BD_480p","DVD_480p","480p","DVD_576p","BD_576p","576p","420p","396p","DVD_476p","DVD_474p","DVD_352p","544p","540p","DVD_528p","528p","720p","690p","692p","693p","694p","360p");
 		foreach($resmatch as $rmatch){
 			$rmatch = str_replace("<br>", "", $rmatch);
@@ -369,15 +367,19 @@ final class GwshareUploader
 				$match++;
 				}
 			}
-			$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona");
-			foreach($yes as $allowed){
-				if(stripos($episode, $allowed)){
-					$match++;
+			$episode = str_replace("OVA", "", $episode);
+			$episode = str_replace("ONA", "", $episode);
+			if (!is_numeric($episode)){
+				$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona");
+				foreach($yes as $allowed){
+					if(stripos($episode, $allowed)){
+						$match++;
+					}
 				}
-			}
-			if($match==0){
-				echo "Invalid episode\n";
-				$episode="";
+				if($match==0){
+					echo "Invalid episode\n";
+					$episode="";
+				}
 			}
 		}
 		
