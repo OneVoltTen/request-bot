@@ -2,19 +2,22 @@
 
 cd /root
 SOURCE="/var/www/downloads"
-QUEUE="/var/www/downloads/.queue"
 SECOND="/var/www/downloads/.00"
+QUEUE="/var/www/downloads/.queue"
+ENCODED="/var/www/encoded"
 countqueue=`ls -1 $QUEUE/*.{mkv,mp4,ass} 2>/dev/null | wc -l`
+countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`
 countsource=`ls -1 $SOURCE/*.mkv 2>/dev/null | wc -l`
 countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
-Noret=""
 
-noret(){
-	echo "$1";
-	return $1;
-	}
 if [[ -z "$1" && "$1"=="sort" ]];then
-	Noret="1"
+	echo "execute retieve worker..."
+	nohup /root/retrieve.sh &
+fi
+
+if [ $countencoded != 0 ];then
+	echo "execute upload worker..."
+	nohup php /root/NodefilesUploader.php &
 fi
 
 php /root/renameu.php
@@ -23,20 +26,11 @@ php /root/rename.php downloads
 
 if [ $countqueue != 0 ]; then
 	echo "encode not empty..."
-	if [ -z "$1" ];then
-		/root/retrieve.sh
-	fi
 elif [ $countqueue == 0 ]; then
-	echo "encode empty..."
-	if [ -z "$1" ];then
-		/root/retrieve.sh
-	fi
-fi
-if [ $countqueue == 0 ]; then
 	if [ $countsource != 0 ]; then
-		echo "renaming files..."
+		echo "execute rename..."
 		mv ${SOURCE}/*.mkv ${QUEUE}; sleep 2
-		echo "process queue..."
+		echo "execute encode..."
 		nohup /root/encode.sh &
 	#elif [ $countsecond != 0 ]; then
 	#	echo "Adding secondary files to queue..."
@@ -45,5 +39,5 @@ if [ $countqueue == 0 ]; then
 	#	nohup /root/encode.sh &
 	fi
 else
-echo "isogashii desu...";
+	echo "isogashii desu...";
 fi
