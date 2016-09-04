@@ -21,7 +21,10 @@ function getTorrentFile(url, cb) {
             getBakabt();
             break;
         default:
-            return cb(new Error('invalid torrent url: ' + url));
+			console.log(url.href);
+			return cb(null, url.href);
+			//return cb(new Error('invalid torrent url: ' + url));
+			break;
     }
     function getBakabt() {
         request(url.href, function(err, response, body) {
@@ -71,9 +74,7 @@ getTorrentsToDL(function(err, torrents) {
 			}
 		}
 	});
-    if(count==0){
-		process.stdout.write("oyasumi\n");
-	}else{
-		process.stdout.write("\n");
+    if(count){
+		process.stdout.write(count + " request(s) found\n");
 	}
 });

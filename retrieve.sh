@@ -11,7 +11,6 @@ else
 		runuser -l root -c 'transmission-daemon'; sleep 2
 	fi		
 fi
-echo "retrieve..."
 if [ $server_status == 301 ]; then
 	if [ -f '/var/www/downloading.txt' ]; then
 		rm '/var/www/downloading.txt'
