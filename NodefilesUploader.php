@@ -14,8 +14,10 @@ if(isset($argv[1])){
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }else{
-	define('DB_HOST', '209.58.180.26');
-	define('DB_PASS', 'y@nGsu5ah2o16');
+	#define('DB_HOST', '209.58.180.26');
+	#define('DB_PASS', 'y@nGsu5ah2o16');
+	define('DB_HOST', '185.52.2.96');
+	define('DB_PASS', 'MaxumX8208G1!');
 }
 
 function urlExists($url=NULL){  
@@ -57,18 +59,22 @@ if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 	}elseif($counter==2){
 		die("Max upload workers\n");
 }
+}
 
 	//if file in dir != mkv,mp4,avi trash
 	$ar=array();
 	$g=array_diff(scandir('/var/www/encoded/'), array('..', '.'));
 	foreach($g as $x){
-		if(is_dir($x))$ar[$x]=scandir($x);
-		else $ar[]=$x;
+		if(is_dir($x)){
+			$ar[$x]=scandir($x);
+		}else{
+			$ar[]=$x;
+		}
 	}
-	foreach($ar as &$itemx){
+	//var_dump($ar);
+	foreach($ar as &$itemx){//merge this with above loop
 		$supported = array('mkv','mp4','avi');
 		$ext = strtolower(pathinfo($itemx, PATHINFO_EXTENSION)); // Using strtolower to overcome case sensitive
-		
 		if (in_array($ext, $supported) && is_file($itemx)) {
 			echo "Uploading ".$itemx."...\n";
 			rename('/var/www/encoded/'.$itemx, '/var/www/trash/'.$itemx);
@@ -76,7 +82,6 @@ if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			//$itemx="";
 		}
 	}
-}
 
 try {
 	$uploader = new GwshareUploader(GWSHARE_USER, GWSHARE_PASS);
@@ -210,32 +215,34 @@ final class GwshareUploader
 		$basename = basename($source); // filename
 		$fn=explode('AnimePahe', $basename, 2);
 		$anime=$fn[0]; // prefix id
-			// Remove prefix id from filename
-		$source=str_replace($fn[0], "", $source);
-		rename('/var/www/encoded/'.$basename, $source);
-		$basename = str_replace($fn[0], "", $basename);
 		$crc32 = hash_file('crc32b', $source); // crc32
-		
+		$filesize = filesize($source);
 		$_SESSION['crc32']=$crc32;
 		$_SESSION['anime']=$anime;
 		$_SESSION['source']=$source;
 		$_SESSION['basename']=$basename;
 		
+		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
+			
+		}else{
+			$source=str_replace($fn[0], "", $source);// Remove prefix id from filename
+			rename('/var/www/encoded/'.$basename, $source);
+			$basename = str_replace($fn[0], "", $basename);
+		}
 		
-		$filesize = filesize($source);
 		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			// Don't move to crc32 folder
 			$source="/var/www/encoded/".$basename;
 		}else{
-		$source=str_replace("/var/www/encoded/", "/var/www/encoded/".$crc32."/", $source);
-		$basename=str_replace("/var/www/encoded/", $crc32."/", $basename);
-			// Move file to crc32 folder
-		mkdir('/var/www/encoded/'.$crc32, 0755, true);
-		rename('/var/www/encoded/'.$basename, '/var/www/encoded/'.$crc32."/".$basename);
-		/*
-		echo $source."\n";
-		echo $basename."\n";
-		*/
+			$source=str_replace("/var/www/encoded/", "/var/www/encoded/".$crc32."/", $source);
+			$basename=str_replace("/var/www/encoded/", $crc32."/", $basename);
+				// Move file to crc32 folder
+			mkdir('/var/www/encoded/'.$crc32, 0755, true);
+			rename('/var/www/encoded/'.$basename, '/var/www/encoded/'.$crc32."/".$basename);
+			/*
+			echo $source."\n";
+			echo $basename."\n";
+			*/
 		}
 ###############################################################################
 ###############################################################################
