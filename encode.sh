@@ -13,6 +13,7 @@ for i in `ls -tr /var/www/downloads/.queue/*.mkv`;do
 	FILENAMEX=${i#*/var/www/downloads/.queue/}
 done
 
+echo "retrieve metadata..."
 meta=`sudo php /root/encode_meta.php $FILENAMEX`
 sub=${meta#*|}
 audio=${meta%|*}
@@ -67,20 +68,23 @@ for i in `ls -tr $SOURCE/*.{mkv,mp4}`;do
 		else
 			scaledResY=$resY
 		fi
+		
 	 
 		if [[ ! $resX -gt $resTargetX ]] || [[ ! $resY -gt $resTargetY ]]; then
 			scale=""
 		elif [[ $resX -eq "1920" ]] || [[ $resY -eq "1080" ]]; then
-			scale=",scale=-1:$resTargetY"
+			scale=",scale=-2:$resTargetY"
 		elif [[ $resX -eq $resTargetX ]] || [[ $resY -eq $resTargetY ]]; then
 			scale=",scale=-1:$resTargetY"
 		elif [[ $scaledResX -gt $resTargetX ]] || [[ $scaledResY -eq $resTargetY ]]; then
-			scale=",scale=$resTargetX:-1"
+			scale=",scale=$resTargetX:-2"
 		elif [[ ! $scaledResX -gt $resTargetX ]] || [[ $scaledResY -gt $resTargetY ]]; then
 			scale=",scale=-1:$resTargetY"
 		elif [[ $scaledResX -gt $resTargetX ]] || [[ $scaledResY -lt $resTargetY ]]; then
-			scale=",scale=$resTargetX:-1"
+			scale=",scale=$resTargetX:-2"
 		fi
+
+		#echo $scale
 		### END: Detect the Video Resolution ###
 	 
 		echo "Extracting attachments..."
@@ -186,5 +190,5 @@ if [[ $seconds -gt "52" ]]; then
     echo ">" $seconds "no bot.sh"
 else
     echo "> bot.sh"
-    /root/bot.sh
+    nohup /root/bot.sh
 fi
