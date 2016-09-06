@@ -12,9 +12,7 @@ echo $FILENAMEX
 meta=`sudo php /root/encode_meta.php $FILENAMEX`
 sub=${meta#*|}; audio=${meta%|*}
 function is_int() { return $(test "$@" -eq "$@" > /dev/null 2>&1); }
-if [ $sub -eq $sub 2> /dev/null ] && [ $audio -eq $audio 2> /dev/null ]; then
-		echo "${meta} meta"
-	else
+if [ ! $sub -eq $sub 2> /dev/null ] && [ ! $audio -eq $audio 2> /dev/null ]; then
 		die "meta failed - ${meta}"
 fi
 # Empty variable to 0
@@ -31,7 +29,7 @@ fi
 echo Audio [$audio] Subtitle [$sub]
 # End retrieve meta
 php /root/rename.php
-for i in `ls -tr $SOURCE/*.{mkv,mp4}`;do
+for i in `ls -tr $SOURCE/*.mkv`;do
 	if [ -f $i ]; then
 		# Resolution
 		resX=`mediainfo $i | grep Width | sed 's/.*: //g' | tr -d '[[:space:]]'`
@@ -72,10 +70,10 @@ for i in `ls -tr $SOURCE/*.{mkv,mp4}`;do
 		# End resolution
 		# Subtitle
 		cd /root/.fonts
-		echo "extracting attachments..."; ffmpeg -dump_attachment:t "" -i $i -y; sleep 1
+		echo "extract attachment..."; ffmpeg -dump_attachment:t "" -i $i -y > /dev/null 2>&1; sleep 1
 		echo "install font..."
-		fc-cache -f -v /root/.fonts
-		echo "extracting subtitle..."; sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
+		fc-cache -f -v /root/.fonts > /dev/null 2>&1
+		echo "extract subtitle..."; sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
 		if [[ $sub ]]; then
 			# Detect subtitle type
 			echo $sub; ada_subtitle=true;
@@ -97,28 +95,28 @@ for i in `ls -tr $SOURCE/*.{mkv,mp4}`;do
 		# End subtitle
 		# Process file
 		if [[ $sub =~ "SubStationAlpha" ]] || [[ $sub =~ "S_TEXT/ASS" ]]; then
-			echo "ASS subtitle found! ${SEP}";
+			echo "ASS subtitle ~ ${SEP}";
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
 			-vf "movie=/root/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=${i}.ass$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
-			echo "SRT subtitle found! ${SEP}";
+			echo "SRT subtitle ~ ${SEP}";
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
 			-vf "movie=/root/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=${i}.srt$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]] || [[ $sub =~ "VobSub" ]] || [[ $sub =~ "S_VOBSUB" ]]; then
-			echo "PGS subtitle found! ${SEP}";
+			echo "PGS subtitle ~ ${SEP}";
 			ffmpeg -y -i $i -i watermark.mov -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
 			-filter_complex "[0:v][0:s:$subtitle]overlay=(W-w)/2:(H-h)/2$scale[hardsubbed];[hardsubbed][1:v]overlay=10:10[out]" -map "[out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		else
-			echo "No subtitle found! ${SEP}";
+			echo "no subtitle ~ ${SEP}";
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
@@ -130,20 +128,20 @@ for i in `ls -tr $SOURCE/*.{mkv,mp4}`;do
 		echo "FFMPEG complete - log renamed progress_$(date +%F_%H-%M).txt"
 		mv ${LOG}/progress.txt ${LOG}/progress_$(date +%F_%H-%M).txt
 		# Move file to encoded folder
-		echo "${i}_encoded.mp4 to ${DEST}..."
+		echo "move to encoded folder..."
 		mv ${i}_encoded.mp4 ${DEST} -f
 		# If file moved to encoded folder
 		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "upload..."; php /root/rename.2.php; nohup php /root/NodefilesUploader.php &
+			echo "upload..."; php /root/rename.2.php > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
 		else
 			echo "no upload..."
 		fi
 		# If file not moved to encode folder
 		if [[ ${FILENAMEX%AnimePahe*} > 0 ]];then
-			echo "$i > ${TRASH}/${FILENAMEX%AnimePahe*}..."; mkdir -p "${TRASH}/${FILENAMEX%AnimePahe*}"; mv $i "${TRASH}/${FILENAMEX%AnimePahe*}" -f
+			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%AnimePahe*}"; mv $i "${TRASH}/${FILENAMEX%AnimePahe*}" -f
 		else
-			echo "no id set"; echo "$i > ${TRASH}..."; mv $i ${TRASH} -f
+			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
 	fi
 done
@@ -155,5 +153,5 @@ seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "bot.sh"; nohup /root/bot.sh
+	echo "execute bot.sh"; nohup /root/bot.sh > /dev/null 2>&1 &
 fi

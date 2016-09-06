@@ -1,263 +1,0 @@
-Adding 2nd worker
-PHP Warning:  mkdir(): File exists in /root/NodefilesUploader.php on line 222
-string(14) "Upload failed!"
-ls: cannot access '/var/www/downloads/.queue/*.mkv': No such file or directory
-
-Audio [undefined file] Sub [undefined file]
-ls: cannot access '/var/www/downloads/.queue/*.mkv': No such file or directory
-ls: cannot access '/var/www/downloads/.queue/*.mp4': No such file or directory
-remove fonts...
-> 59 no bot.sh
-1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv
-Audio [0] Sub [0]
-ls: cannot access '/var/www/downloads/.queue/*.mp4': No such file or directory
-Extracting attachments...
-ffmpeg version N-81225-g1fcf243 Copyright (c) 2000-2016 the FFmpeg developers
-  built with gcc 5.4.0 (Ubuntu 5.4.0-6ubuntu1~16.04.1) 20160609
-  configuration: --prefix=/root/ffmpeg_build --pkg-config-flags=--static --extra-cflags=-I/root/ffmpeg_build/include --extra-ldflags=-L/root/ffmpeg_build/lib --bindir=/root/bin --enable-gpl --enable-libass --enable-libfdk-aac --enable-libfreetype --enable-libmp3lame --enable-libopus --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libx264 --enable-libx265 --enable-nonfree
-  libavutil      55. 28.100 / 55. 28.100
-  libavcodec     57. 51.100 / 57. 51.100
-  libavformat    57. 44.100 / 57. 44.100
-  libavdevice    57.  0.102 / 57.  0.102
-  libavfilter     6. 49.100 /  6. 49.100
-  libswscale      4.  1.100 /  4.  1.100
-  libswresample   2.  1.100 /  2.  1.100
-  libpostproc    54.  0.100 / 54.  0.100
-[aac @ 0x26db2e0] channel element 1.2 is not allocated
-Input #0, matroska,webm, from '/var/www/downloads/.queue/1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv':
-  Metadata:
-    title           : 1336|Shingeki_no_Bahamut_Genesis|eraser|0|0
-    encoder         : libebml v1.3.4 + libmatroska v1.4.5
-    creation_time   : 2016-08-30 04:41:10
-  Duration: 00:23:49.93, start: 0.000000, bitrate: 2998 kb/s
-    Chapter #0:0: start 0.041708, end 148.065000
-    Metadata:
-      title           : Prologue
-    Chapter #0:1: start 148.065000, end 648.982000
-    Metadata:
-      title           : Part A
-    Chapter #0:2: start 648.982000, end 1325.491000
-    Metadata:
-      title           : Part B
-    Chapter #0:3: start 1325.491000, end 1414.997000
-    Metadata:
-      title           : Credits
-    Chapter #0:4: start 1414.997000, end 1429.931000
-    Metadata:
-      title           : Preview
-    Stream #0:0(jpn): Video: h264 (High 10), yuv420p10le, 1280x720, SAR 1:1 DAR 16:9, 23.98 fps, 23.98 tbr, 1k tbn, 47.95 tbc (default)
-    Metadata:
-      BPS             : 2586306
-      BPS-eng         : 2586306
-      DURATION        : 00:23:49.929000000
-      DURATION-eng    : 00:23:49.929000000
-      NUMBER_OF_FRAMES: 34284
-      NUMBER_OF_FRAMES-eng: 34284
-      NUMBER_OF_BYTES : 462279290
-      NUMBER_OF_BYTES-eng: 462279290
-      _STATISTICS_WRITING_APP: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_APP-eng: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_DATE_UTC: 2016-08-30 04:41:10
-      _STATISTICS_WRITING_DATE_UTC-eng: 2016-08-30 04:41:10
-      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-    Stream #0:1(jpn): Audio: aac (LC), 48000 Hz, 5.1, fltp (default)
-    Metadata:
-      BPS             : 380577
-      BPS-eng         : 380577
-      DURATION        : 00:23:49.931000000
-      DURATION-eng    : 00:23:49.931000000
-      NUMBER_OF_FRAMES: 67028
-      NUMBER_OF_FRAMES-eng: 67028
-      NUMBER_OF_BYTES : 68024970
-      NUMBER_OF_BYTES-eng: 68024970
-      _STATISTICS_WRITING_APP: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_APP-eng: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_DATE_UTC: 2016-08-30 04:41:10
-      _STATISTICS_WRITING_DATE_UTC-eng: 2016-08-30 04:41:10
-      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-    Stream #0:2(eng): Subtitle: ass (default)
-    Metadata:
-      BPS             : 134
-      BPS-eng         : 134
-      DURATION        : 00:23:44.250000000
-      DURATION-eng    : 00:23:44.250000000
-      NUMBER_OF_FRAMES: 301
-      NUMBER_OF_FRAMES-eng: 301
-      NUMBER_OF_BYTES : 24002
-      NUMBER_OF_BYTES-eng: 24002
-      _STATISTICS_WRITING_APP: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_APP-eng: mkvmerge v9.3.1 ('Mask Machine') 64bit
-      _STATISTICS_WRITING_DATE_UTC: 2016-08-30 04:41:10
-      _STATISTICS_WRITING_DATE_UTC-eng: 2016-08-30 04:41:10
-      _STATISTICS_TAGS: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-      _STATISTICS_TAGS-eng: BPS DURATION NUMBER_OF_FRAMES NUMBER_OF_BYTES
-    Stream #0:3: Attachment: ttf
-    Metadata:
-      filename        : andlso.ttf
-      mimetype        : application/x-truetype-font
-    Stream #0:4: Attachment: ttf
-    Metadata:
-      filename        : GenBasB.ttf
-      mimetype        : application/x-truetype-font
-    Stream #0:5: Attachment: ttf
-    Metadata:
-      filename        : GenBasBI.ttf
-      mimetype        : application/x-truetype-font
-    Stream #0:6: Attachment: otf
-    Metadata:
-      filename        : KozMinPro-Bold.otf
-      mimetype        : application/vnd.ms-opentype
-    Stream #0:7: Attachment: ttf
-    Metadata:
-      filename        : PirataOne-Regular.ttf
-      mimetype        : application/x-truetype-font
-    Stream #0:8: Attachment: ttf
-    Metadata:
-      filename        : tulisan_tanganku.ttf
-      mimetype        : application/x-truetype-font
-At least one output file must be specified
-Installing fonts...
-mv: cannot stat '/root/*.OTF': No such file or directory
-mv: cannot stat '/root/*.TTF': No such file or directory
-mv: cannot stat '/root/*.TTC': No such file or directory
-mv: cannot stat '/root/*.FON': No such file or directory
-mv: cannot stat '/root/*.FNT': No such file or directory
-mv: cannot stat '/root/*.PFB': No such file or directory
-mv: cannot stat '/root/*.DFONT': No such file or directory
-mv: cannot stat '/root/*.Otf': No such file or directory
-mv: cannot stat '/root/*.Ttf': No such file or directory
-mv: cannot stat '/root/*.Ttc': No such file or directory
-mv: cannot stat '/root/*.Fon': No such file or directory
-mv: cannot stat '/root/*.Fnt': No such file or directory
-mv: cannot stat '/root/*.Pfb': No such file or directory
-mv: cannot stat '/root/*.Dfont': No such file or directory
-mv: cannot stat '/root/*.ttc': No such file or directory
-mv: cannot stat '/root/*.fon': No such file or directory
-mv: cannot stat '/root/*.fnt': No such file or directory
-mv: cannot stat '/root/*.pfb': No such file or directory
-mv: cannot stat '/root/*.dfont': No such file or directory
-/usr/share/fonts: caching, new cache contents: 0 fonts, 5 dirs
-/usr/share/fonts/X11: caching, new cache contents: 0 fonts, 4 dirs
-/usr/share/fonts/X11/Type1: caching, new cache contents: 8 fonts, 0 dirs
-/usr/share/fonts/X11/encodings: caching, new cache contents: 0 fonts, 1 dirs
-/usr/share/fonts/X11/encodings/large: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/X11/misc: caching, new cache contents: 59 fonts, 0 dirs
-/usr/share/fonts/X11/util: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/cmap: caching, new cache contents: 0 fonts, 5 dirs
-/usr/share/fonts/cmap/adobe-cns1: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/cmap/adobe-gb1: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/cmap/adobe-japan1: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/cmap/adobe-japan2: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/cmap/adobe-korea1: caching, new cache contents: 0 fonts, 0 dirs
-/usr/share/fonts/opentype: caching, new cache contents: 0 fonts, 4 dirs
-/usr/share/fonts/opentype/cantarell: caching, new cache contents: 4 fonts, 0 dirs
-/usr/share/fonts/opentype/noto: caching, new cache contents: 36 fonts, 0 dirs
-/usr/share/fonts/opentype/stix: caching, new cache contents: 29 fonts, 0 dirs
-/usr/share/fonts/opentype/stix-word: caching, new cache contents: 5 fonts, 0 dirs
-/usr/share/fonts/truetype: caching, new cache contents: 1 fonts, 24 dirs
-/usr/share/fonts/truetype/abyssinica: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/ancient-scripts: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/dejavu: caching, new cache contents: 21 fonts, 0 dirs
-/usr/share/fonts/truetype/fonts-guru-extra: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/freefont: caching, new cache contents: 12 fonts, 0 dirs
-/usr/share/fonts/truetype/horai-umefont: caching, new cache contents: 18 fonts, 0 dirs
-/usr/share/fonts/truetype/kacst: caching, new cache contents: 15 fonts, 0 dirs
-/usr/share/fonts/truetype/kacst-one: caching, new cache contents: 2 fonts, 0 dirs
-/usr/share/fonts/truetype/lao: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/liberation: caching, new cache contents: 16 fonts, 0 dirs
-/usr/share/fonts/truetype/lohit-punjabi: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/msttcorefonts: caching, new cache contents: 60 fonts, 0 dirs
-/usr/share/fonts/truetype/nanum: caching, new cache contents: 6 fonts, 0 dirs
-/usr/share/fonts/truetype/openoffice: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/padauk: caching, new cache contents: 4 fonts, 0 dirs
-/usr/share/fonts/truetype/sinhala: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/takao-gothic: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/tibetan-machine: caching, new cache contents: 1 fonts, 0 dirs
-/usr/share/fonts/truetype/tlwg: caching, new cache contents: 58 fonts, 0 dirs
-/usr/share/fonts/truetype/ttf-khmeros-core: caching, new cache contents: 2 fonts, 0 dirs
-/usr/share/fonts/truetype/ubuntu-font-family: caching, new cache contents: 13 fonts, 0 dirs
-/usr/share/fonts/truetype/unfonts-core: caching, new cache contents: 12 fonts, 0 dirs
-/usr/share/fonts/truetype/wqy: caching, new cache contents: 2 fonts, 0 dirs
-/usr/share/fonts/truetype/xmind: caching, new cache contents: 27 fonts, 0 dirs
-/usr/share/fonts/type1: caching, new cache contents: 0 fonts, 1 dirs
-/usr/share/fonts/type1/gsfonts: caching, new cache contents: 35 fonts, 0 dirs
-/usr/local/share/fonts: caching, new cache contents: 0 fonts, 0 dirs
-/root/.local/share/fonts: skipping, no such directory
-/root/.fonts: caching, new cache contents: 6 fonts, 0 dirs
-Re-scanning /usr/share/fonts: caching, new cache contents: 0 fonts, 5 dirs
-Re-scanning /usr/share/fonts/X11: caching, new cache contents: 0 fonts, 4 dirs
-Re-scanning /usr/share/fonts/X11/encodings: caching, new cache contents: 0 fonts, 1 dirs
-Re-scanning /usr/share/fonts/cmap: caching, new cache contents: 0 fonts, 5 dirs
-Re-scanning /usr/share/fonts/opentype: caching, new cache contents: 0 fonts, 4 dirs
-Re-scanning /usr/share/fonts/truetype: caching, new cache contents: 1 fonts, 24 dirs
-Re-scanning /usr/share/fonts/type1: caching, new cache contents: 0 fonts, 1 dirs
-/var/cache/fontconfig: cleaning cache directory
-/root/.cache/fontconfig: not cleaning non-existent cache directory
-/root/.fontconfig: not cleaning non-existent cache directory
-fc-cache: succeeded
-Extracting subtitle...
-Track ID 2: subtitles (SubStationAlpha)
-2
-Extracting track 2 with the CodecID 'S_TEXT/ASS' to the file '/var/www/downloads/.queue/1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv.ass'. Container format: SSA/ASS text subtitles
-Progress: 1%Progress: 1%Progress: 1%Progress: 2%Progress: 2%Progress: 2%Progress: 2%Progress: 3%Progress: 3%Progress: 3%Progress: 3%Progress: 3%Progress: 4%Progress: 4%Progress: 4%Progress: 4%Progress: 5%Progress: 5%Progress: 5%Progress: 5%Progress: 6%Progress: 6%Progress: 6%Progress: 6%Progress: 7%Progress: 7%Progress: 7%Progress: 7%Progress: 7%Progress: 8%Progress: 8%Progress: 8%Progress: 8%Progress: 9%Progress: 9%Progress: 9%Progress: 9%Progress: 9%Progress: 10%Progress: 10%Progress: 10%Progress: 11%Progress: 11%Progress: 11%Progress: 11%Progress: 11%Progress: 12%Progress: 12%Progress: 12%Progress: 12%Progress: 13%Progress: 13%Progress: 13%Progress: 13%Progress: 14%Progress: 14%Progress: 14%Progress: 14%Progress: 15%Progress: 15%Progress: 15%Progress: 15%Progress: 15%Progress: 15%Progress: 15%Progress: 15%Progress: 16%Progress: 16%Progress: 16%Progress: 17%Progress: 17%Progress: 17%Progress: 17%Progress: 18%Progress: 18%Progress: 18%Progress: 18%Progress: 19%Progress: 19%Progress: 19%Progress: 19%Progress: 19%Progress: 19%Progress: 20%Progress: 20%Progress: 20%Progress: 21%Progress: 21%Progress: 21%Progress: 21%Progress: 22%Progress: 22%Progress: 22%Progress: 22%Progress: 22%Progress: 23%Progress: 23%Progress: 23%Progress: 23%Progress: 24%Progress: 24%Progress: 24%Progress: 25%Progress: 25%Progress: 25%Progress: 25%Progress: 25%Progress: 26%Progress: 26%Progress: 26%Progress: 26%Progress: 26%Progress: 26%Progress: 27%Progress: 27%Progress: 27%Progress: 27%Progress: 27%Progress: 28%Progress: 28%Progress: 28%Progress: 28%Progress: 28%Progress: 28%Progress: 29%Progress: 29%Progress: 29%Progress: 29%Progress: 30%Progress: 30%Progress: 30%Progress: 30%Progress: 31%Progress: 31%Progress: 31%Progress: 31%Progress: 31%Progress: 32%Progress: 32%Progress: 32%Progress: 32%Progress: 33%Progress: 33%Progress: 33%Progress: 33%Progress: 33%Progress: 34%Progress: 34%Progress: 34%Progress: 34%Progress: 34%Progress: 35%Progress: 35%Progress: 35%Progress: 35%Progress: 36%Progress: 36%Progress: 36%Progress: 36%Progress: 36%Progress: 36%Progress: 37%Progress: 37%Progress: 37%Progress: 37%Progress: 37%Progress: 37%Progress: 38%Progress: 38%Progress: 38%Progress: 38%Progress: 38%Progress: 39%Progress: 39%Progress: 39%Progress: 39%Progress: 40%Progress: 40%Progress: 40%Progress: 40%Progress: 40%Progress: 40%Progress: 40%Progress: 40%Progress: 41%Progress: 41%Progress: 41%Progress: 41%Progress: 41%Progress: 42%Progress: 42%Progress: 42%Progress: 42%Progress: 43%Progress: 43%Progress: 43%Progress: 43%Progress: 43%Progress: 44%Progress: 44%Progress: 44%Progress: 44%Progress: 44%Progress: 45%Progress: 45%Progress: 45%Progress: 45%Progress: 45%Progress: 46%Progress: 46%Progress: 46%Progress: 46%Progress: 46%Progress: 46%Progress: 47%Progress: 47%Progress: 47%Progress: 47%Progress: 47%Progress: 47%Progress: 47%Progress: 48%Progress: 48%Progress: 48%Progress: 48%Progress: 48%Progress: 48%Progress: 48%Progress: 49%Progress: 49%Progress: 49%Progress: 49%Progress: 49%Progress: 49%Progress: 49%Progress: 50%Progress: 50%Progress: 50%Progress: 50%Progress: 50%Progress: 51%Progress: 51%Progress: 51%Progress: 51%Progress: 52%Progress: 52%Progress: 52%Progress: 52%Progress: 52%Progress: 53%Progress: 53%Progress: 53%Progress: 53%Progress: 53%Progress: 53%Progress: 53%Progress: 54%Progress: 54%Progress: 54%Progress: 54%Progress: 55%Progress: 55%Progress: 55%Progress: 55%Progress: 55%Progress: 55%Progress: 56%Progress: 56%Progress: 56%Progress: 56%Progress: 56%Progress: 56%Progress: 56%Progress: 57%Progress: 57%Progress: 57%Progress: 57%Progress: 57%Progress: 57%Progress: 58%Progress: 58%Progress: 58%Progress: 58%Progress: 58%Progress: 58%Progress: 58%Progress: 58%Progress: 59%Progress: 59%Progress: 59%Progress: 59%Progress: 59%Progress: 59%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 60%Progress: 61%Progress: 61%Progress: 61%Progress: 61%Progress: 61%Progress: 61%Progress: 61%Progress: 61%Progress: 62%Progress: 62%Progress: 62%Progress: 62%Progress: 62%Progress: 62%Progress: 62%Progress: 63%Progress: 63%Progress: 63%Progress: 63%Progress: 63%Progress: 63%Progress: 63%Progress: 64%Progress: 64%Progress: 64%Progress: 64%Progress: 64%Progress: 64%Progress: 64%Progress: 64%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 65%Progress: 66%Progress: 66%Progress: 66%Progress: 66%Progress: 66%Progress: 66%Progress: 67%Progress: 67%Progress: 67%Progress: 67%Progress: 67%Progress: 67%Progress: 67%Progress: 67%Progress: 68%Progress: 68%Progress: 68%Progress: 68%Progress: 68%Progress: 68%Progress: 69%Progress: 69%Progress: 69%Progress: 70%Progress: 70%Progress: 70%Progress: 70%Progress: 71%Progress: 71%Progress: 71%Progress: 72%Progress: 72%Progress: 72%Progress: 72%Progress: 72%Progress: 73%Progress: 73%Progress: 73%Progress: 73%Progress: 73%Progress: 73%Progress: 74%Progress: 74%Progress: 74%Progress: 74%Progress: 74%Progress: 75%Progress: 75%Progress: 75%Progress: 75%Progress: 75%Progress: 75%Progress: 75%Progress: 75%Progress: 76%Progress: 76%Progress: 76%Progress: 77%Progress: 77%Progress: 77%Progress: 77%Progress: 77%Progress: 78%Progress: 78%Progress: 78%Progress: 78%Progress: 79%Progress: 79%Progress: 79%Progress: 79%Progress: 80%Progress: 80%Progress: 80%Progress: 80%Progress: 80%Progress: 81%Progress: 81%Progress: 81%Progress: 81%Progress: 81%Progress: 82%Progress: 82%Progress: 82%Progress: 82%Progress: 82%Progress: 82%Progress: 83%Progress: 83%Progress: 83%Progress: 83%Progress: 83%Progress: 83%Progress: 84%Progress: 84%Progress: 84%Progress: 84%Progress: 84%Progress: 84%Progress: 85%Progress: 85%Progress: 85%Progress: 85%Progress: 86%Progress: 86%Progress: 86%Progress: 87%Progress: 87%Progress: 87%Progress: 87%Progress: 88%Progress: 88%Progress: 88%Progress: 88%Progress: 89%Progress: 89%Progress: 89%Progress: 89%Progress: 90%Progress: 90%Progress: 90%Progress: 90%Progress: 90%Progress: 91%Progress: 91%Progress: 91%Progress: 91%Progress: 91%Progress: 91%Progress: 91%Progress: 91%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 92%Progress: 93%Progress: 93%Progress: 93%Progress: 93%Progress: 93%Progress: 93%Progress: 94%Progress: 94%Progress: 94%Progress: 94%Progress: 94%Progress: 94%Progress: 94%Progress: 94%Progress: 95%Progress: 95%Progress: 95%Progress: 95%Progress: 96%Progress: 96%Progress: 96%Progress: 96%Progress: 97%Progress: 97%Progress: 97%Progress: 97%Progress: 97%Progress: 98%Progress: 98%Progress: 98%Progress: 98%Progress: 98%Progress: 99%Progress: 99%Progress: 99%Progress: 99%Progress: 99%Progress: 99%Progress: 99%Progress: 99%Progress: 100%
-ASS subtitle found!
-Starting with the encoding process. This may take some time. Be patient...
-Renaming log file to progress_2016-08-30_14-59.txt
-Moving /var/www/downloads/.queue/1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv_encoded.mp4 to /var/www/encoded...
-Uploading...
-1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv_encoded.mp4 => 1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mp4
-
-Moving /var/www/downloads/.queue/1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mkv to /var/www/trash/1336...
-remove fonts...
-> bot.sh
-encode empty...
-retrieve...
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=607117
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=610522
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=613493
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=616994
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=620677
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=623951
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=628931
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=632255
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=635166
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=642328
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=642328
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=642365
-id: 1336 title: Shingeki_no_Bahamut_Genesis fansub: eraser audio: 0 sub: 0 url: https://www.nyaa.se/?page=download&tid=643022
-object(stdClass)#5 (2) {
-  ["error"]=>
-  int(0)
-  ["short"]=>
-  string(21) "https://lnjt.in/N2jxT"
-}
-PHP Warning:  mkdir(): File exists in /root/NodefilesUploader.php on line 461
-/var/www/uploaded/1336/1336AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mp4array(1) {
-  [0]=>
-  array(11) {
-    ["filename"]=>
-    string(58) "AnimePahe_Shingeki_no_Bahamut_Genesis_-_01_720p_Eraser.mp4"
-    ["filesize"]=>
-    int(113875284)
-    ["crc32"]=>
-    string(8) "706714cb"
-    ["anime"]=>
-    string(4) "1336"
-    ["episode"]=>
-    string(2) "01"
-    ["revision"]=>
-    string(0) ""
-    ["fansub"]=>
-    string(6) "Eraser"
-    ["resolution"]=>
-    string(4) "720p"
-    ["upload_url"]=>
-    string(34) "https://nodefiles.com/fobbv2610ki3"
-    ["short_url"]=>
-    string(5) "N2jxT"
-    ["disc"]=>
-    string(0) ""
-  }
-}
