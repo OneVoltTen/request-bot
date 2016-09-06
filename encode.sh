@@ -153,5 +153,6 @@ seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "execute bot.sh"; nohup /root/bot.sh > /dev/null 2>&1 &
+	echo "execute retieve worker..."; nohup /root/retrieve.sh keep > /dev/null 2>&1 &
+	echo "execute bot.sh"; nohup /root/bot.sh sort > /dev/null 2>&1 &
 fi

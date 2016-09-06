@@ -1,5 +1,6 @@
 #!/bin/bash
 server_status=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "animepahe.com")
+var=$1
 
 if ! ps ax | grep -v grep | grep transmission-daemon > /dev/null; then
 	runuser -l root -c 'transmission-daemon'; sleep 2
@@ -12,8 +13,13 @@ else
 	fi		
 fi
 if [ $server_status == 301 ]; then
-	if [ -f '/var/www/downloading.txt' ]; then
-		rm '/var/www/downloading.txt'
+	if [[ $var=="keep" ]]; then
+		echo "no delete"
+	else
+		echo "delete"
+		if [ -f '/var/www/downloading.txt' ]; then
+			rm '/var/www/downloading.txt'
+		fi
 	fi
 	sudo node /root/app/app.js; sleep 1
 else
