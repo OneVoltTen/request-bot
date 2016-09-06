@@ -51,7 +51,7 @@
 					$str = str_ireplace('OVA_1', 'OVA1', $str);
 
 					# Get metadata
-					require_once('/root/getid3/getid3.php');
+					require_once('/root/app/getid3/getid3.php');
 					$getID3=new getID3;
 					$path=realpath('/var/www/downloads/'.$fileName);
 					$ThisFileInfo=$getID3->analyze($path);

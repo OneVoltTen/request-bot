@@ -5,7 +5,7 @@ if(isset($argv[1]) && !empty($argv[1])){
 }else{
 	die('undefined file');
 }
-require_once('/root/getid3/getid3.php');
+require_once('/root/app/getid3/getid3.php');
 $getID3=new getID3;
 
 #$fileName="12883AnimePahe_Non_Non_Biyori_-_01_Darude_720p_CBM.mkv";
