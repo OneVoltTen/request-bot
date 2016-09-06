@@ -47,6 +47,8 @@
 					$str = str_replace('.', '_', $str);
 					$str = str_replace(',', '_', $str);
 					$str = str_ireplace('_ep', '_', $str);
+					$str = str_ireplace('OVA_0', 'OVA0', $str);
+					$str = str_ireplace('OVA_1', 'OVA1', $str);
 
 					# Get metadata
 					require_once('/root/getid3/getid3.php');
@@ -162,6 +164,9 @@
 					// Replaces final
 					$str=str_ireplace('final','',$str);
 
+					// Replaces 24fps
+					$str=str_ireplace('24fps','',$str);
+					
 					// Replaces multiple spaces with a space
 					$str=preg_replace('/\s+/',' ',$str);
 

@@ -7,7 +7,7 @@ QUEUE="/var/www/downloads/.queue"
 ENCODED="/var/www/encoded"
 countqueue=`ls -1 $QUEUE/*.{mkv,mp4,ass} 2>/dev/null | wc -l`
 countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`
-countsource=`ls -1 $SOURCE/*.mkv 2>/dev/null | wc -l`
+countsource=`ls -1 $SOURCE/*{mkv,mp4,ass} 2>/dev/null | wc -l`
 countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
 
 if [[ -z "$1" && "$1"=="sort" ]]; then
