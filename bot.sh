@@ -12,7 +12,7 @@ countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
 
 if [[ -z "$1" && "$1"=="sort" ]]; then
 	echo "execute retieve worker..."
-	/root/retrieve.sh
+	nohup /root/retrieve.sh &
 fi
 
 if [ $countencoded != 0 ]; then
