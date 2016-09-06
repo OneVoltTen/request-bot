@@ -12,12 +12,12 @@ countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
 
 if [[ -z "$1" && "$1"=="sort" ]]; then
 	echo "execute retieve worker..."
-	nohup /root/retrieve.sh &
+	nohup /root/retrieve.sh > /dev/null 2>&1 &
 fi
 
 if [ $countencoded != 0 ]; then
 	echo "execute upload worker..."
-	nohup php /root/NodefilesUploader.php &
+	nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
 fi
 
 php /root/renameu.php
@@ -25,18 +25,18 @@ php /root/rename.php downloads
 #php ~/rename.php 00
 
 if [ $countqueue != 0 ]; then
-	echo "encode not empty..."
+	echo "queue not empty..."
 elif [ $countqueue == 0 ]; then
 	if [ $countsource != 0 ]; then
 		echo "execute rename..."
 		mv ${SOURCE}/*.mkv ${QUEUE}; sleep 2
 		echo "execute encode..."
-		nohup /root/encode.sh &
+		nohup /root/encode.sh > /dev/null 2>&1 &
 	#elif [ $countsecond != 0 ]; then
 	#	echo "Adding secondary files to queue..."
 	#	mv $(ls -1tr $SECOND/*.{mkv,mp4,avi} | grep -E '^[^d]' | head -1) ${QUEUE}; sleep 2
 	#	echo "Process the queue..."
-	#	nohup /root/encode.sh &
+	#	nohup /root/encode.sh > /dev/null 2>&1 &
 	else
 		echo "oyasumi..."
 	fi
