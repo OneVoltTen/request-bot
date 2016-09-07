@@ -91,7 +91,7 @@ try {
 	var_dump($upload);
 } catch (Exception $e) {
 	// If login exception move back file
-	rename('/var/www/encoded/'.$_SESSION['crc32']."/".$_SESSION['basename'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename']);
+	rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
 	rmdir('/var/www/encoded/'.$_SESSION['crc32']);
 	die(var_dump($e->getMessage()));
 	
@@ -217,10 +217,12 @@ final class GwshareUploader
 		$anime=$fn[0]; // prefix id
 		$crc32 = hash_file('crc32b', $source); // crc32
 		$filesize = filesize($source);
+		$basename1 = str_replace($fn[0], "", $basename);
 		$_SESSION['crc32']=$crc32;
 		$_SESSION['anime']=$anime;
 		$_SESSION['source']=$source;
 		$_SESSION['basename']=$basename;
+		$_SESSION['basename1']=$basename1;
 		
 		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			
@@ -237,7 +239,7 @@ final class GwshareUploader
 			$source=str_replace("/var/www/encoded/", "/var/www/encoded/".$crc32."/", $source);
 			$basename=str_replace("/var/www/encoded/", $crc32."/", $basename);
 				// Move file to crc32 folder
-			mkdir('/var/www/encoded/'.$crc32, 0755, true);
+			mkdir('/var/www/encoded/'.$crc32, 0700, true);
 			rename('/var/www/encoded/'.$basename, '/var/www/encoded/'.$crc32."/".$basename);
 			/*
 			echo $source."\n";
@@ -472,7 +474,7 @@ final class GwshareUploader
 						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename;
 						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
 					}else{
-						@rename($source, UPLOADED.'/'.$anime.''.$basename);
+						@rename($source, UPLOADED.'/'.$anime.''.$source);
 					}
 				}
 				rmdir('/var/www/encoded/'.$crc32);
