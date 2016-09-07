@@ -13,14 +13,14 @@ else
 	fi		
 fi
 if [ $server_status == 301 ]; then
-	if [[ $var=="keep" ]]; then
-		echo "no delete"
-	else
-		echo "delete"
+	#if [[ $var=="keep" ]]; then
+	#	echo "no delete"
+	#else
+	#	echo "delete"
 		if [ -f '/var/www/downloading.txt' ]; then
 			rm '/var/www/downloading.txt'
 		fi
-	fi
+	#fi
 	sudo node /root/app/app.js; sleep 1
 else
 	echo "Connection failed:" $server_status

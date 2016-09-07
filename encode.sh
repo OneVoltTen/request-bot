@@ -133,7 +133,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		# If file moved to encoded folder
 		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "upload..."; php /root/rename.2.php > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
+			echo "execute upload worker..."; php /root/rename.2.php > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
 		else
 			echo "no upload..."
 		fi
@@ -146,13 +146,12 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 	fi
 done
 
-# Remove temp files
-sleep 2; echo "remove temp files..."; rm -rf $SOURCE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} /root/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
+# Remove temp file
+sleep 2; echo "remove temp file..."; rm -rf $SOURCE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} /root/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
 
 seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "execute retieve worker..."; nohup /root/retrieve.sh keep > /dev/null 2>&1 &
 	echo "execute bot.sh"; nohup /root/bot.sh sort > /dev/null 2>&1 &
 fi
