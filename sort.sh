@@ -1,7 +1,7 @@
 #!/bin/bash
 cd /var/www/sort; SORT="/var/www/sort"; DOWNLOAD="/var/www/downloads"; TRASH="/var/www/trash"
 #TR_TORRENT_DIR="/var/www/sort"
-#TR_TORRENT_NAME="Tekkon_Kinkreet_(2006)_[720p,BluRay,x264]_-_THORA.mkv"
+#TR_TORRENT_NAME="SampleVideo_1280x720_2mb.mp4"
 TR_DOWNLOADS="/var/www/sort/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
 # Function die with message
 die() { echo "$@" 1>&2 ; exit 1; }
@@ -26,15 +26,41 @@ while read line; do
 		die "invalid colon ${line}" >> $SORT/log.txt
 	else
 		# If file in working directory
-		if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]]; then
+		if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
 			echo "file $FILEN" >> $SORT/log.txt
 			if [[ -f $FILEN ]]; then
 				echo "match!"; echo "match!" >> $SORT/log.txt; echo "$FILEN"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 				#mediainfo --fullscan "$FILEN"
-				if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $Basename == *".mkv" ]]; then
+				if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]]  || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
 					# Remove pipe if exist
 					if [[ $file == *"|"* ]]; then
-						mv "${FILEN}" "${FILEN/|/}"; file=${file//|/};
+						mv "${FILEN}" "${FILEN/|/}"; file=${file//|/}
+					fi
+					# Change mp4 container
+					if [[ $FILEN == *"mp4" ]]; then
+						echo "detect mp4" >> $SORT/log.txt
+						ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
+						# Move file into trash/ID
+						mkdir -p "$TRASH/$MALID"
+						mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
+						# Update filen to new file
+						FILEN="${FILEN}.mkv"
+						mv "$FILEN" "${FILEN//.mp4/}" >> $SORT/log.txt
+						FILEN=${FILEN//.mp4/}
+						echo "MKV " $FILEN >> $SORT/log.txt
+					fi
+					# Change avi container
+					if [[ $FILEN == *"avi" ]]; then
+						echo "detect avi" >> $SORT/log.txt
+						ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
+						# Move file into trash/ID
+						mkdir -p "$TRASH/$MALID"
+						mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
+						# Update filen to new file
+						FILEN="${FILEN}.mkv"
+						mv "$FILEN" "${FILEN//.avi/}" >> $SORT/log.txt
+						FILEN=${FILEN//.avi/}
+						echo "MKV " $FILEN >> $SORT/log.txt
 					fi
 					# Set file title metadata
 					mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
@@ -63,8 +89,42 @@ while read line; do
 				if [ ! $(pwd) == $SORT ]; then
 					echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 					# Move files into working directory [Max 1 subfolder]
-					mv ***/*.mkv "$SORT/$FILEN1"; sleep 2
+					mv ***/*.mkv "$SORT/$FILEN1"; sleep 1
+					mv ***/*.mp4 "$SORT/$FILEN1"; sleep 1
+					mv ***/*.avi "$SORT/$FILEN1"; sleep 1
 					echo "Working directory" $(pwd) >> $SORT/log.txt
+					for file in *.mp4; do
+						# Change mp4 container
+						if [[ $file == *"mp4" ]]; then
+							echo "detect mp4" >> $SORT/log.txt
+							ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
+							# Move file into trash/ID
+							mkdir -p "$TRASH/$MALID"
+							mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
+							# Update file to new file
+							file="${file}.mkv"
+							mv "$file" "${file//.mp4/}" >> $SORT/log.txt
+							file=${file//.mp4/}
+							echo "MKV " $file >> $SORT/log.txt
+						fi
+						sleep 1
+					done
+					for file in *.avi; do
+						# Change avi container
+						if [[ $file == *"avi" ]]; then
+							echo "detect avi" >> $SORT/log.txt
+							ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
+							# Move file into trash/ID
+							mkdir -p "$TRASH/$MALID"
+							mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
+							# Update file to new file
+							file="${file}.mkv"
+							mv "$file" "${file//.avi/}" >> $SORT/log.txt
+							file=${file//.avi/}
+							echo "MKV " $file >> $SORT/log.txt
+						fi
+						sleep 1
+					done
 					for file in *.mkv; do
 						# Rename file to remove pipe
 						if [[ $file == *"|"* ]]; then
