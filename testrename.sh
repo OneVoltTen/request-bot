@@ -11,7 +11,7 @@ if [ $countsource != 0 ]; then
 		mv /var/www/komaru/* /var/www/downloads # If error
 		echo "moving renamed files to encoded..."
 		mv /var/www/downloads/*.mkv /var/www/encoded; sleep 2
-		php rename.2.php; sleep 1
+		php rename.php 2; sleep 1
 		php NodefilesUploader.php test; sleep 2
 		echo "moving uploaded files to downloads..."
 		php rename.php renametest; sleep 2

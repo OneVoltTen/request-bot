@@ -14,6 +14,10 @@
 			rename('/var/www/downloads/'.$itemx, '/var/www/komaru/'.$itemx);
 		}
 	}
+	
+	if(!isset($argv[1])){
+		die();
+	}
 
 	if(isset($argv[1])){
 		if($argv[1]=="downloads"||$argv[1]=="downloads"){
@@ -141,6 +145,9 @@
 					if (substr($str,-1,1)==")" && substr($str,-10,-9)=="("){
 						$str=substr($str,0,-10);
 					}
+					
+					// Remove text between 'text' (typically episode names)
+					$str=preg_replace("/'[\s\S]+?'/", '', $str);
 
 					// Strip whitespaces
 					$str=ltrim(rtrim($str));
@@ -251,17 +258,6 @@
 					} else {
 						$resolution="720p";
 					}
-					
-					// Replaces revision with spaces
-					$str=str_replace('_v0','v0',$str);
-					$str=str_replace('_v1','v1',$str);
-					$str=str_replace('_v2','v2',$str);
-					$str=str_replace('_v3','v3',$str);
-					$str=str_replace('_v4','v4',$str);
-					$str=str_replace('_v5','v5',$str);
-					$str=str_replace('_v6','v6',$str);
-					$str=str_replace('_v7','v7',$str);
-					$str=str_replace('_v8','v8',$str);
 					
 					
 					// Replaces final
@@ -414,6 +410,17 @@
 							$str=str_ireplace('v2','',str_ireplace('v3','',str_ireplace('v4','',$str)));
 						}
 					}
+					
+					// Replaces revision with spaces
+					$str=str_replace('_v0','v0',$str);
+					$str=str_replace('_v1','v1',$str);
+					$str=str_replace('_v2','v2',$str);
+					$str=str_replace('_v3','v3',$str);
+					$str=str_replace('_v4','v4',$str);
+					$str=str_replace('_v5','v5',$str);
+					$str=str_replace('_v6','v6',$str);
+					$str=str_replace('_v7','v7',$str);
+					$str=str_replace('_v8','v8',$str);
 					
 					$str = str_replace("_s_", "s_", $str);
 
