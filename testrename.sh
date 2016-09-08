@@ -2,7 +2,6 @@
 cd /root
 countsource=`ls -1 /var/www/downloads/*.{mkv,mp4} 2>/dev/null | wc -l`
 
-php renameu.php
 php rename.php downloads; sleep 1
 
 # Move uploaded files before testing
@@ -15,7 +14,7 @@ if [ $countsource != 0 ]; then
 		php rename.2.php; sleep 1
 		php NodefilesUploader.php test; sleep 2
 		echo "moving uploaded files to downloads..."
-		php renametest.php; sleep 2
+		php rename.php renametest; sleep 2
 		mv /var/www/encoded/* /var/www/downloads
 else
 	echo "no files in downloads folder..."

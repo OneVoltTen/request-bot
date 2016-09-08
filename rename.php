@@ -1,7 +1,110 @@
 <?php
+
+	# Move all non mkv/mp4/avi move to komaru folder
+	$ar=array();
+	$g=array_diff(scandir('/var/www/downloads/'), array('..', '.'));
+	foreach($g as $x){
+		if(is_dir($x))$ar[$x]=scandir($x);
+		else $ar[]=$x;
+	}
+	foreach($ar as &$itemx){
+		$supported = array('mkv','mp4','avi');
+		$ext = strtolower(pathinfo($itemx, PATHINFO_EXTENSION));
+		if (!in_array($ext, $supported) && is_file($itemx)) {
+			rename('/var/www/downloads/'.$itemx, '/var/www/komaru/'.$itemx);
+		}
+	}
+
 	if(isset($argv[1])){
 		if($argv[1]=="downloads"||$argv[1]=="downloads"){
 			$path="/var/www/downloads/";
+		}elseif($argv[1]=="2"){
+		# Start 2
+		$path = "/var/www/encoded/";
+
+		if ($handle = opendir($path)) {
+			chdir($path);
+			while (false !== ($fileName = readdir($handle))) {
+				if ($fileName != "." && $fileName != ".." && strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mp4' || strpos($fileName, '.mkv'))  {
+					$str = $fileName;
+					$newName = $str;
+
+					$str = str_ireplace("_Cant_", "_Can't_", $str);
+					$str = str_ireplace("_I_ll_", "_I'll_", $str);
+					$str = str_replace('_I_ve', "_I've", $str);
+
+					$str = str_replace("TV_720p", "720p", $str);
+					$str = str_replace("542p", "720p", $str);
+
+					$str = str_replace('.mkv_encoded', '', $str);
+					$str = str_replace('.mp4_encoded', '', $str);
+					$str = str_replace('.avi_encoded', '', $str);
+					$str = str_replace('.mkv', '', $str);
+
+					$str = preg_replace('/\\.[^.\\s]{3,4}$/', '', $str);
+					if (strpos($str,'.mkv') !== false) {
+						$str = substr($str, 0, strpos($str, ".mkv"));
+						$str = $str.".mp4";
+					}
+					$newName = str_replace(".mkv", ".mp4", $newName);
+					$newName = str_replace(".mp4_encoded", "", str_replace(".mkv_encoded", "", str_replace(".avi_encoded", "", $newName)));
+					echo $fileName." => ".$newName."\n\n";
+					rename($fileName, $newName);
+
+					unset($str);
+					unset($fileName);
+					unset($newName);
+				}
+			}
+			closedir($handle);
+		}
+		die();
+		# End 2
+		}elseif($argv[1]=="renametest"){
+			# Start renametest
+			
+			$path = "/var/www/uploaded/";
+			if ($handle = opendir($path)) {
+				chdir($path);
+				while (false !== ($fileName = readdir($handle))) {
+					if (($fileName != "." && $fileName != ".." && (strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mkv' || strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mp4'))) {
+						$str = $fileName;
+
+						// Replaces all spaces with an underscore
+						$str = str_replace('AnimePahe_', '', $str);
+						$str = str_replace('mp4', 'mkv', $str);
+						$newName = $str;
+						//echo $fileName." => ".$newName."\n\n";
+						rename($fileName, $newName);
+
+						unset($str);
+					}
+				}
+			}
+
+			$path = "/var/www/downloads/";
+			if ($handle = opendir($path)) {
+				chdir($path);
+			while (false !== ($fileName = readdir($handle))) {
+					if (($fileName != "." && $fileName != ".." && (strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mkv' || strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mp4'))) {
+						$str = $fileName;
+
+						// Replaces all spaces with an underscore
+						$str = str_replace('AnimePahe_', '', $str);
+						$str = str_replace('mp4', 'mkv', $str);
+						$newName = $str;
+						//echo $fileName." => ".$newName."\n\n";
+						rename($fileName, $newName);
+
+						unset($str);
+					}
+				}
+			}
+
+			closedir($handle);
+			die();
+			# End renametest
+		
 		}elseif($argv[1]=="00"){
 			$path="/var/www/downloads/.00/";
 		}else{
