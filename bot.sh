@@ -22,8 +22,11 @@ if [ $countsource != 0 ]; then
 	mv ${SOURCE}/*.mkv ${QUEUE}; sleep 2
 	PROCESS_DT=$(ps -C ffmpeg -o ruser=)
 	if [[ $PROCESS_DT == "ffmpeg" ]]; then
-		echo "execute encode..."
-		nohup /root/encode.sh > /dev/null 2>&1 &
+		sleep 15
+		if [[ $PROCESS_DT == "ffmpeg" ]]; then
+			echo "execute encode..."
+			nohup /root/encode.sh > /dev/null 2>&1 &
+		fi
 	else
 		echo "isogashii desu..."
 	fi
