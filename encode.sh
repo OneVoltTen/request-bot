@@ -133,12 +133,14 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		# If file moved to encoded folder
 		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "execute upload worker..."; php /root/rename.2.php > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
+			echo "execute upload worker..."; php /root/rename.php 2 > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
 		else
 			echo "no upload..."
 		fi
 		# If file not moved to encode folder
 		if [[ ${FILENAMEX%AnimePahe*} > 0 ]];then
+			rm $FILENAMEX.ass
+			rm $FILENAMEX.srt
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%AnimePahe*}"; mv $i "${TRASH}/${FILENAMEX%AnimePahe*}" -f
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
