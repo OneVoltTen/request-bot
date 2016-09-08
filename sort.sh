@@ -90,11 +90,12 @@ while read line; do
 					# If moved successfully into folder
 					if [ ! $(pwd) == $SORT ]; then
 						echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
-						# Move files into working directory [Max 1 subfolder]
-						mv ***/*.mkv "$SORT/$FILEN1"; sleep 1
-						mv ***/*.mp4 "$SORT/$FILEN1"; sleep 1
-						mv ***/*.avi "$SORT/$FILEN1"; sleep 1
 						echo "Working directory" $(pwd) >> $SORT/log.txt
+						# Move files into working directory [Max 1 subfolder]
+						mv ***/*.mkv "$SORT/$FILEN1";
+						mv ***/*.mp4 "$SORT/$FILEN1";
+						mv ***/*.avi "$SORT/$FILEN1";
+						mkdir -p "$TRASH/$MALID"
 						for file in *.mp4; do
 							# Change mp4 container
 							if [[ $file == *"mp4" ]]; then
@@ -109,7 +110,6 @@ while read line; do
 								file=${file//.mp4/}
 								echo "MKV " $file >> $SORT/log.txt
 							fi
-							sleep 1
 						done
 						for file in *.avi; do
 							# Change avi container
@@ -125,13 +125,22 @@ while read line; do
 								file=${file//.avi/}
 								echo "MKV " $file >> $SORT/log.txt
 							fi
-							sleep 1
 						done
 						for file in *.mkv; do
 							# Rename file to remove pipe
 							if [[ $file == *"|"* ]]; then
 								mv "${file}" "${file/|/}"; file=${file//|/};
 							fi
+							# Move OP/ED files into trash
+							arr=('creditless' 'ending' 'opening' 'op1' 'op01' 'op 01' 'op2' 'op 2' 'op02' 'op 02' 'op3' 'op 3' 'op03' 'op 03' 'op4' 'op 4' 'op04' 'op 04' 'op5' 'op 5' 'op05' 'op 05' 'op6' 'op 6' 'op06' 'op 06' 'op7' 'op 7' 'op07' 'op 07' 'op8' 'op 8' 'op08' 'op 08' 'ed1' 'ed 1' 'ed01' 'ed 01' 'ed2' 'ed 2' 'ed02' 'ed 02' 'ed3' 'ed 3' 'ed03' 'ed 03' 'ed4' 'ed 4' 'ed 04' 'ed5' 'ed 5' 'ed05' 'ed 05' 'ed6' 'ed 6' 'ed06' 'ed 06' 'ed7' 'ed 7' 'ed07' 'ed 07' 'ed8' 'ed 8' 'ed08' 'ed 08')
+							for ((i = 0; i < ${#arr[@]}; i++)); do
+								#echo "${file,,} - ${arr[$i]}"
+								if [[ ${file,,} == *${arr[$i]}*  ]]; then
+									echo "delete ~ ${file,,} - ${arr[$i]}" >> $SORT/log.txt
+									# Move to trash folder
+									mv "${file}" "$TRASH/$MALID"
+								fi
+							done
 							# Set file title metadata
 							mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
 							# Move to downloads folder
@@ -142,7 +151,6 @@ while read line; do
 					fi
 					sleep 2
 					# Move folder into trash/ID
-					mkdir -p "$TRASH/$MALID"
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
 					nohup /root/bot.sh sort > /dev/null 2>&1 &
 					die "complete" >> $SORT/log.txt
