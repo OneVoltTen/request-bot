@@ -6,8 +6,12 @@ TR_DOWNLOADS="/var/www/sort/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOAD
 # Function die with message
 die() { echo "$@" 1>&2 ; exit 1; }
 # Update downloading.txt if any changes
+# If downloading.txt being updated
+if [ ! -f '/var/www/downloading.txt' ]; then
+	sleep 5
+fi
 echo 'retrieve...' >> $SORT/log.txt; /root/retrieve.sh; sleep 1
-# Foreach line in downloading.txt
+# Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
 	if [[ ! $LAST == $line ]]; then
@@ -68,7 +72,7 @@ while read line; do
 						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
 						mv ${SORT}/*.mkv ${DOWNLOAD}
-						nohup /root/bot.sh sort > /dev/null 2>&1 &
+						nohup /root/bot.sh sort &
 						die "complete" >> $SORT/log.txt
 					fi
 				else
@@ -131,14 +135,14 @@ while read line; do
 							if [[ $file == *"|"* ]]; then
 								mv "${file}" "${file/|/}"; file=${file//|/};
 							fi
-							# Move OP/ED files into trash
+							# Move OP/ED files into trash folder
 							arr=('creditless' 'ending' 'opening' 'nced' ' op1' ' op01' ' op 01' ' op2' ' op 2' ' op02' ' op 02' ' op3' ' op 3' ' op03' ' op 03' ' op4' ' op 4' ' op04' ' op 04' ' op5' ' op 5' ' op05' ' op 05' ' op6' ' op 6' ' op06' ' op 06' ' op7' ' op 7' ' op07' ' op 07' ' op8' ' op 8' ' op08' ' op 08' ' ed1' ' ed 1' ' ed01' ' ed 01' ' ed2' ' ed 2' ' ed02' ' ed 02' ' ed3' ' ed 3' ' ed03' ' ed 03' ' ed4' ' ed 4' ' ed 04' ' ed5' ' ed 5' ' ed05' ' ed 05' ' ed6' ' ed 6' ' ed06' ' ed 06' ' ed7' ' ed 7' ' ed07' ' ed 07' ' ed8' ' ed 8' ' ed08' ' ed 08' 'op1' '_op01' '_op_01' '_op2' '_op_2' '_op02' '_op_02' '_op3' '_op_3' '_op03' '_op_03' '_op4' '_op_4' '_op04' '_op_04' '_op5' '_op_5' '_op05' '_op_05' '_op6' '_op_6' '_op06' '_op_06' '_op7' '_op_7' '_op07' '_op_07' '_op8' '_op_8' '_op08' '_op_08' '_ed1' '_ed_1' '_ed01' '_ed_01' '_ed2' '_ed_2' '_ed02' '_ed_02' '_ed3' '_ed_3' '_ed03' '_ed_03' '_ed4' '_ed_4' '_ed_04' '_ed5' '_ed_5' '_ed05' '_ed_05' '_ed6' '_ed_6' '_ed06' '_ed_06' '_ed7' '_ed_7' '_ed07' '_ed_07' '_ed8' '_ed_8' '_ed08' '_ed_08')
 							for ((i = 0; i < ${#arr[@]}; i++)); do
 								#echo "${file,,} - ${arr[$i]}"
 								if [[ ${file,,} == *${arr[$i]}*  ]]; then
-									echo "delete ~ ${file,,} - ${arr[$i]}" >> $SORT/log.txt
+									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
 									# Move to trash folder
-									mv "${file}" "$TRASH/$MALID"
+									mv "${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
 								fi
 							done
 							# Set file title metadata
@@ -152,7 +156,7 @@ while read line; do
 					sleep 2
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
-					nohup /root/bot.sh sort > /dev/null 2>&1 &
+					nohup /root/bot.sh sort &
 					die "complete" >> $SORT/log.txt
 				else
 					echo "file $FILEN" >> $SORT/log.txt

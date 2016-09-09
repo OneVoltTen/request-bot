@@ -133,7 +133,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		# If file moved to encoded folder
 		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "execute upload worker..."; php /root/rename.php 2 > /dev/null 2>&1; nohup php /root/NodefilesUploader.php > /dev/null 2>&1 &
+			echo "execute upload worker..."; php /root/rename.php 2; nohup php /root/NodefilesUploader.php &
 		else
 			echo "no upload..."
 		fi
@@ -156,5 +156,5 @@ seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "execute bot.sh"; nohup /root/bot.sh sort > /dev/null 2>&1 &
+	echo "execute bot.sh"; nohup /root/bot.sh sort &
 fi
