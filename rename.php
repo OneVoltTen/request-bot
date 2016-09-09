@@ -188,7 +188,7 @@
 						}
 						// Remove fansub text
 						$str=str_ireplace($fansub,'',$str);
-						$fansubpath='/root/fansub/'.$fansub.'.php';
+						$fansubpath='/root/app/fansub/'.$fansub.'.php';
 						$fansubpath=strtolower($fansubpath);
 						if(file_exists($fansubpath) && !empty(file_get_contents($fansubpath) && !empty($fansub))){
 							echo "Yatta!\n";
@@ -202,7 +202,7 @@
 							echo "Undefined fansub meta\n";
 							//get list of all fansub titles
 							$ar=array();
-							$g=array_diff(scandir('/root/fansub/'), array('..', '.'));
+							$g=array_diff(scandir('/root/app/fansub/'), array('..', '.'));
 							foreach($g as $x){
 								if(is_dir($x))$ar[$x]=scandir($x);
 								else $ar[]=$x;
@@ -217,7 +217,7 @@
 									echo "Yatta!! \n";
 									$str = str_ireplace($fansubx, '', $str);
 									$fansub=ucfirst($fansubx);
-									include "/root/fansub/".$fansubx.".php";
+									include "/root/app/fansub/".$fansubx.".php";
 									$counter++;
 								}else{
 									$counter++;

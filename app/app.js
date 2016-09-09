@@ -75,6 +75,6 @@ getTorrentsToDL(function(err, torrents) {
 		}
 	});
     if(count){
-		process.stdout.write(count + " request(s) found\n");
+		process.stdout.write(count + " request found\n");
 	}
 });
