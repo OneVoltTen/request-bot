@@ -7,13 +7,12 @@ die() { echo "$@" 1>&2 ; exit 1; }
 for i in `ls -tr /var/www/downloads/.queue/*.mkv`; do
 	FILENAMEX=${i#*/var/www/downloads/.queue/}
 done
-echo $FILENAMEX
 # Retrieve file meta
 meta=`sudo php /root/encode_meta.php $FILENAMEX`
 sub=${meta#*|}; audio=${meta%|*}
 function is_int() { return $(test "$@" -eq "$@" > /dev/null 2>&1); }
 if [ ! $sub -eq $sub 2> /dev/null ] && [ ! $audio -eq $audio 2> /dev/null ]; then
-		die "meta failed - ${meta}"
+	die "meta failed - ${meta}"
 fi
 # Empty variable to 0
 if [ -z "$audio" ];	then
@@ -26,7 +25,7 @@ if [ -z "$sub" ]; then
 else
 	subtitle=$sub
 fi
-echo Audio [$audio] Subtitle [$sub]
+echo "${FILENAMEX} => [${audio}] [${sub}]" >> /root/log.txt
 # End retrieve meta
 php /root/rename.php
 for i in `ls -tr $SOURCE/*.mkv`;do
@@ -133,7 +132,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		# If file moved to encoded folder
 		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "execute upload worker..."; php /root/rename.php 2; nohup php /root/NodefilesUploader.php &
+			echo "execute upload worker..."; php /root/rename.php 2; nohup php /root/NodefilesUploader.php >> /root/log.txt &
 		else
 			echo "no upload..."
 		fi
@@ -156,5 +155,5 @@ seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "execute bot.sh"; nohup /root/bot.sh sort &
+	echo "execute bot.sh"; nohup /root/bot.sh sort >> /root/log.txt &
 fi
