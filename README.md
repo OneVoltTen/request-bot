@@ -1,2 +1,2 @@
 AnimePahe request bot
-www.animepahe.com/request
+https://beta.animepahe.com/request
