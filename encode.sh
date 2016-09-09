@@ -139,16 +139,17 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		fi
 		# If file not moved to encode folder
 		if [[ ${FILENAMEX%AnimePahe*} > 0 ]];then
-			rm $FILENAMEX.ass
-			rm $FILENAMEX.srt
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%AnimePahe*}"; mv $i "${TRASH}/${FILENAMEX%AnimePahe*}" -f
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
+		# Remove temp subtitle file after processing
+		rm -f $FILENAMEX.ass
+		rm -f $FILENAMEX.srt
 	fi
 done
 
-# Remove temp file
+# Remove remaining temp file
 sleep 2; echo "remove temp file..."; rm -rf $SOURCE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} /root/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
 
 seconds=`date +%S`
