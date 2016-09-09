@@ -26,6 +26,8 @@ if [[ $countsource != 0 ]]; then
 	else
 		echo "queue contain files..."
 	fi
+elif pidof -s ffmpeg > /dev/null; then
+	echo 'ffmpeg running...'
 else
-	echo "isogashii desu..."
+	echo "sabishī yo..."
 fi
