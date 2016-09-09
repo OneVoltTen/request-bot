@@ -470,7 +470,9 @@ final class GwshareUploader
 					$_SESSION["test"]="";
 				}else{
 					if(isset($anime) && !empty($anime)){
-						mkdir(UPLOADED.'/'.$anime);
+						if (!file_exists(UPLOADED.'/'.$anime)) {
+							mkdir(UPLOADED.'/'.$anime);
+						}
 						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename;
 						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
 					}else{
