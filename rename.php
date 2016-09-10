@@ -159,15 +159,45 @@
 					$str = str_ireplace('_ep', '_', $str);
 					$str = str_ireplace('OVA_0', 'OVA0', $str);
 					$str = str_ireplace('OVA_1', 'OVA1', $str);
-
-					# Get metadata
-					require_once('/root/app/getid3/getid3.php');
-					$getID3=new getID3;
-					$path=realpath('/var/www/downloads/'.$fileName);
-					$ThisFileInfo=$getID3->analyze($path);
-					getid3_lib::CopyTagsToComments($ThisFileInfo);
+					
 					if(!empty(file_get_contents($fileName))){
-						$metadata=htmlentities(!empty($ThisFileInfo['comments_html']['title'])?implode('<br>',$ThisFileInfo['comments_html']['title']):chr(160));
+						$baseid = basename($str); // filename
+						$fn=explode('|', $baseid);
+						if(!empty($fn[0])){
+							$anime=$fn[0];
+							//echo $anime."\n";
+						}else{
+							echo "id error\n";
+							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
+						}
+						$fansub=$fn[1];
+						//echo $fansub."\n";
+						$str = strstr($str, '|');#1
+						$str = strstr($str, '|');#2
+						# Get metadata
+						# Both metadata methods have been disabled due to high ram usage
+						/*
+						echo "read meta => ".$fileName."\n";
+						$output = shell_exec('/root/meta.sh /var/www/downloads/'.$fileName);
+						echo "output => ".$output."\n";
+						if(strpos($output, '|') !== false){
+							$metadata=array_filter(explode('|', $output));
+							$anime=$metadata[0];
+							$title=$metadata[1];
+							if(!isset($metadata[2]) || empty($metadata[2]) || $metadata[2]==" "){$fansub="";}else{$fansub=$metadata[2];$fansub=ucfirst($fansub);}
+							if(empty($metadata[3])){$aud=0;}else{$aud=$metadata[3];}
+							if(empty($metadata[4])){$sub=0;}else{$sub=$metadata[4];}
+							echo "[".$anime."] [".$title."] [".$fansub."] [".$aud."] [".$sub."]\n";
+						}else{
+							die("invalid metadata\n");
+						}
+						*/
+						/*
+						require_once('/root/app/getid3/getid3.php');
+						$getID3=new getID3;
+						$path=realpath('/var/www/downloads/'.$fileName);
+						$ThisFileInfo=$getID3->analyze($path);
+						getid3_lib::CopyTagsToComments($ThisFileInfo);		$metadata=htmlentities(!empty($ThisFileInfo['comments_html']['title'])?implode('<br>',$ThisFileInfo['comments_html']['title']):chr(160));
 						$metadata=array_filter(explode('|', $metadata));
 						if(empty($metadata[0]) || empty($metadata[1])){
 							var_dump($metadata);
@@ -186,6 +216,7 @@
 							if(empty($metadata[4])){$sub=0;}else{$sub=$metadata[4];}
 							echo "[".$anime."] [".$title."] [".$fansub."] [".$aud."] [".$sub."]\n";
 						}
+						*/
 						// Remove fansub text
 						$str=str_ireplace($fansub,'',$str);
 						$fansubpath='/root/app/fansub/'.$fansub.'.php';

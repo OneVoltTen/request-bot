@@ -60,21 +60,23 @@ getTorrentsToDL(function(err, torrents) {
 			//foreach link
 			var index;
 			for (index = 0; index < torarray.length; ++index) {
-				//console.log(torarray[index]);
-				getTorrentFile(torarray[index], function(err, torrentFileUrl) {
-					var urlt = torrentFileUrl;
-					console.log('id: ' + torrent.id + ' title: ' + torrent.title + ' fansub: ' + torrent.fansub + ' audio: ' + torrent.audio + ' sub: ' + torrent.sub + ' url: ' + urlt);
-					transmission.addUrl(torrentFileUrl, {"download-dir": "/var/www/sort"}, function(err, arg) {
-						if (err) {throw err;process.exit(1);}
-						fs.appendFile('/var/www/downloading.txt', '/var/www/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
+				if(torarray[index]) {
+					//console.log(torarray[index]);
+					getTorrentFile(torarray[index], function(err, torrentFileUrl) {
+						var urlt = torrentFileUrl;
+						console.log('id: ' + torrent.id + ' title: ' + torrent.title + ' fansub: ' + torrent.fansub + ' audio: ' + torrent.audio + ' sub: ' + torrent.sub + ' url: ' + urlt);
+						transmission.addUrl(torrentFileUrl, {"download-dir": "/var/www/sort"}, function(err, arg) {
 							if (err) {throw err;process.exit(1);}
+							fs.appendFile('/var/www/downloading.txt', '/var/www/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
+								if (err) {throw err;process.exit(1);}
+							});
 						});
 					});
-				});
+				}
 			}
 		}
 	});
-    if(count){
-		process.stdout.write(count + " request found\n");
-	}
+    //if(count){
+	//	process.stdout.write(count + " request found\n");
+	//}
 });

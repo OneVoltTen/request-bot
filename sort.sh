@@ -10,7 +10,7 @@ die() { echo "$@" 1>&2 ; exit 1; }
 if [ ! -f '/var/www/downloading.txt' ]; then
 	sleep 5
 fi
-echo 'retrieve...' >> $SORT/log.txt; /root/retrieve.sh; sleep 1
+echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
@@ -71,8 +71,8 @@ while read line; do
 						# Set file title metadata
 						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
-						mv ${SORT}/*.mkv ${DOWNLOAD}
-						nohup /root/bot.sh sort &
+						mv ${SORT}/$FILEN ${DOWNLOAD}/$MALID|$FANSUB|$FILEN.mkv >> $SORT/log.txt
+						nohup /root/bot.sh sort  >/dev/null 2>&1 &
 						die "complete" >> $SORT/log.txt
 					fi
 				else
@@ -148,7 +148,8 @@ while read line; do
 							# Set file title metadata
 							mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
 							# Move to downloads folder
-							mv "${file}" "${DOWNLOAD}" >> $SORT/log.txt
+							FILE=${file///var/www/sort//}
+							mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
 						done
 					else
 						echo "working directory failed change > $SORT/$FILEN1" >> $SORT/log.txt
@@ -156,7 +157,7 @@ while read line; do
 					sleep 2
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
-					nohup /root/bot.sh sort &
+					nohup /root/bot.sh sort >/dev/null 2>&1 &
 					die "complete" >> $SORT/log.txt
 				else
 					echo "file $FILEN" >> $SORT/log.txt

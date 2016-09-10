@@ -4,7 +4,7 @@ SOURCE="/var/www/downloads"; SECOND="/var/www/downloads/.00"; QUEUE="/var/www/do
 countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`; countsource=`ls -1 $SOURCE/*{mkv,mp4,ass} 2>/dev/null | wc -l`; countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`; lastlog=`tail -1 /root/log.txt | head -1`;
 
 if [[ -z "$1" && "$1"=="sort" ]]; then
-	echo "execute retieve worker..."; nohup /root/retrieve.sh keep >/dev/null 2>&1 &
+	echo "execute retieve worker..."; nohup /root/app/retrieve.sh keep >/dev/null 2>&1 &
 fi
 if [ $countencoded != 0 ]; then
 	echo "execute upload worker..." >> /root/log.txt; nohup php /root/NodefilesUploader.php >> /root/log.txt &
