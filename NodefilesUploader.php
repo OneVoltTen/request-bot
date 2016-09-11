@@ -2,7 +2,7 @@
 date_default_timezone_set("UTC");
 define('GWSHARE_USER', 'Anime');
 define('GWSHARE_PASS', 'Anime');
-define('FOLDER_FILES', '/var/www/encoded');
+define('ENCODED', '/var/www/encoded');
 define('UPLOADED', '/var/www/uploaded');
 define('DB_NAME', 'animepahe');
 define('DB_USER', 'root');
@@ -36,7 +36,7 @@ if(urlExists('nodefiles.com')==200 || urlExists('nodefiles.com')==0){
 }
 
 # Delete failed crc32 folder
-$dir = new DirectoryIterator(FOLDER_FILES);
+$dir = new DirectoryIterator(ENCODED);
 $counter = 0;
 foreach ($dir as $fileinfo) {
 	if ($fileinfo->isDir() && !$fileinfo->isDot()) {
@@ -179,7 +179,7 @@ final class GwshareUploader
 
 		$encodedFiles = [];
 
-		foreach (new DirectoryIterator(FOLDER_FILES) as $item) {
+		foreach (new DirectoryIterator(ENCODED) as $item) {
 			if (! $item->isDot()
 				&& $item->isFile()
 				&& ! in_array($item->getFilename(), $ignoreFiles)
@@ -473,7 +473,7 @@ final class GwshareUploader
 						if (!file_exists(UPLOADED.'/'.$anime)) {
 							mkdir(UPLOADED.'/'.$anime);
 						}
-						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename;
+						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
 						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
 					}else{
 						@rename($source, UPLOADED.'/'.$anime.''.$source);
@@ -504,7 +504,7 @@ final class GwshareUploader
 
 		if (stripos($login, 'xfss') === false) {
 			throw new Exception('Login failed.', self::CODE_LOGIN_ERROR);
-			echo "481x";
+			echo "481x\n";
 		}
 
 		// get xfss

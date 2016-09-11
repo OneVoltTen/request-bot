@@ -7,7 +7,7 @@ if [[ -z "$1" && "$1"=="sort" ]]; then
 	echo "execute retieve worker..."; nohup /root/app/retrieve.sh keep >/dev/null 2>&1 &
 fi
 if [ $countencoded != 0 ]; then
-	echo "execute upload worker..." >> /root/log.txt; nohup php /root/NodefilesUploader.php >> /root/log.txt &
+	echo "execute upload worker..." >> /root/log.txt >> /root/log.txt;nohup php /root/NodefilesUploader.php >> /root/log.txt &
 fi
 
 php /root/rename.php downloads  >> /root/log.txt; sleep 1
@@ -41,5 +41,7 @@ elif [[ $countqueue != 0 ]]; then
 		fi
 	fi
 else
-	echo "sabishī yo..." >> /root/log.txt
+	if [[ ! $lastlog == "sabishī yo..." ]]; then
+		echo "sabishī yo..." >> /root/log.txt
+	fi
 fi
