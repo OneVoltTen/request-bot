@@ -10,7 +10,7 @@ die() { echo "$@" 1>&2 ; exit 1; }
 if [ ! -f '/var/www/downloading.txt' ]; then
 	sleep 5
 fi
-echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
+#echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
@@ -71,7 +71,11 @@ while read line; do
 						# Set file title metadata
 						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
-						mv ${SORT}/$FILEN ${DOWNLOAD}/$MALID|$FANSUB|$FILEN.mkv >> $SORT/log.txt
+						filen=${FILEN//"/var/www/sort/"/}
+						echo $filen
+						echo $FANSUB
+						echo $MALID
+						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
 						nohup /root/bot.sh sort  >/dev/null 2>&1 &
 						die "complete" >> $SORT/log.txt
 					fi

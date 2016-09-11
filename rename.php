@@ -1,5 +1,4 @@
 <?php
-
 	# Move all non mkv/mp4/avi move to komaru folder
 	$ar=array();
 	$g=array_diff(scandir('/var/www/downloads/'), array('..', '.'));
@@ -15,15 +14,12 @@
 		}
 	}
 	
-	if(!isset($argv[1])){
-		die();
-	}
+	if(!isset($argv[1])){die();}
 
 	if(isset($argv[1])){
 		if($argv[1]=="downloads"||$argv[1]=="downloads"){
 			$path="/var/www/downloads/";
 		}elseif($argv[1]=="2"){
-		# Start 2
 		$path = "/var/www/encoded/";
 
 		if ($handle = opendir($path)) {
@@ -62,7 +58,7 @@
 			}
 			closedir($handle);
 		}
-		die();
+		die('00end');
 		# End 2
 		}elseif($argv[1]=="renametest"){
 			# Start renametest
@@ -106,7 +102,7 @@
 			}
 
 			closedir($handle);
-			die();
+			die('11end');
 			# End renametest
 		
 		}elseif($argv[1]=="00"){
@@ -124,10 +120,9 @@
 			if (($fileName != "." && $fileName != ".." && (strtolower(substr($fileName,strrpos($fileName,'.') + 1))=='mkv' || strtolower(substr($fileName,strrpos($fileName,'.') + 1))=='mp4'))){
 
 				$str=$fileName;
-				if (strpos($str,'AnimePahe') !== false){
-					//echo "> ".$str." has been renamed before...\n";
+				if (strpos($str,'AnimePahe') !== false && strpos($str,'|AnimePahe|') == false){
+					echo "> ".$str." has been renamed before...\n";
 				} else {
-
 					// Remove extension
 					$extension=substr($str,-3,3);
 					$str=substr($str,0,-4);
@@ -159,7 +154,6 @@
 					$str = str_ireplace('_ep', '_', $str);
 					$str = str_ireplace('OVA_0', 'OVA0', $str);
 					$str = str_ireplace('OVA_1', 'OVA1', $str);
-					
 					if(!empty(file_get_contents($fileName))){
 						$baseid = basename($str); // filename
 						$fn=explode('|', $baseid);
@@ -171,9 +165,12 @@
 							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
 						}
 						$fansub=$fn[1];
-						//echo $fansub."\n";
+						echo "Fansub ".$fansub."\n";
+						$str = str_replace($fn[0], '', $str);
+						$str = str_replace($fn[1], '', $str);
 						$str = strstr($str, '|');#1
 						$str = strstr($str, '|');#2
+						echo $str;
 						# Get metadata
 						# Both metadata methods have been disabled due to high ram usage
 						/*
