@@ -9,10 +9,8 @@ var url = 'https://beta.animepahe.com/devrequest';
 // https://www.nyaa.se/?page=view&tid=607865
 // https://bakabt.me/torrent/148508/07-ghost-720p-hatsuyuki
 
-// Gets the torrent file
 function getTorrentFile(url, cb) {
     url = URL.parse(url, true);
-    
     switch (url.hostname) {
         case 'www.nyaa.se':
             getNyaa();
@@ -34,11 +32,12 @@ function getTorrentFile(url, cb) {
         });
     }
     function getNyaa() {
+		JSON.stringify(url);
+		//if (string.indexOf("page=download") !== -1)
         return cb(null, 'https://www.nyaa.se/?page=download&tid=' + url.query.tid);
     }
 }
 
-// get the torrents to download
 function getTorrentsToDL(cb) {
     request(url, function(err, response, body) {
         if (err) return cb(err);
@@ -55,9 +54,7 @@ getTorrentsToDL(function(err, torrents) {
 		if(torrent.id) {
 			count++;
 			//console.log('MAL: ' + torrent.id + ' Title: ' + torrent.title);
-			//split links by line
 			var torarray = torrent.url.split("\r\n");
-			//foreach link
 			var index;
 			for (index = 0; index < torarray.length; ++index) {
 				if(torarray[index]) {
@@ -76,7 +73,9 @@ getTorrentsToDL(function(err, torrents) {
 			}
 		}
 	});
-    //if(count){
-	//	process.stdout.write(count + " request found\n");
-	//}
+    /* unnecessary
+    if(count){
+		process.stdout.write(count + " request found\n");
+	}
+	*/
 });
