@@ -131,6 +131,7 @@
 					$str = str_replace('(1)', '', $str);
 					$str = str_replace('(2)', '', $str);
 					$str = str_replace('(copy)', '', $str);
+					$str = str_replace('x2', '', $str);
 
 					// Check if file name contains CRC32 and remove it
 					// Only works if crc32 is at end of filename
@@ -165,9 +166,8 @@
 							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
 						}
 						$fansub=$fn[1];
-						echo "Fansub ".$fansub."\n";
-						$str = str_replace($fn[0], '', $str);
-						$str = str_replace($fn[1], '', $str);
+						//$str = str_replace($fn[0], '', $str);
+						//$str = str_replace($fn[1], '', $str);
 						$str = strstr($str, '|');#1
 						$str = strstr($str, '|');#2
 						echo $str;
@@ -388,8 +388,11 @@
 					$str=str_ireplace('h.264','',$str);
 					$str=str_ireplace('h_264','',$str);
 					$str=str_ireplace('x264','',$str);
+					$str=str_ireplace('x.264','',$str);
+					$str=str_ireplace('x_264','',$str);
 					$str=str_ireplace('h265','',$str);
 					$str=str_ireplace('h.265','',$str);
+					$str=str_ireplace('h_265','',$str);
 					$str=str_ireplace('h_265','',$str);
 					$str=str_ireplace('x265','',$str);
 					$str=str_ireplace('hevc','',$str);
