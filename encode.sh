@@ -12,7 +12,7 @@ done
 #meta=`sudo php /root/encode_meta.php $FILENAMEX`
 #sub=${meta#*|}; audio=${meta%|*}
 
-metaa=`/root/meta.sh /var/www/downloads/.queue/$FILENAMEX`
+metaa=`/root/meta.sh $SOURCE/$FILENAMEX`
 meta=${metaa#*|*|*|}
 sub=${meta#*|}; audio=${meta%|*}
 
@@ -33,8 +33,22 @@ else
 	subtitle=$sub
 fi
 echo "${FILENAMEX} => [${audio}] [${sub}]" >> /root/log.txt
-
 # End retrieve meta
+# Multiple audio track
+metaaudio=`/root/metaaudio.sh $SOURCE/$FILENAMEX`
+number='^[0-9]+$'
+if [[ ${audio_channel} -eq 0 && ${metaaudio} > 1 && ${metaaudio} =~ $number ]]; then
+	echo "multiple audio [${metaaudio}]"
+	mkdir -p "${KOMARU}/${metaaudio}";
+	mv ${SOURCE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
+	#mv /root/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
+	gnome-terminal -e /root/encode.sh >> /root/log.txt &
+	sleep 1
+	die "multiple audio [${metaaudio}]" >> /root/log.txt
+fi
+rm -f /root/metadata.txt
+# End multiple audio track
+
 php /root/rename.php
 for i in `ls -tr $SOURCE/*.mkv`;do
 	if [ -f $i ]; then
