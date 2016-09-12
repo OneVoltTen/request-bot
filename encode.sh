@@ -8,7 +8,8 @@ for i in `ls -tr /var/www/downloads/.queue/*.mkv`; do
 	FILENAMEX=${i#*/var/www/downloads/.queue/}
 done
 # Retrieve file meta
-
+rm -f meta.txt
+rm -f metadata.txt
 #meta=`sudo php /root/encode_meta.php $FILENAMEX`
 #sub=${meta#*|}; audio=${meta%|*}
 
@@ -35,23 +36,34 @@ fi
 echo "${FILENAMEX} => [${audio}] [${sub}]" >> /root/log.txt
 # End retrieve meta
 # Multiple audio track
+FILENAMEXX=${FILENAMEX%AnimePahe*}
+arr=(666 1337 1354)
 metaaudio=`/root/metaaudio.sh $SOURCE/$FILENAMEX`
-number='^[0-9]+$'
-if [[ ${audio_channel} -eq 0 && ${metaaudio} > 1 && ${metaaudio} =~ $number ]]; then
-	echo "multiple audio [${metaaudio}]"
-	mkdir -p "${KOMARU}/${metaaudio}";
-	mv ${SOURCE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
-	#mv /root/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
-	nohup /root/encode.sh >> /root/log.txt &
-	sleep 1
-	die "multiple audio [${metaaudio}]" >> /root/log.txt
+if [[ ! ${arr[@]} =~ ${FILENAMEXX} ]]; then
+	number='^[0-9]+$'
+	if [[ ${audio_channel}==0 && ${metaaudio}>2 && ${metaaudio} =~ $number ]]; then
+		echo "multiple audio [${metaaudio}] [${FILENAMEX}]"
+		mkdir -p "${KOMARU}/${metaaudio}";
+		mv ${SOURCE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
+		mv /root/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
+		nohup /root/encode.sh >> /root/log.txt &
+		sleep 1
+		die "multiple audio [${metaaudio}]" >> /root/log.txt
+	else
+		echo "pass [${metaaudio}]"
+	fi
+	rm -f /root/metadata.txt
+else
+	echo "bypass multiple audio [${metaaudio}] [${FILENAMEX}]"
 fi
-rm -f /root/metadata.txt
 # End multiple audio track
+rm -f meta.txt
+rm -f metadata.txt
 
 php /root/rename.php
 for i in `ls -tr $SOURCE/*.mkv`;do
 	if [ -f $i ]; then
+		filename=${i#/var/www/downloads/.queue/*}
 		# Resolution
 		resX=`mediainfo $i | grep Width | sed 's/.*: //g' | tr -d '[[:space:]]'`
 		resY=`mediainfo $i | grep Height | sed 's/.*: //g' | tr -d '[[:space:]]'`
@@ -112,7 +124,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 			#echo $track
 			mkvextract tracks "$i" "$track:${i}.$ext"
 		fi
-		mv $i.{ass,srt} /root/.fonts/ -f
+		mv $i.{ass,srt} /root/.fonts/ -f >/dev/null 2>&1;sleep 1
 		cd /root
 		# End subtitle
 		# Process file
@@ -121,14 +133,14 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=/root/.fonts/${i}.ass$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=/root/.fonts/${filename}.ass$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
 			echo "SRT subtitle ~ ${SEP}" >> /root/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=/root/.fonts/${i}.srt$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=/root/.fonts/${filename}.srt$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]] || [[ $sub =~ "VobSub" ]] || [[ $sub =~ "S_VOBSUB" ]]; then
 			echo "PGS subtitle ~ ${SEP}" >> /root/log.txt;
