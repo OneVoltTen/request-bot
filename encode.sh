@@ -42,7 +42,7 @@ if [[ ${audio_channel} -eq 0 && ${metaaudio} > 1 && ${metaaudio} =~ $number ]]; 
 	mkdir -p "${KOMARU}/${metaaudio}";
 	mv ${SOURCE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
 	#mv /root/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
-	gnome-terminal -e /root/encode.sh >> /root/log.txt &
+	nohup /root/encode.sh >> /root/log.txt &
 	sleep 1
 	die "multiple audio [${metaaudio}]" >> /root/log.txt
 fi
@@ -149,6 +149,8 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		echo "FFMPEG complete" >> /root/log.txt
 		echo "log rename => progress_$(date +%F_%H-%M).txt"
 		mv ${LOG}/progress.txt ${LOG}/progress_$(date +%F_%H-%M).txt
+		# Remove temp subtitle file after processing
+		rm -rf $SOURCE/*.{ass,srt}
 		# Move file to encoded folder
 		echo "move to encoded folder..."
 		mv ${i}_encoded.mp4 ${DEST} -f
@@ -165,12 +167,9 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
-		# Remove temp subtitle file after processing
-		rm -f $FILENAMEX.ass
-		rm -f $FILENAMEX.srt
 	fi
 done
-
+die end
 # Remove remaining temp file
 sleep 2; echo "remove temp file..."; rm -rf $SOURCE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} /root/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
 

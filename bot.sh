@@ -20,7 +20,7 @@ if [[ $countsource != 0 ]]; then
 				echo "ffmpeg running..." >> /root/log.txt
 			fi
 		else
-			echo "execute encode..." >> /root/log.txt; gnome-terminal -e /root/encode.sh >> /root/log.txt &
+			echo "execute encode..." >> /root/log.txt; nohup /root/encode.sh >> /root/log.txt &
 		fi
 	else
 		if [[ ! $lastlog == "queue contain files..." ]]; then

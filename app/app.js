@@ -32,9 +32,11 @@ function getTorrentFile(url, cb) {
         });
     }
     function getNyaa() {
-		JSON.stringify(url);
-		//if (string.indexOf("page=download") !== -1)
-        return cb(null, 'https://www.nyaa.se/?page=download&tid=' + url.query.tid);
+		if (url.href.indexOf("page=download") == -1){
+			return cb(null, 'https://www.nyaa.se/?page=download&tid=' + url.query.tid);
+		}else{
+			return cb(null, url.href);
+		}
     }
 }
 

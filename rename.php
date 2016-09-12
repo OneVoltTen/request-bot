@@ -170,7 +170,6 @@
 						//$str = str_replace($fn[1], '', $str);
 						$str = strstr($str, '|');#1
 						$str = strstr($str, '|');#2
-						echo $str;
 						# Get metadata
 						# Both metadata methods have been disabled due to high ram usage
 						/*
@@ -215,6 +214,7 @@
 						}
 						*/
 						// Remove fansub text
+						echo "Before fansub [".$str."]\n";
 						$str=str_ireplace($fansub,'',$str);
 						$fansubpath='/root/app/fansub/'.$fansub.'.php';
 						$fansubpath=strtolower($fansubpath);
@@ -241,20 +241,19 @@
 							echo $str."\n";
 							foreach($ar as &$fansubx){
 								if (stripos($str,'_'.$fansubx) !== false || stripos($str,$fansubx.'_') !== false || stripos($str,'['.$fansubx.']') !== false || stripos($str,'-'.$fansubx) !== false || stripos($str,$fansubx.'-') !== false){
-								if ($counter==0){
-									echo "Yatta!! \n";
-									$str = str_ireplace($fansubx, '', $str);
-									$fansub=ucfirst($fansubx);
-									include "/root/app/fansub/".$fansubx.".php";
-									$counter++;
-								}else{
-									$counter++;
-									echo $counter." Removing 2nd fansub\n";
-									$str = str_ireplace("-".$fansubx, '', $str);
-									$str = str_ireplace($fansubx."-", '', $str);
-									$str = str_ireplace($fansubx, '', $str);
-								
-								}
+									if ($counter==0){
+										echo "Yatta!! \n";
+										$str = str_ireplace($fansubx, '', $str);
+										$fansub=ucfirst($fansubx);
+										include "/root/app/fansub/".$fansubx.".php";
+										$counter++;
+									}else{
+										$counter++;
+										echo $counter." Removing 2nd fansub\n";
+										$str = str_ireplace("-".$fansubx, '', $str);
+										$str = str_ireplace($fansubx."-", '', $str);
+										$str = str_ireplace($fansubx, '', $str);
+									}
 								}
 							}
 							if($counter==0){
@@ -267,8 +266,6 @@
 					}else{
 						die("No file found");
 					}
-					
-					
 
 					// Check video resolution
 					if (strpos($str,'720p')==true || strpos($str,'x720')==true){
@@ -286,7 +283,6 @@
 					} else {
 						$resolution="720p";
 					}
-					
 					
 					// Replaces final
 					$str=str_ireplace('final','',$str);
@@ -463,7 +459,7 @@
 
 					//echo "Video resolution: ".$resolution."\n";
 					$newName=$str;
-					echo $fileName." => ".$newName."\n\n";
+					echo $fileName." =>\n".$newName."\n";
 					rename($fileName,$newName);
 
 					unset($str);
