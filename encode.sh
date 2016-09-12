@@ -112,6 +112,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 			#echo $track
 			mkvextract tracks "$i" "$track:${i}.$ext"
 		fi
+		mv $i.{ass,srt} /root/.fonts/ -f
 		cd /root
 		# End subtitle
 		# Process file
@@ -120,14 +121,14 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=${i}.ass$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=/root/.fonts/${i}.ass$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
 			echo "SRT subtitle ~ ${SEP}" >> /root/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=${i}.srt$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=/root/.fonts/${i}.srt$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]] || [[ $sub =~ "VobSub" ]] || [[ $sub =~ "S_VOBSUB" ]]; then
 			echo "PGS subtitle ~ ${SEP}" >> /root/log.txt;
@@ -150,7 +151,7 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		echo "log rename => progress_$(date +%F_%H-%M).txt"
 		mv ${LOG}/progress.txt ${LOG}/progress_$(date +%F_%H-%M).txt
 		# Remove temp subtitle file after processing
-		rm -rf $SOURCE/*.{ass,srt}
+		rm -rf /root/.fonts/*
 		# Move file to encoded folder
 		echo "move to encoded folder..."
 		mv ${i}_encoded.mp4 ${DEST} -f
