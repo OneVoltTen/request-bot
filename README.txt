@@ -1,13 +1,15 @@
-AnimePahe request bot
-Semi-automated processing of anime files
-Supports video formats avi, mp4, mkv
+AnimePahe request bot; download torrent, encode video, upload & post to database.
 
-General process:
-User adds anime request https://beta.animepahe.com/request
-Moderator accepts request
-Set config retrieve url /app/app.js "var url = 'https://beta.animepahe.com/request/0'"
-Retrieve.sh retrieves json anime details and downloads torrent
-Sort.sh is executed after download complete, convert video format and move to downloads folder
-Video files are renamed and moved to queue folder to be processed
-After queue file is processed moved to encoded folder
+Supports:
+Retrieve torrent page download url [nyaa.se, bakabt.me]
+Video formats [avi, mp4, mkv]
+Multiple tracks [subtitle, audio]
+Multiple RSS/Request instances
+
+Basic Process:
+User adds request via web interface [https://beta.animepahe.com/request], moderator accepts request
+Retrieve.sh retrieves requests [https://beta.animepahe.com/devrequest/0], saves details, downloads torrent url
+On download complete sort.sh processes downloaded files, move video files to downloads folder, leftover files to trash folder
+Downloads folder renames video files, moved to queue folder, else invalid filename move to komaru folder
+Queue folder encodes files with FFMPEG, processed file moved to encoded folder
 Encoded folder upload video file to filehost, retrieve upload url, post to database, move uploaded file to uploaded folder
