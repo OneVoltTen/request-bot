@@ -10,4 +10,4 @@ Retrieve.sh retrieves json anime details and downloads torrent
 Sort.sh is executed after download complete, convert video format and move to downloads folder
 Video files are renamed and moved to queue folder to be processed
 After queue file is processed moved to encoded folder
-Encoded folder automatically upload video file to filehost, retrieve upload url and post to database, move uploaded file to uploaded folder
+Encoded folder upload video file to filehost, retrieve upload url, post to database, move uploaded file to uploaded folder
