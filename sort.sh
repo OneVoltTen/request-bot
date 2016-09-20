@@ -60,7 +60,7 @@ while read line; do
 						# Change avi container
 						if [[ $FILEN == *"avi" ]]; then
 							echo "detect avi" >> $SORT/log.txt
-							ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
+							ffmpeg-i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
 							# Move file into trash/ID
 							mkdir -p "$TRASH/$MALID"
 							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
@@ -101,80 +101,77 @@ while read line; do
 					if [ ! $(pwd) == $SORT ]; then
 						echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 						echo "Working directory" $(pwd) >> $SORT/log.txt
-						# Move files into working directory [Max 1 subfolder]
-						mv ***/*.mkv "$SORT/$FILEN1";
-						mv ***/*.mp4 "$SORT/$FILEN1";
-						mv ***/*.avi "$SORT/$FILEN1";
+						# Move files into working directoryc
+						mv **/*.mkv "$SORT/$FILEN1";mv **/*.mp4 "$SORT/$FILEN1";mv **/*.avi "$SORT/$FILEN1"
 						mkdir -p "$TRASH/$MALID"
-						for file in *.mp4; do
-							# Change mp4 container
-							if [[ $file == *"mp4" ]]; then
-								echo "detect mp4" >> $SORT/log.txt
-								ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
-								# Move file into trash/ID
-								mkdir -p "$TRASH/$MALID"
-								mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
-								# Update file to new file
-								file="${file}.mkv"
-								mv "$file" "${file//.mp4/}" >> $SORT/log.txt
-								file=${file//.mp4/}
-								echo "MKV " $file >> $SORT/log.txt
+						echo $(pwd)		
+						for file in *.{mp4,avi,mkv}; do
+							# Replace space with underscore
+							if [[ $file == *" "* ]]; then
+								mv "$(pwd)/${file}" "$(pwd)/${file// /_}"; file=${file// /_}
 							fi
-						done
-						for file in *.avi; do
-							# Change avi container
-							if [[ $file == *"avi" ]]; then
-								echo "detect avi" >> $SORT/log.txt
-								ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
+							# Remove pipe
+							if [[ $file == *"|"* ]]; then
+								mv "${file}" "${file/|/}"; file=${file//|/}
+							fi
+							if [[ "${file}" == *".mp4" || "${file}" == *".avi" ]]; then
+								if [[ "${file}" == *".avi"* ]]; then
+									ffmpeg -fflags +genpts -i "$file" -vcodec copy -acodec copy $file.mp4; sleep .5
+									mkdir -p "$TRASH/$MALID"
+									rm "$file" >> $SORT/log.txt
+									mv "${file}.mp4" "${file//.avi/.mp4}"; file=${file//.avi/.mp4}
+								fi
+								if [[ "${file}" == *".mp4" ]]; then
+									ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep .5
+									rm "$file" >> $SORT/log.txt
+								fi
 								# Move file into trash/ID
-								mkdir -p "$TRASH/$MALID"
-								mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
+								# mkdir -p "$TRASH/$MALID"
+								# mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
 								# Update file to new file
 								file="${file}.mkv"
-								mv "$file" "${file//.avi/}" >> $SORT/log.txt
-								file=${file//.avi/}
+								if [[ "${file}" == *".mp4"* ]]; then
+									mv "$file" "${file//.mp4/}" >> $SORT/log.txt
+									file=${file//.mp4/}
+								elif [[ "${file}" == *".avi"* ]]; then
+									mv "$file" "${file//.avi/}" >> $SORT/log.txt
+									file=${file//.avi/}
+								fi
 								echo "MKV " $file >> $SORT/log.txt
 							fi
 						done
 						for file in *.mkv; do
-							# Rename file to remove pipe
-							if [[ $file == *"|"* ]]; then
-								mv "${file}" "${file/|/}"; file=${file//|/};
-							fi
-							
 							# Move OP/ED files into trash folder
 							filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$filen")
-							arr=(
-								'creditless' 'ending' 'opening' ' ncop' ' nced'
-								' op1' ' op 1' ' op01' ' op 01'
-								' op2' ' op 2' ' op02' ' op 02'
-								' op3' ' op 3' ' op03' ' op 03'
-								' op4' ' op 4' ' op04' ' op 04'
-								' op5' ' op 5' ' op05' ' op 05'
-								' op6' ' op 6' ' op06' ' op 06'
-								' op7' ' op 7' ' op07' ' op 07'
-								' op8' ' op 8' ' op08' ' op 08'
-								' op9' ' op 9' ' op09' ' op 09'
-								' ed1' ' ed 1' ' ed01' ' ed 01'
-								' ed2' ' ed 2' ' ed02' ' ed 02'
-								' ed3' ' ed 3' ' ed03' ' ed 03'
-								' ed4' ' ed 4' ' ed04' ' ed 04'
-								' ed5' ' ed 5' ' ed05' ' ed 05'
-								' ed6' ' ed 6' ' ed06' ' ed 06'
-								' ed7' ' ed 7' ' ed07' ' ed 07'
-								' ed8' ' ed 8' ' ed08' ' ed 08'
-								' ed9' ' ed 9' ' ed09' ' ed 09'
-								)
+							arr=('creditless' 'ending' 'opening' 'ncop' 'nced'
+								'_op1' '_op_1' '_op01' '_op_01'
+								'_op2' '_op_2' '_op02' '_op_02'
+								'_op3' '_op_3' '_op03' '_op_03'
+								'_op4' '_op_4' '_op04' '_op_04'
+								'_op5' '_op_5' '_op05' '_op_05'
+								'_op6' '_op_6' '_op06' '_op_06'
+								'_op7' '_op_7' '_op07' '_op_07'
+								'_op8' '_op_8' '_op08' '_op_08'
+								'_op9' '_op_9' '_op09' '_op_09'
+								'_ed1' '_ed_1' '_ed01' '_ed_01'
+								'_ed2' '_ed_2' '_ed02' '_ed_02'
+								'_ed3' '_ed_3' '_ed03' '_ed_03'
+								'_ed4' '_ed_4' '_ed04' '_ed_04'
+								'_ed5' '_ed_5' '_ed05' '_ed_05'
+								'_ed6' '_ed_6' '_ed06' '_ed_06'
+								'_ed7' '_ed_7' '_ed07' '_ed_07'
+								'_ed8' '_ed_8' '_ed08' '_ed_08'
+								'_ed9' '_ed_9' '_ed09' '_ed_09')
 							for ((i = 0; i < ${#arr[@]}; i++)); do
-								#echo "${file,,} - ${arr[$i]}"
-								if [[ ${filen,,} == *${arr[$i]}*  ]]; then
+								echo "${file,,} - ${arr[$i]}"
+								if [[ ${file,,} == *${arr[$i]}*  ]]; then
 									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
 									# Move to trash folder
 									mv "${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
 								fi
 							done
 							# Set file title metadata
-							mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
+							mkvpropedit "${file}" -e info -s title="${FTITLE}" >> $SORT/log.txt
 							# Move to downloads folder
 							FILE=${file//${SORT}//}
 							mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
