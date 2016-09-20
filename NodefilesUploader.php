@@ -393,6 +393,10 @@ final class GwshareUploader
 		if (is_numeric($episode) && strlen($episode) == 1) {
 				$episode="0".$episode;
 		}
+		# Remove leading 0
+		if(substr($episode,1)==0 && strlen($episode) > 2){
+			$episode = substr($episode, 1);
+		}
 		
 
 ###############################################################################
