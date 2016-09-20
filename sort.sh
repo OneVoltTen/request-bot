@@ -1,16 +1,18 @@
 #!/bin/bash
-cd /var/www/sort; SORT="/var/www/sort"; DOWNLOAD="/var/www/downloads"; TRASH="/var/www/trash"; LAST=""
-#TR_TORRENT_DIR="/var/www/sort"
-#TR_TORRENT_NAME="SampleVideo_1280x720_2mb.mp4"
-TR_DOWNLOADS="/var/www/sort/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
+. /root/config.sh
+cd ${SORT}
+LAST=""
+#TR_TORRENT_DIR="${SORT}"
+#TR_TORRENT_NAME="Bleach"
+TR_DOWNLOADS="${SORT}/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
 # Function die with message
 die() { echo "$@" 1>&2 ; exit 1; }
 # Update downloading.txt if any changes
 # If downloading.txt being updated
-if [ ! -f '/var/www/downloading.txt' ]; then
+if [ ! -f '${WWW}/downloading.txt' ]; then
 	sleep 5
 fi
-#echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
+# echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
@@ -71,12 +73,12 @@ while read line; do
 						# Set file title metadata
 						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
-						filen=${FILEN//"/var/www/sort/"/}
+						filen=${FILEN//"${SORT}"/}
 						echo $filen
 						echo $FANSUB
 						echo $MALID
 						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
-						nohup /root/bot.sh sort  >/dev/null 2>&1 &
+						nohup ${INSTALL}/bot.sh sort  > /dev/null 2>&1 &
 						die "complete" >> $SORT/log.txt
 					fi
 				else
@@ -174,7 +176,7 @@ while read line; do
 							# Set file title metadata
 							mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
 							# Move to downloads folder
-							FILE=${file///var/www/sort//}
+							FILE=${file//${SORT}//}
 							mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
 						done
 					else
@@ -183,7 +185,7 @@ while read line; do
 					sleep 2
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
-					nohup /root/bot.sh sort >/dev/null 2>&1 &
+					nohup ${INSTALL}/bot.sh sort >/dev/null 2>&1 &
 					die "complete" >> $SORT/log.txt
 				else
 					echo "file $FILEN" >> $SORT/log.txt
@@ -193,5 +195,5 @@ while read line; do
 	else
 		echo "dupe line" >> $SORT/log.txt
 	fi # LAST
-done <../downloading.txt
+done < ${WWW}/downloading.txt
 echo "failed" >> $SORT/log.txt

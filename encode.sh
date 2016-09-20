@@ -1,25 +1,26 @@
 #!/bin/bash
-# Define variables
-cd /root; SOURCE="/var/www/downloads/.queue"; DEST="/var/www/encoded"; TRASH="/var/www/trash"; KOMARU="/var/www/komaru"; LOG="/var/www/logs"; FILENAMEX=""; SEP="FFMPEG start!"
-# Function die with message
+. /root/config.sh
+FILENAMEX=""
 die() { echo "$@" 1>&2 ; exit 1; }
 # Retrieve file
-for i in `ls -tr /var/www/downloads/.queue/*.mkv`; do
-	FILENAMEX=${i#*/var/www/downloads/.queue/}
+for i in `ls -tr ${DOWNLOAD}/.queue/*.mkv`; do
+	FILENAMEX=${i#*${QUEUE}}
 done
 # Retrieve file meta
 rm -f meta.txt
 rm -f metadata.txt
-#meta=`sudo php /root/encode_meta.php $FILENAMEX`
+
+#Old method
+#meta=`sudo php ${INSTALL}/encode_meta.php $FILENAMEX`
 #sub=${meta#*|}; audio=${meta%|*}
 
-metaa=`/root/meta.sh $SOURCE/$FILENAMEX`
+metaa=`${INSTALL}/meta.sh $QUEUE/$FILENAMEX`
 meta=${metaa#*|*|*|}
 sub=${meta#*|}; audio=${meta%|*}
 
 function is_int() { return $(test "$@" -eq "$@" > /dev/null 2>&1); }
 if [ ! $sub -eq $sub 2> /dev/null ] && [ ! $audio -eq $audio 2> /dev/null ]; then
-	die "meta failed - ${meta}" >> /root/log.txt
+	die "meta failed - ${meta}" >> ${INSTALL}/log.txt
 fi
 
 # Empty variable to 0
@@ -33,26 +34,26 @@ if [ -z "$sub" ]; then
 else
 	subtitle=$sub
 fi
-echo "${FILENAMEX} => [${audio}] [${sub}]" >> /root/log.txt
+echo "${FILENAMEX} => [${audio}] [${sub}]" >> ${INSTALL}/log.txt
 # End retrieve meta
 # Multiple audio track
-FILENAMEXX=${FILENAMEX%AnimePahe*}
+FILENAMEXX=${FILENAMEX%${GROUP}*}
 arr=(666 1337 1354)
-metaaudio=`/root/metaaudio.sh $SOURCE/$FILENAMEX`
+metaaudio=`${INSTALL}/metaaudio.sh $QUEUE/$FILENAMEX`
 if [[ ! ${arr[@]} =~ ${FILENAMEXX} ]]; then
 	number='^[0-9]+$'
 	if [[ ${audio_channel}==0 && ${metaaudio}>2 && ${metaaudio} =~ $number ]]; then
 		echo "multiple audio [${metaaudio}] [${FILENAMEX}]"
 		mkdir -p "${KOMARU}/${metaaudio}";
-		mv ${SOURCE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
-		mv /root/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
-		nohup /root/encode.sh >> /root/log.txt &
+		mv ${QUEUE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
+		mv ${INSTALL}/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
+		nohup ${INSTALL}/encode.sh >> ${INSTALL}/log.txt &
 		sleep 1
-		die "multiple audio [${metaaudio}]" >> /root/log.txt
+		die "multiple audio [${metaaudio}]" >> ${INSTALL}/log.txt
 	else
 		echo "pass [${metaaudio}]"
 	fi
-	rm -f /root/metadata.txt
+	rm -f ${INSTALL}/metadata.txt
 else
 	echo "bypass multiple audio [${metaaudio}] [${FILENAMEX}]"
 fi
@@ -60,10 +61,10 @@ fi
 rm -f meta.txt
 rm -f metadata.txt
 
-php /root/rename.php
-for i in `ls -tr $SOURCE/*.mkv`;do
+php ${INSTALL}/rename.php
+for i in `ls -tr $QUEUE/*.mkv`;do
 	if [ -f $i ]; then
-		filename=${i#/var/www/downloads/.queue/*}
+		filename=${i#${QUEUE}/*}
 		# Resolution
 		resX=`mediainfo $i | grep Width | sed 's/.*: //g' | tr -d '[[:space:]]'`
 		resY=`mediainfo $i | grep Height | sed 's/.*: //g' | tr -d '[[:space:]]'`
@@ -102,10 +103,10 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 		fi
 		# End resolution
 		# Subtitle
-		cd /root/.fonts
+		cd ${INSTALL}/.fonts
 		echo "extract attachment..."; ffmpeg -dump_attachment:t "" -i $i -y > /dev/null 2>&1; sleep 1
 		echo "install font..."
-		fc-cache -f -v /root/.fonts > /dev/null 2>&1
+		fc-cache -f -v ${INSTALL}/.fonts > /dev/null 2>&1
 		echo "extract subtitle..."; sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
 		if [[ $sub ]]; then
 			# Detect subtitle type
@@ -124,59 +125,60 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 			#echo $track
 			mkvextract tracks "$i" "$track:${i}.$ext"
 		fi
-		mv $i.{ass,srt} /root/.fonts/ -f >/dev/null 2>&1;sleep 1
-		cd /root
+		mv $i.{ass,srt} ${INSTALL}/.fonts/ -f >/dev/null 2>&1;sleep 1
+		cd ${INSTALL}
+		SEP="FFMPEG start!"
 		# End subtitle
 		# Process file
 		if [[ $sub =~ "SubStationAlpha" ]] || [[ $sub =~ "S_TEXT/ASS" ]]; then
-			echo "ASS subtitle ~ ${SEP}" >> /root/log.txt;
+			echo "ASS subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=/root/.fonts/${filename}.ass$scale,format=yuv420p [out]" \
+			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=${INSTALL}/.fonts/${filename}.ass$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
-			echo "SRT subtitle ~ ${SEP}" >> /root/log.txt;
+			echo "SRT subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=/root/.fonts/${filename}.srt$scale,format=yuv420p [out]" \
+			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=${INSTALL}/.fonts/${filename}.srt$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]] || [[ $sub =~ "VobSub" ]] || [[ $sub =~ "S_VOBSUB" ]]; then
-			echo "PGS subtitle ~ ${SEP}" >> /root/log.txt;
+			echo "PGS subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
 			ffmpeg -y -i $i -i watermark.mov -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
 			-filter_complex "[0:v][0:s:$subtitle]overlay=(W-w)/2:(H-h)/2$scale[hardsubbed];[hardsubbed][1:v]overlay=10:10[out]" -map "[out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		else
-			echo "no subtitle ~ ${SEP}" >> /root/log.txt;
+			echo "no subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10$scale,format=yuv420p [out]" \
+			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		fi
 		# End process file
 		# Rename log file
-		echo "FFMPEG complete" >> /root/log.txt
+		echo "FFMPEG complete" >> ${INSTALL}/log.txt
 		echo "log rename => progress_$(date +%F_%H-%M).txt"
 		mv ${LOG}/progress.txt ${LOG}/progress_$(date +%F_%H-%M).txt
 		# Remove temp subtitle file after processing
-		rm -rf /root/.fonts/*
+		rm -rf ${INSTALL}/.fonts/*
 		# Move file to encoded folder
 		echo "move to encoded folder..."
-		mv ${i}_encoded.mp4 ${DEST} -f
+		mv ${i}_encoded.mp4 ${ENCODED} -f
 		# If file moved to encoded folder
-		count=`ls -1 $DEST/*_encoded.mp4 2>/dev/null | wc -l`
+		count=`ls -1 $ENCODED/*_encoded.mp4 2>/dev/null | wc -l`
 		if [ $count != 0 ]; then
-			echo "execute upload worker..." >> /root/log.txt; php /root/rename.php 2; nohup php /root/NodefilesUploader.php >> /root/log.txt &
+			echo "execute upload worker..." >> ${INSTALL}/log.txt; php ${INSTALL}/rename.php 2; nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
 		else
 			echo "no upload..."
 		fi
 		# If file not moved to encode folder
-		if [[ ${FILENAMEX%AnimePahe*} > 0 ]];then
-			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%AnimePahe*}"; mv $i "${TRASH}/${FILENAMEX%AnimePahe*}" -f
+		if [[ ${FILENAMEX%${GROUP}*} > 0 ]];then
+			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%${GROUP}*}"; mv $i "${TRASH}/${FILENAMEX%${GROUP}*}" -f
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
@@ -184,11 +186,11 @@ for i in `ls -tr $SOURCE/*.mkv`;do
 done
 die end
 # Remove remaining temp file
-sleep 2; echo "remove temp file..."; rm -rf $SOURCE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} /root/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
+sleep 2; echo "remove temp file..."; rm -rf $QUEUE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} ${INSTALL}/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
 
 seconds=`date +%S`
 if [[ $seconds -gt "52" ]]; then
 	echo ">" $seconds "no bot.sh"
 else
-	echo "execute bot.sh"; nohup /root/bot.sh sort >> /root/log.txt &
+	echo "execute bot.sh"; nohup ${INSTALL}/bot.sh sort >> ${INSTALL}/log.txt &
 fi

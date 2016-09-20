@@ -14,10 +14,8 @@ if(isset($argv[1])){
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }else{
-	#define('DB_HOST', '209.58.180.26');
-	#define('DB_PASS', 'y@nGsu5ah2o16');
-	define('DB_HOST', '185.52.2.96');
-	define('DB_PASS', 'MaxumX8208G1!');
+	if(1==1){define('DB_HOST','209.58.180.26');define('DB_PASS', 'y@nGsu5ah2o16');}
+	else{define('DB_HOST', '185.52.2.96');define('DB_PASS', 'MaxumX8208G1!');}
 }
 
 function urlExists($url=NULL){  
