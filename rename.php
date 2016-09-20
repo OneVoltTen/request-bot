@@ -131,6 +131,7 @@
 					$str = str_replace('(1)', '', $str);
 					$str = str_replace('(2)', '', $str);
 					$str = str_replace('(copy)', '', $str);
+					$str = str_replace('x264', '', $str);
 					$str = str_replace('x2', '', $str);
 
 					// Check if file name contains CRC32 and remove it
