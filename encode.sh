@@ -4,7 +4,7 @@ FILENAMEX=""
 die() { echo "$@" 1>&2 ; exit 1; }
 # Retrieve file
 for i in `ls -tr ${DOWNLOAD}/.queue/*.mkv | sort -rh`; do
-	FILENAMEX=${i#*${QUEUE}}
+	FILENAMEX=${i#*${QUEUE}/}
 done
 # Retrieve file meta
 rm -f meta.txt
@@ -32,7 +32,7 @@ else
 fi
 echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]"
 echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]" >> ${INSTALL}/log.txt
-
+die test
 # End retrieve meta
 # Multiple audio track
 FILENAMEXX=${FILENAMEX%${GROUP}*}
