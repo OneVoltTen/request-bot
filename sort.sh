@@ -12,7 +12,7 @@ die() { echo "$@" 1>&2 ; exit 1; }
 if [ ! -f '${WWW}/downloading.txt' ]; then
 	sleep 5
 fi
-# echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
+echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
@@ -40,45 +40,18 @@ while read line; do
 					echo "match!"; echo "match!" >> $SORT/log.txt; echo "$FILEN"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 					#mediainfo --fullscan "$FILEN"
 					if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]]  || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
-						# Remove pipe if exist
-						if [[ $file == *"|"* ]]; then
-							mv "${FILEN}" "${FILEN/|/}"; file=${file//|/}
-						fi
-						# Change mp4 container
-						if [[ $FILEN == *"mp4" ]]; then
-							echo "detect mp4" >> $SORT/log.txt
-							ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
-							# Move file into trash/ID
-							mkdir -p "$TRASH/$MALID"
-							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
-							# Update filen to new file
-							FILEN="${FILEN}.mkv"
-							mv "$FILEN" "${FILEN//.mp4/}" >> $SORT/log.txt
-							FILEN=${FILEN//.mp4/}
-							echo "MKV " $FILEN >> $SORT/log.txt
-						fi
-						# Change avi container
-						if [[ $FILEN == *"avi" ]]; then
-							echo "detect avi" >> $SORT/log.txt
-							ffmpeg-i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
-							# Move file into trash/ID
-							mkdir -p "$TRASH/$MALID"
-							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
-							# Update filen to new file
-							FILEN="${FILEN}.mkv"
-							mv "$FILEN" "${FILEN//.avi/}" >> $SORT/log.txt
-							FILEN=${FILEN//.avi/}
-							echo "MKV " $FILEN >> $SORT/log.txt
-						fi
+						file=${Basename}
+						. ${INSTALL}/app/sortm.sh
 						# Set file title metadata
-						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
+						mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
-						filen=${FILEN//"${SORT}"/}
-						echo $filen
-						echo $FANSUB
-						echo $MALID
-						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
+						filen=${file//"${SORT}"/}
+						echo $file $FANSUB $MALID
+						sleep 1
+						mv "${SORT}/${filen}" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
 						nohup ${INSTALL}/bot.sh sort  > /dev/null 2>&1 &
+						php ${INSTALL}/app/sorted.php $MALID >> ${INSTALL}/log.txt
+						nohup ${INSTALL}/sort.sh >> $SORT/log.txt &
 						die "complete" >> $SORT/log.txt
 					fi
 				else
@@ -106,39 +79,7 @@ while read line; do
 						mkdir -p "$TRASH/$MALID"
 						echo $(pwd)		
 						for file in *.{mp4,avi,mkv}; do
-							# Replace space with underscore
-							if [[ $file == *" "* ]]; then
-								mv "$(pwd)/${file}" "$(pwd)/${file// /_}"; file=${file// /_}
-							fi
-							# Remove pipe
-							if [[ $file == *"|"* ]]; then
-								mv "${file}" "${file/|/}"; file=${file//|/}
-							fi
-							if [[ "${file}" == *".mp4" || "${file}" == *".avi" ]]; then
-								if [[ "${file}" == *".avi"* ]]; then
-									ffmpeg -fflags +genpts -i "$file" -vcodec copy -acodec copy $file.mp4; sleep .5
-									mkdir -p "$TRASH/$MALID"
-									rm "$file" >> $SORT/log.txt
-									mv "${file}.mp4" "${file//.avi/.mp4}"; file=${file//.avi/.mp4}
-								fi
-								if [[ "${file}" == *".mp4" ]]; then
-									ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep .5
-									rm "$file" >> $SORT/log.txt
-								fi
-								# Move file into trash/ID
-								# mkdir -p "$TRASH/$MALID"
-								# mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
-								# Update file to new file
-								file="${file}.mkv"
-								if [[ "${file}" == *".mp4"* ]]; then
-									mv "$file" "${file//.mp4/}" >> $SORT/log.txt
-									file=${file//.mp4/}
-								elif [[ "${file}" == *".avi"* ]]; then
-									mv "$file" "${file//.avi/}" >> $SORT/log.txt
-									file=${file//.avi/}
-								fi
-								echo "MKV " $file >> $SORT/log.txt
-							fi
+							. ${INSTALL}/app/sortm.sh
 						done
 						for file in *.mkv; do
 							# Move OP/ED files into trash folder
@@ -163,7 +104,7 @@ while read line; do
 								'_ed8' '_ed_8' '_ed08' '_ed_08'
 								'_ed9' '_ed_9' '_ed09' '_ed_09')
 							for ((i = 0; i < ${#arr[@]}; i++)); do
-								echo "${file,,} - ${arr[$i]}"
+								#echo "${file,,} - ${arr[$i]}"
 								if [[ ${file,,} == *${arr[$i]}*  ]]; then
 									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
 									# Move to trash folder
@@ -183,6 +124,7 @@ while read line; do
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
 					nohup ${INSTALL}/bot.sh sort >/dev/null 2>&1 &
+					php ${INSTALL}/app/sorted.php $MALID >> ${INSTALL}/log.txt
 					die "complete" >> $SORT/log.txt
 				else
 					echo "file $FILEN" >> $SORT/log.txt
