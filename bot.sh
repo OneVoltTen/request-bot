@@ -1,10 +1,9 @@
 #!/bin/bash
 . /root/config.sh
 
+countsource=`ls -1 $DOWNLOAD/*{mkv,mp4,ass} 2>/dev/null | wc -l`
 countqueue=`ls -1 $QUEUE/*.{mkv,mp4,ass} 2>/dev/null | wc -l`
 countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`
-countsource=`ls -1 $SOURCE/*{mkv,mp4,ass} 2>/dev/null | wc -l`
-countsecond=`ls -1 $SECOND/*.{mkv,mp4,avi} 2>/dev/null | wc -l`
 lastlog=`tail -1 ${INSTALL}/log.txt | head -1`
 
 ERW="execute retieve worker..."
@@ -23,10 +22,9 @@ if [ $countencoded != 0 ]; then
 	echo "${EUW}" >> ${INSTALL}/log.txt >> ${INSTALL}/log.txt;nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
 fi
 
-php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
-
 if [[ $countsource != 0 ]]; then
 	if [ $countqueue == 0 ]; then
+		php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
 		echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
 		if pidof -s ffmpeg > /dev/null; then
 			if [[ ! $lastlog == "${FR}" ]]; then
