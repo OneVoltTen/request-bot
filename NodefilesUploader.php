@@ -1,11 +1,7 @@
 <?php
+include"app/config.php";
+
 date_default_timezone_set("UTC");
-define('GWSHARE_USER', 'Anime');
-define('GWSHARE_PASS', 'Anime');
-define('ENCODED', '/var/www/encoded');
-define('UPLOADED', '/var/www/uploaded');
-define('DB_NAME', 'animepahe');
-define('DB_USER', 'root');
 session_start();
 
 if(isset($argv[1])){
@@ -14,8 +10,8 @@ if(isset($argv[1])){
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }else{
-	if(1==1){define('DB_HOST','209.58.180.26');define('DB_PASS', 'y@nGsu5ah2o16');}
-	else{define('DB_HOST', '185.52.2.96');define('DB_PASS', 'MaxumX8208G1!');}
+	#define('DB_HOST', '185.52.2.96');
+	#define('DB_PASS', 'MaxumX8208G1!');
 }
 
 function urlExists($url=NULL){  
@@ -48,15 +44,12 @@ foreach ($dir as $fileinfo) {
 }
 
 if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-			$uploadUrl = 'test';
-			$shortUrl = 'test';
+	$uploadUrl = 'test';
+	$shortUrl = 'test';
 }else{
-
 	if($counter==1){
-		echo"Adding 2nd worker\n";
-	}elseif($counter==2){
 		die("Max upload workers\n");
-}
+	}
 }
 
 	//if file in dir != mkv,mp4,avi trash
@@ -460,7 +453,6 @@ final class GwshareUploader
 			// save to db
 			$this->saveToDb($data);
 			$this->updateAnime($data);
-			
 			
 			if (UPLOADED) {
 				if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
