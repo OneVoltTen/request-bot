@@ -32,7 +32,7 @@ else
 fi
 echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]"
 echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]" >> ${INSTALL}/log.txt
-die test
+
 # End retrieve meta
 # Multiple audio track
 FILENAMEXX=${FILENAMEX%${GROUP}*}
