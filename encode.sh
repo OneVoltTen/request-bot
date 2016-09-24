@@ -10,10 +10,6 @@ done
 rm -f meta.txt
 rm -f metadata.txt
 
-#Old method
-#meta=`sudo php ${INSTALL}/encode_meta.php $FILENAMEX`
-#sub=${meta#*|}; audio=${meta%|*}
-
 metaa=`${INSTALL}/meta.sh $QUEUE/$FILENAMEX`
 meta=${metaa#*|*|*|}
 sub=${meta#*|}; audio=${meta%|*}
@@ -38,25 +34,6 @@ echo "${FILENAMEX} => [${audio}] [${sub}]" >> ${INSTALL}/log.txt
 # End retrieve meta
 # Multiple audio track
 FILENAMEXX=${FILENAMEX%${GROUP}*}
-arr=(666 1337 1354)
-metaaudio=`${INSTALL}/metaaudio.sh $QUEUE/$FILENAMEX`
-if [[ ! ${arr[@]} =~ ${FILENAMEXX} ]]; then
-	number='^[0-9]+$'
-	if [[ ${audio_channel}==0 && ${metaaudio}>2 && ${metaaudio} =~ $number ]]; then
-		echo "multiple audio [${metaaudio}] [${FILENAMEX}]"
-		mkdir -p "${KOMARU}/${metaaudio}";
-		mv ${QUEUE}/${FILENAMEX} ${KOMARU}/${metaaudio}/${FILENAMEX}
-		mv ${INSTALL}/metadata.txt ${KOMARU}/${metaaudio}/${FILENAMEX}_metadata.txt
-		nohup ${INSTALL}/encode.sh >> ${INSTALL}/log.txt &
-		sleep 1
-		die "multiple audio [${metaaudio}]" >> ${INSTALL}/log.txt
-	else
-		echo "pass [${metaaudio}]"
-	fi
-	rm -f ${INSTALL}/metadata.txt
-else
-	echo "bypass multiple audio [${metaaudio}] [${FILENAMEX}]"
-fi
 # End multiple audio track
 rm -f meta.txt
 rm -f metadata.txt
@@ -125,7 +102,7 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 			#echo $track
 			mkvextract tracks "$i" "$track:${i}.$ext"
 		fi
-		mv $i.{ass,srt} ${INSTALL}/.fonts/ -f >/dev/null 2>&1;sleep 1
+		mv $i.{ass,srt} ${INSTALL}/.fonts/ -f >/dev/null 2>&1;sleep .5
 		cd ${INSTALL}
 		SEP="FFMPEG start!"
 		# End subtitle
@@ -135,18 +112,18 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=${INSTALL}/.fonts/${filename}.ass$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,ass=${INSTALL}/.fonts/${filename}.ass$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
 			echo "SRT subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
 			ffmpeg -i $i -map 0:v:0 -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
-			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=${INSTALL}/.fonts/${filename}.srt$scale,format=yuv420p [out]" \
+			-vf "movie=/root/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10,subtitles=${INSTALL}/.fonts/${filename}.srt$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]] || [[ $sub =~ "VobSub" ]] || [[ $sub =~ "S_VOBSUB" ]]; then
 			echo "PGS subtitle ~ ${SEP}" >> ${INSTALL}/log.txt;
-			ffmpeg -y -i $i -i watermark.mov -c:v libx264 \
+			ffmpeg -y -i $i -i "${INSTALL}/app/watermark.mov" -c:v libx264 \
 			-map 0:a:$audio_channel \
 			-c:a libfdk_aac -profile:a aac_he_v2 -ac 2 -b:a 48k -af "volume=2" -vbr 3 -profile:v high -x264-params crf=27.0:ref=8:bframes=3:psy-rd=0.00,0.00:rc-lookahead=60:deblock=1,1:merange=8:partitions=all:me=umh:subme=7:trellis=0:8x8dct=1:cqm=flat:deadzone-inter=21:deadzone-intra=11:chroma-qp-offset=0:threads=8:lookahead-threads=2:b-pyramid=normal:b-adapt=2:b-bias=0:direct=spatial:weightp=2:keyint=240:min-keyint=24:scenecut=40:qcomp=0.60:qpmin=0:qpmax=69:qpstep=4:ipratio=1.40:aq-mode=1:aq-strength=1.00:level=3.1 -map_metadata -1 -movflags +faststart \
 			-filter_complex "[0:v][0:s:$subtitle]overlay=(W-w)/2:(H-h)/2$scale[hardsubbed];[hardsubbed][1:v]overlay=10:10[out]" -map "[out]" \
@@ -159,7 +136,6 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 			-vf "movie=${INSTALL}/app/watermark.mov [watermark]; [in] [watermark] overlay=10:10$scale,format=yuv420p [out]" \
 			${i}_encoded.mp4 2> ${LOG}/progress.txt
 		fi
-		# End process file
 		# Rename log file
 		echo "FFMPEG complete" >> ${INSTALL}/log.txt
 		echo "log rename => progress_$(date +%F_%H-%M).txt"
@@ -184,7 +160,6 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 		fi
 	fi
 done
-die end
 # Remove remaining temp file
 sleep 2; echo "remove temp file..."; rm -rf $QUEUE/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,ASS,SRT,PGS,SUP,SUB,IDX,JPG,PNG,GIF,BMP,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,Ass,Srt,Pgs,Sup,Sub,Idx,Jpg,Png,Gif,Bmp,otf,ttf,ttc,fon,fnt,pfb,dfont,ass,srt,pgs,sup,sub,idx,jpg,png,gif,bmp} ${INSTALL}/.fonts/*.{OTF,TTF,TTC,FON,FNT,PFB,DFONT,Otf,Ttf,Ttc,Fon,Fnt,Pfb,Dfont,otf,ttf,ttc,fon,fnt,pfb,dfont}
 
