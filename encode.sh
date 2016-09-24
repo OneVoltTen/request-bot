@@ -3,7 +3,7 @@
 FILENAMEX=""
 die() { echo "$@" 1>&2 ; exit 1; }
 # Retrieve file
-for i in `ls -tr ${DOWNLOAD}/.queue/*.mkv`; do
+for i in `ls -tr ${DOWNLOAD}/.queue/*.mkv | sort -rh`; do
 	FILENAMEX=${i#*${QUEUE}}
 done
 # Retrieve file meta
@@ -12,10 +12,10 @@ rm -f metadata.txt
 
 metaa=`${INSTALL}/meta.sh $QUEUE/$FILENAMEX`
 meta=${metaa#*|*|*|}
-sub=${meta#*|}; audio=${meta%|*}
+subx=${meta#*|}; audio=${meta%|*}
 
 function is_int() { return $(test "$@" -eq "$@" > /dev/null 2>&1); }
-if [ ! $sub -eq $sub 2> /dev/null ] && [ ! $audio -eq $audio 2> /dev/null ]; then
+if [ ! $subx -eq $subx 2> /dev/null ] && [ ! $audio -eq $audio 2> /dev/null ]; then
 	die "meta failed - ${meta}" >> ${INSTALL}/log.txt
 fi
 
@@ -25,12 +25,14 @@ if [ -z "$audio" ];	then
 else
 	audio_channel=$audio
 fi
-if [ -z "$sub" ]; then
+if [ -z "$subx" ]; then
 	subtitle=0
 else
-	subtitle=$sub
+	subtitle=$subx
 fi
-echo "${FILENAMEX} => [${audio}] [${sub}]" >> ${INSTALL}/log.txt
+echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]"
+echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]" >> ${INSTALL}/log.txt
+
 # End retrieve meta
 # Multiple audio track
 FILENAMEXX=${FILENAMEX%${GROUP}*}
