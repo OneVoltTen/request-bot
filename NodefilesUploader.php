@@ -387,7 +387,7 @@ final class GwshareUploader
 				$episode="0".$episode;
 		}
 		# Remove leading 0
-		if(substr($episode,1)==0 && strlen($episode) > 2){
+		if(substr($episode,0,1)==0 && strlen($episode) > 2){
 			$episode = substr($episode, 1);
 		}
 		
