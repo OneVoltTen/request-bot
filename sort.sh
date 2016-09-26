@@ -63,66 +63,56 @@ while read line; do
 				echo "directory" >> $SORT/log.txt
 				echo $Basename >> $SORT/log.txt
 				# Rename variable to remove illegal characters
-				FILEN1=${Basename//[^a-zA-Z_0-9]/_}
+				FOLDER=${Basename//[^a-zA-Z_0-9]/_}
 				if [ -d "$FILEN" ]; then
 					# Rename folder to remove illegal characters
-					RENAME=${FILEN1/[^a-zA-Z_0-9]/_}
+					RENAME=${FOLDER/[^a-zA-Z_0-9]/_}
 					mv "$FILEN" "$SORT/$RENAME"
 					# Change working directory into folder
-					cd "$SORT/$FILEN1"
+					cd "$SORT/$FOLDER"
 					# If moved successfully into folder
 					if [ ! $(pwd) == $SORT ]; then
 						echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 						echo "Working directory" $(pwd) >> $SORT/log.txt
 						# Move files into working directoryc
-						mv **/*.mkv "$SORT/$FILEN1";mv **/*.mp4 "$SORT/$FILEN1";mv **/*.avi "$SORT/$FILEN1"
+						mv **/*.mkv "$SORT/$FOLDER";mv **/*.mp4 "$SORT/$FOLDER";mv **/*.avi "$SORT/$FOLDER"
 						mkdir -p "$TRASH/$MALID"
 						echo $(pwd)		
 						for file in *.{mp4,avi,mkv}; do
 							. ${INSTALL}/app/sortm.sh
 						done
 						for file in *.mkv; do
+							music=0
 							# Move OP/ED files into trash folder
 							filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$filen")
-							arr=('creditless' 'ending' 'opening' 'ncop' 'nced'
-								'_op1' '_op_1' '_op01' '_op_01'
-								'_op2' '_op_2' '_op02' '_op_02'
-								'_op3' '_op_3' '_op03' '_op_03'
-								'_op4' '_op_4' '_op04' '_op_04'
-								'_op5' '_op_5' '_op05' '_op_05'
-								'_op6' '_op_6' '_op06' '_op_06'
-								'_op7' '_op_7' '_op07' '_op_07'
-								'_op8' '_op_8' '_op08' '_op_08'
-								'_op9' '_op_9' '_op09' '_op_09'
-								'_ed1' '_ed_1' '_ed01' '_ed_01'
-								'_ed2' '_ed_2' '_ed02' '_ed_02'
-								'_ed3' '_ed_3' '_ed03' '_ed_03'
-								'_ed4' '_ed_4' '_ed04' '_ed_04'
-								'_ed5' '_ed_5' '_ed05' '_ed_05'
-								'_ed6' '_ed_6' '_ed06' '_ed_06'
-								'_ed7' '_ed_7' '_ed07' '_ed_07'
-								'_ed8' '_ed_8' '_ed08' '_ed_08'
-								'_ed9' '_ed_9' '_ed09' '_ed_09')
+							arr=('creditless' 'ending' 'opening' 'ncop' 'nced' '1' '2' '3' '4'	'5' '6' '7' '8'	'9' '10')
 							for ((i = 0; i < ${#arr[@]}; i++)); do
 								#echo "${file,,} - ${arr[$i]}"
-								if [[ ${file,,} == *${arr[$i]}*  ]]; then
-									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
-									# Move to trash folder
-									mv "${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
+								number='^[0-9]+$'
+								if [[ ${arr[$i]} =~ $number ]]; then
+									oped=('_op' '_op0' '_op_' '_op_0' '_ed' '_ed0' '_ed_' '_ed_0')
+									for ((ii = 0; ii < ${#oped[@]}; ii++)); do
+									   . ${INSTALL}/app/music.sh "${oped[$ii]}${arr[$i]}"
+									done
+								else
+									. ${INSTALL}/app/music.sh ${arr[$i]}
 								fi
 							done
-							# Set file title metadata
-							mkvpropedit "${file}" -e info -s title="${FTITLE}" >> $SORT/log.txt
-							# Move to downloads folder
-							FILE=${file//${SORT}//}
-							mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
+							if [[ $music == 0 ]]; then
+								# Set file title metadata
+								mkvpropedit "${file}" -e info -s title="${FTITLE}" >> $SORT/log.txt
+								# Move to downloads folder
+								FILE=${file//${SORT}//}
+								mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
+							fi
 						done
 					else
-						echo "working directory failed change > $SORT/$FILEN1" >> $SORT/log.txt
+						echo "working directory failed change > $SORT/$FOLDER" >> $SORT/log.txt
 					fi
-					sleep 2
+					sleep 1
 					# Move folder into trash/ID
-					mv "$SORT/$FILEN1" "$TRASH/$MALID"
+					rm -rf "$TRASH/$MALID/$FOLDER"
+					mv "$SORT/$FOLDER" "$TRASH/$MALID"
 					nohup ${INSTALL}/bot.sh sort >/dev/null 2>&1 &
 					php ${INSTALL}/app/sorted.php $MALID >> ${INSTALL}/log.txt
 					die "complete" >> $SORT/log.txt
