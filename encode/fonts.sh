@@ -21,6 +21,6 @@ if [[ $sub ]]; then
 	#echo $ext
 	#echo $track
 	mkvextract tracks "$i" "$track:${i}.${ext}" >> ${INSTALL}/log.txt
-	mv -f $i.{ass,srt,sub} ${INSTALL}/.fonts/  >> ${INSTALL}/log.txt
+	mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts/  >> ${INSTALL}/log.txt
 fi
 sleep 0.5
