@@ -15,11 +15,12 @@ EE="execute encode..."
 FR="ffmpeg running..."
 SY="sabishī yo..."
 
-if [[ -z "$1" && "$1"=="sort" ]]; then
-	echo "${ERW}"; nohup ${INSTALL}/app/retrieve.sh keep >/dev/null 2>&1 &
-fi
+# Schedule:
+# bot.sh every 10 minutes
+# retrieve.sh every 5 minutes
+
 if [ $countencoded != 0 ]; then
-	echo "${EUW}" >> ${INSTALL}/log.txt >> ${INSTALL}/log.txt;nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
+	echo "${EUW}" >> ${INSTALL}/log.txt;nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
 fi
 
 if [[ $countsource != 0 ]]; then

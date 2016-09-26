@@ -28,7 +28,7 @@ if($con->query($sql) === TRUE) {
 	else{die("request last_sort failed\n");}
 }else{echo "error updating record: ".$cnn->error."\n";}
 
-$sql="UPDATE `animes` SET `published`=0 WHERE `id`=".$argv[1];
+$sql="UPDATE `animes` SET `published`=1 WHERE `id`=".$argv[1];
 if($con->query($sql) === TRUE) {
 	echo "animes published updated\n";
 }else{echo "error updating record: ".$cnn->error."\n";}
