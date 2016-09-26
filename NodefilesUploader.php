@@ -9,9 +9,6 @@ if(isset($argv[1])){
 	echo "\nTEST TEST TEST\n\n";
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
-}else{
-	#define('DB_HOST', '185.52.2.96');
-	#define('DB_PASS', 'MaxumX8208G1!');
 }
 
 function urlExists($url=NULL){  
@@ -398,12 +395,11 @@ final class GwshareUploader
 
 		// Revision
 		$revision="";
-		$list = array("v0", "v1", "v2", "v3", "v4", "v5");
+		$list = array("v0_", "v1_", "v2_", "v3_", "v4_", "v5_");
 		foreach($list as $revise){
 			if(stripos($episode, $revise)){
 				$episode=str_ireplace($revise,"",$episode);
-				$revision=$revise;
-				$revision=str_ireplace("v","",$revision);
+				$revision=str_ireplace("v","",$revise);
 			}
 		}
 
