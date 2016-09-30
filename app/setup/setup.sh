@@ -92,3 +92,6 @@ sudo mkdir /var/www/logs
 sudo mkdir /var/www/uploaded
 #wget https://www.link/files.zip -O temp.zip; unzip temp.zip; rm temp.zip
 #To finish...
+
+# bot.sh every 10 minutes
+# retrieve.sh every 5 minutes

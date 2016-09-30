@@ -15,12 +15,8 @@ EE="execute encode..."
 FR="ffmpeg running..."
 SY="sabishī yo..."
 
-# Schedule:
-# bot.sh every 10 minutes
-# retrieve.sh every 5 minutes
-
 if [ $countencoded != 0 ]; then
-	echo "${EUW}" >> ${INSTALL}/log.txt;nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
+	echo "${EUW}" >> ${INSTALL}/log.txt;nohup php ${INSTALL}/upload.php >> ${INSTALL}/log.txt &
 fi
 
 if [[ $countsource != 0 ]]; then

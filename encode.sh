@@ -24,11 +24,6 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 		mv ${i}_encoded.mp4 ${ENCODED} -f
 		# If file moved to encoded folder
 		count=`ls -1 $ENCODED/*_encoded.mp4 2>/dev/null | wc -l`
-		if [ $count != 0 ]; then
-			echo "execute upload worker..." >> ${INSTALL}/log.txt; php ${INSTALL}/rename.php 2; nohup php ${INSTALL}/NodefilesUploader.php >> ${INSTALL}/log.txt &
-		else
-			echo "no upload..."
-		fi
 		# If file not moved to encode folder
 		if [[ ${FILENAMEX%${GROUP}*} > 0 ]];then
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%${GROUP}*}"; mv $i "${TRASH}/${FILENAMEX%${GROUP}*}" -f

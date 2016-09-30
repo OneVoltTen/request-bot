@@ -1,8 +1,9 @@
 cd ${INSTALL}/.fonts
 echo "extract attachment..."; ffmpeg -dump_attachment:t "" -i $i -y  >> ${INSTALL}/log.txt; sleep 1
 echo "install font..."
-fc-cache -f -v ${INSTALL}/.fonts > /dev/null 2>&1
-echo "extract subtitle..."; sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
+fc-cache -f -v ${INSTALL}/.fonts >> ${INSTALL}/log.txt
+echo "extract subtitle..."
+sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
 if [[ $sub ]]; then
 	# Detect subtitle type
 	echo $sub
@@ -23,4 +24,4 @@ if [[ $sub ]]; then
 	mkvextract tracks "$i" "$track:${i}.${ext}" >> ${INSTALL}/log.txt
 	mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts/  >> ${INSTALL}/log.txt
 fi
-sleep 0.5
+sleep 2
