@@ -1,8 +1,5 @@
 <?php
-include"app/config.php";
-
-date_default_timezone_set("UTC");
-session_start();
+// commented out crc32 logic due to no error handling if connection interupted
 
 if(isset($argv[1])){
 	$_SESSION["test"] = $argv[1];
@@ -10,6 +7,17 @@ if(isset($argv[1])){
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }
+
+define('DB_HOST', '185.52.2.96');
+define('DB_PASS', 'MaxumX8208G1!');
+
+include_once"app/config.php";
+
+date_default_timezone_set("UTC");
+session_start();
+
+// test database connection before upload
+mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME) or die("Unable to connect to ".DB_HOST."\n");
 
 function urlExists($url=NULL){  
     if($url == NULL) return false;  
@@ -78,9 +86,12 @@ try {
 
 	var_dump($upload);
 } catch (Exception $e) {
+	rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
+	/*
 	// If login exception move back file
 	rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
 	rmdir('/var/www/encoded/'.$_SESSION['crc32']);
+	*/
 	die(var_dump($e->getMessage()));
 	
 }
@@ -155,7 +166,14 @@ final class GwshareUploader
 		}
 
 		$json = json_decode($match[0]);
+		echo "one\n";
 		var_dump($json);
+		echo "two\n";
+		
+		if (in_array("Access denied for", $json)){
+			echo DB_HOST." refused connection\n";
+		}
+		
 		return $json->short;
 	}
 
@@ -224,12 +242,13 @@ final class GwshareUploader
 			// Don't move to crc32 folder
 			$source="/var/www/encoded/".$basename;
 		}else{
+			/*
 			$source=str_replace("/var/www/encoded/", "/var/www/encoded/".$crc32."/", $source);
 			$basename=str_replace("/var/www/encoded/", $crc32."/", $basename);
 				// Move file to crc32 folder
 			mkdir('/var/www/encoded/'.$crc32, 0700, true);
 			rename('/var/www/encoded/'.$basename, '/var/www/encoded/'.$crc32."/".$basename);
-			/*
+			
 			echo $source."\n";
 			echo $basename."\n";
 			*/
@@ -469,7 +488,8 @@ final class GwshareUploader
 						@rename($source, UPLOADED.'/'.$anime.''.$source);
 					}
 				}
-				rmdir('/var/www/encoded/'.$crc32);
+				//rmdir('/var/www/encoded/'.$crc32);
+				@unlink($source);
 			} else {
 				// delete file
 				@unlink($source);
