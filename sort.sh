@@ -7,7 +7,7 @@ TR_DOWNLOADS="/var/www/sort/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOAD
 die() { echo "$@" 1>&2 ; exit 1; }
 # Update downloading.txt if any changes
 # If downloading.txt being updated
-if [ ! -f '/var/www/downloading.txt' ]; then
+if [ ! -f '/var/www/downloading.txt' ] || pidof -s retrieve.sh > 0; then
 	sleep 5
 fi
 #echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
@@ -42,10 +42,13 @@ while read line; do
 						if [[ $file == *"|"* ]]; then
 							mv "${FILEN}" "${FILEN/|/}"; file=${file//|/}
 						fi
+						if [[ $file == *" "* ]]; then
+							mv "${FILEN}" "${FILEN/ /_}"; file=${file// /_}
+						fi
 						# Change mp4 container
-						if [[ $FILEN == *"mp4" ]]; then
-							echo "detect mp4" >> $SORT/log.txt
-							ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
+						if [[ $FILEN == *".mp4" ]]; then
+							echo "detect mp4 [${FILEN}]" >> $SORT/log.txt
+							ffmpeg -i "${FILEN}" -vcodec copy -acodec copy "${FILEN}.mkv"; sleep 1
 							# Move file into trash/ID
 							mkdir -p "$TRASH/$MALID"
 							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
@@ -53,12 +56,12 @@ while read line; do
 							FILEN="${FILEN}.mkv"
 							mv "$FILEN" "${FILEN//.mp4/}" >> $SORT/log.txt
 							FILEN=${FILEN//.mp4/}
-							echo "MKV " $FILEN >> $SORT/log.txt
+							echo "[${FILEN}]" $FILEN >> $SORT/log.txt
 						fi
 						# Change avi container
-						if [[ $FILEN == *"avi" ]]; then
+						if [[ $FILEN == *".avi" ]]; then
 							echo "detect avi" >> $SORT/log.txt
-							ffmpeg -i $FILEN -vcodec copy -acodec copy $FILEN.mkv; sleep 1
+							ffmpeg -i "${FILEN}" -vcodec copy -acodec copy "${FILEN}.mkv"; sleep 1
 							# Move file into trash/ID
 							mkdir -p "$TRASH/$MALID"
 							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
@@ -66,7 +69,7 @@ while read line; do
 							FILEN="${FILEN}.mkv"
 							mv "$FILEN" "${FILEN//.avi/}" >> $SORT/log.txt
 							FILEN=${FILEN//.avi/}
-							echo "MKV " $FILEN >> $SORT/log.txt
+							echo "[${FILEN}]" $FILEN >> $SORT/log.txt
 						fi
 						# Set file title metadata
 						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
@@ -77,7 +80,7 @@ while read line; do
 						echo $MALID
 						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
 						nohup /root/bot.sh sort  >/dev/null 2>&1 &
-						die "complete" >> $SORT/log.txt
+						#die "complete" >> $SORT/log.txt
 					fi
 				else
 					echo 'no match' >> $SORT/log.txt
@@ -116,7 +119,7 @@ while read line; do
 								file="${file}.mkv"
 								mv "$file" "${file//.mp4/}" >> $SORT/log.txt
 								file=${file//.mp4/}
-								echo "MKV " $file >> $SORT/log.txt
+								echo "MKV ${file}" >> $SORT/log.txt
 							fi
 						done
 						for file in *.avi; do
@@ -141,34 +144,15 @@ while read line; do
 							fi
 							
 							# Move OP/ED files into trash folder
-							filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$filen")
-							arr=(
-								'creditless' 'ending' 'opening' ' ncop' ' nced'
-								' op1' ' op 1' ' op01' ' op 01'
-								' op2' ' op 2' ' op02' ' op 02'
-								' op3' ' op 3' ' op03' ' op 03'
-								' op4' ' op 4' ' op04' ' op 04'
-								' op5' ' op 5' ' op05' ' op 05'
-								' op6' ' op 6' ' op06' ' op 06'
-								' op7' ' op 7' ' op07' ' op 07'
-								' op8' ' op 8' ' op08' ' op 08'
-								' op9' ' op 9' ' op09' ' op 09'
-								' ed1' ' ed 1' ' ed01' ' ed 01'
-								' ed2' ' ed 2' ' ed02' ' ed 02'
-								' ed3' ' ed 3' ' ed03' ' ed 03'
-								' ed4' ' ed 4' ' ed04' ' ed 04'
-								' ed5' ' ed 5' ' ed05' ' ed 05'
-								' ed6' ' ed 6' ' ed06' ' ed 06'
-								' ed7' ' ed 7' ' ed07' ' ed 07'
-								' ed8' ' ed 8' ' ed08' ' ed 08'
-								' ed9' ' ed 9' ' ed09' ' ed 09'
-								)
+							# filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$file")
+							# mv "${file}" "$SORT/$FILEN1/${filen}"
+							echo "${file,,}"
+							arr=('creditless' 'ending' 'opening' ' ncop' ' nced' ' op1' ' op 1' ' op01' ' op 01' ' op2' ' op 2' ' op02' ' op 02' ' op3' ' op 3' ' op03' ' op 03' ' op4' ' op 4' ' op04' ' op 04' ' =op5' ' op 5' ' op05' ' op 05' ' op6' ' op 6' ' op06' ' op 06' ' op7' ' op 7' ' op07' ' op 07' ' op8' ' op 8' ' op08' ' op 08' ' op9' ' op 9' ' op09' ' op 09' ' op10' ' op 10' ' op10' ' op 10' ' op11' ' op 11' ' op11' ' op 11' ' ed1' ' ed 1' ' ed01' ' ed 01' ' ed2' ' ed 2' ' ed02' ' ed 02' ' ed3' ' ed 3' ' ed03' ' ed 03' ' ed4' ' ed 4' ' ed04' ' ed 04' ' ed5' ' ed 5' ' ed05' ' ed 05' ' ed6' ' ed 6' ' ed06' ' ed 06' ' ed7' ' ed 7' ' ed07' ' ed 07' ' ed8' ' ed 8' ' ed08' ' ed 08' ' ed9' ' ed 9' ' ed09' ' ed 09' ' ed10' ' ed 10' ' ed 10' ' ed11' ' ed 11' ' ed 11')
 							for ((i = 0; i < ${#arr[@]}; i++)); do
-								#echo "${file,,} - ${arr[$i]}"
-								if [[ ${filen,,} == *${arr[$i]}*  ]]; then
+								if [[ ${file,,} == *${arr[$i]}*  ]]; then
+									echo "${file,,} - ${arr[$i]}"
 									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
-									# Move to trash folder
-									mv "${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
+									mv "$SORT/$FILEN1/${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
 								fi
 							done
 							# Set file title metadata
@@ -184,7 +168,7 @@ while read line; do
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
 					nohup /root/bot.sh sort >/dev/null 2>&1 &
-					die "complete" >> $SORT/log.txt
+					#die "complete" >> $SORT/log.txt
 				else
 					echo "file $FILEN" >> $SORT/log.txt
 				fi # dir not exist
@@ -194,4 +178,4 @@ while read line; do
 		echo "dupe line" >> $SORT/log.txt
 	fi # LAST
 done <../downloading.txt
-echo "failed" >> $SORT/log.txt
+echo "end" >> $SORT/log.txt

@@ -53,12 +53,11 @@ if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			$uploadUrl = 'test';
 			$shortUrl = 'test';
 }else{
-
 	if($counter==1){
-		echo"Adding 2nd worker\n";
-	}elseif($counter==2){
-		die("Max upload workers\n");
-}
+		die("Max upload worker\n");
+	}elseif($counter==1){
+		//die("Max upload workers\n");
+	}
 }
 
 	//if file in dir != mkv,mp4,avi trash
@@ -376,10 +375,8 @@ final class GwshareUploader
 				$match++;
 				}
 			}
-			$episode = str_replace("OVA", "", $episode);
-			$episode = str_replace("ONA", "", $episode);
 			if (!is_numeric($episode)){
-				$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona");
+				$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona", "oad");
 				foreach($yes as $allowed){
 					if(stripos($episode, $allowed)){
 						$match++;
@@ -388,6 +385,11 @@ final class GwshareUploader
 				if($match==0){
 					echo "Invalid episode\n";
 					$episode="";
+				}else{
+					$episode = str_ireplace("special", "", $episode);
+					$episode = str_replace("OVA", "", $episode);
+					$episode = str_replace("ONA", "", $episode);
+					$episode = str_replace("OAD", "", $episode);
 				}
 			}
 		}
@@ -442,52 +444,54 @@ final class GwshareUploader
 			echo "resolution - ".$resolution."\n";
 			echo "disc - ".$disc."\n";
 		}else{
-			$data = [
-				'filename'		=> $basename,
-				'filesize'		=> $filesize,
-				'crc32'			=> $crc32,
-				'anime'			=> $anime,
-				'episode'		=> $episode,
-				'revision'		=> $revision,
-				'fansub'		=> $fansub,
-				'resolution'	=> $resolution,
-				'upload_url'	=> $uploadUrl,
-				'short_url'		=> $shortUrl,
-				'disc'			=> $disc,
-			];
-			// save to db
-			$this->saveToDb($data);
-			$this->updateAnime($data);
-			
-			
-			if (UPLOADED) {
-				if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
-					throw new Exception('Directory for move file doesn\'t exists or readable');
-				}
-
-				if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-					@rename($source, '/var/www/downloads/'.$basename);
-					$_SESSION["test"]="";
-				}else{
-					if(isset($anime) && !empty($anime)){
-						if (!file_exists(UPLOADED.'/'.$anime)) {
-							mkdir(UPLOADED.'/'.$anime);
-						}
-						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
-						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
-					}else{
-						@rename($source, UPLOADED.'/'.$anime.''.$source);
+			if($filesize>1 && $crc32 != "00000000"){
+				$data = [
+					'filename'		=> $basename,
+					'filesize'		=> $filesize,
+					'crc32'			=> $crc32,
+					'anime'			=> $anime,
+					'episode'		=> $episode,
+					'revision'		=> $revision,
+					'fansub'		=> $fansub,
+					'resolution'	=> $resolution,
+					'upload_url'	=> $uploadUrl,
+					'short_url'		=> $shortUrl,
+					'disc'			=> $disc,
+				];
+				// save to db
+				$this->saveToDb($data);
+				$this->updateAnime($data);
+				
+				
+				if (UPLOADED) {
+					if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
+						throw new Exception('Directory for move file doesn\'t exists or readable');
 					}
+
+					if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
+						@rename($source, '/var/www/downloads/'.$basename);
+						$_SESSION["test"]="";
+					}else{
+						if(isset($anime) && !empty($anime)){
+							if (!file_exists(UPLOADED.'/'.$anime)) {
+								mkdir(UPLOADED.'/'.$anime);
+							}
+							echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
+							@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
+						}else{
+							@rename($source, UPLOADED.'/'.$anime.''.$source);
+						}
+					}
+					rmdir('/var/www/encoded/'.$crc32);
+				} else {
+					// delete file
+					@unlink($source);
 				}
-				rmdir('/var/www/encoded/'.$crc32);
-			} else {
-				// delete file
-				@unlink($source);
+
+				return $data;
+
+				sleep(4);
 			}
-
-			return $data;
-
-			sleep(4);
 		}
 	}
 
@@ -622,6 +626,9 @@ final class GwshareUploader
 	protected function saveToDb(array $data)
 	{
 		try {
+			
+			if($data['upload_url'] != "https://nodefiles.com/undef"){
+			
 			$db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8', DB_USER, DB_PASS);
 
 			$sql = 'INSERT INTO releases(filename, filesize, crc32, anime_id, episode, revision, fansub, upload_url, short_url, disc, published, created_at) 
@@ -643,6 +650,13 @@ final class GwshareUploader
 			]);
 
 			return $db->lastInsertId();
+			
+			}else{
+				// If upload error move back file
+				rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
+				rmdir('/var/www/encoded/'.$_SESSION['crc32']);
+				die("Undefined nodefiles url => ".$data['upload_url']);
+			}
 		} catch (PDOException $e) {
 			throw new Exception($e->getMessage());
 		}
