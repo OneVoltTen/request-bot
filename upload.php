@@ -1,21 +1,12 @@
 <?php
+include"app/config.php";
+
 date_default_timezone_set("UTC");
-define('GWSHARE_USER', 'Anime');
-define('GWSHARE_PASS', 'Anime');
-define('ENCODED', '/var/www/encoded');
-define('UPLOADED', '/var/www/uploaded');
-define('DB_NAME', 'animepahe');
-define('DB_USER', 'root');
 session_start();
 
 if(isset($argv[1])){
 	$_SESSION["test"] = $argv[1];
 	echo "\nTEST TEST TEST\n\n";
-	define('DB_HOST', '185.52.2.96');
-	define('DB_PASS', 'MaxumX8208G1!');
-}else{
-	#define('DB_HOST', '209.58.180.26');
-	#define('DB_PASS', 'y@nGsu5ah2o16');
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
 }
@@ -50,13 +41,11 @@ foreach ($dir as $fileinfo) {
 }
 
 if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-			$uploadUrl = 'test';
-			$shortUrl = 'test';
+	$uploadUrl = 'test';
+	$shortUrl = 'test';
 }else{
 	if($counter==1){
-		die("Max upload worker\n");
-	}elseif($counter==1){
-		//die("Max upload workers\n");
+		die("Max upload workers\n");
 	}
 }
 
@@ -375,8 +364,10 @@ final class GwshareUploader
 				$match++;
 				}
 			}
+			$episode = str_replace("OVA", "", $episode);
+			$episode = str_replace("ONA", "", $episode);
 			if (!is_numeric($episode)){
-				$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona", "oad");
+				$yes = array("v0", "v1", "v2", "v3", "v4", "v5", "movie", "special", "ova", "ona");
 				foreach($yes as $allowed){
 					if(stripos($episode, $allowed)){
 						$match++;
@@ -385,17 +376,16 @@ final class GwshareUploader
 				if($match==0){
 					echo "Invalid episode\n";
 					$episode="";
-				}else{
-					$episode = str_ireplace("special", "", $episode);
-					$episode = str_replace("OVA", "", $episode);
-					$episode = str_replace("ONA", "", $episode);
-					$episode = str_replace("OAD", "", $episode);
 				}
 			}
 		}
 		
 		if (is_numeric($episode) && strlen($episode) == 1) {
 				$episode="0".$episode;
+		}
+		# Remove leading 0
+		if(substr($episode,0,1)==0 && strlen($episode) > 2){
+			$episode = substr($episode, 1);
 		}
 		
 
@@ -405,12 +395,11 @@ final class GwshareUploader
 
 		// Revision
 		$revision="";
-		$list = array("v0", "v1", "v2", "v3", "v4", "v5");
+		$list = array("v0_", "v1_", "v2_", "v3_", "v4_", "v5_");
 		foreach($list as $revise){
 			if(stripos($episode, $revise)){
 				$episode=str_ireplace($revise,"",$episode);
-				$revision=$revise;
-				$revision=str_ireplace("v","",$revision);
+				$revision=str_ireplace("v","",$revise);
 			}
 		}
 
@@ -444,54 +433,51 @@ final class GwshareUploader
 			echo "resolution - ".$resolution."\n";
 			echo "disc - ".$disc."\n";
 		}else{
-			if($filesize>1 && $crc32 != "00000000"){
-				$data = [
-					'filename'		=> $basename,
-					'filesize'		=> $filesize,
-					'crc32'			=> $crc32,
-					'anime'			=> $anime,
-					'episode'		=> $episode,
-					'revision'		=> $revision,
-					'fansub'		=> $fansub,
-					'resolution'	=> $resolution,
-					'upload_url'	=> $uploadUrl,
-					'short_url'		=> $shortUrl,
-					'disc'			=> $disc,
-				];
-				// save to db
-				$this->saveToDb($data);
-				$this->updateAnime($data);
-				
-				
-				if (UPLOADED) {
-					if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
-						throw new Exception('Directory for move file doesn\'t exists or readable');
-					}
-
-					if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-						@rename($source, '/var/www/downloads/'.$basename);
-						$_SESSION["test"]="";
-					}else{
-						if(isset($anime) && !empty($anime)){
-							if (!file_exists(UPLOADED.'/'.$anime)) {
-								mkdir(UPLOADED.'/'.$anime);
-							}
-							echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
-							@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
-						}else{
-							@rename($source, UPLOADED.'/'.$anime.''.$source);
-						}
-					}
-					rmdir('/var/www/encoded/'.$crc32);
-				} else {
-					// delete file
-					@unlink($source);
+			$data = [
+				'filename'		=> $basename,
+				'filesize'		=> $filesize,
+				'crc32'			=> $crc32,
+				'anime'			=> $anime,
+				'episode'		=> $episode,
+				'revision'		=> $revision,
+				'fansub'		=> $fansub,
+				'resolution'	=> $resolution,
+				'upload_url'	=> $uploadUrl,
+				'short_url'		=> $shortUrl,
+				'disc'			=> $disc,
+			];
+			// save to db
+			$this->saveToDb($data);
+			$this->updateAnime($data);
+			
+			if (UPLOADED) {
+				if (! file_exists(UPLOADED) || ! is_readable(UPLOADED)) {
+					throw new Exception('Directory for move file doesn\'t exists or readable');
 				}
 
-				return $data;
-
-				sleep(4);
+				if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
+					@rename($source, '/var/www/downloads/'.$basename);
+					$_SESSION["test"]="";
+				}else{
+					if(isset($anime) && !empty($anime)){
+						if (!file_exists(UPLOADED.'/'.$anime)) {
+							mkdir(UPLOADED.'/'.$anime);
+						}
+						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
+						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
+					}else{
+						@rename($source, UPLOADED.'/'.$anime.''.$source);
+					}
+				}
+				rmdir('/var/www/encoded/'.$crc32);
+			} else {
+				// delete file
+				@unlink($source);
 			}
+
+			return $data;
+
+			sleep(4);
 		}
 	}
 
@@ -626,9 +612,6 @@ final class GwshareUploader
 	protected function saveToDb(array $data)
 	{
 		try {
-			
-			if($data['upload_url'] != "https://nodefiles.com/undef"){
-			
 			$db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8', DB_USER, DB_PASS);
 
 			$sql = 'INSERT INTO releases(filename, filesize, crc32, anime_id, episode, revision, fansub, upload_url, short_url, disc, published, created_at) 
@@ -650,13 +633,6 @@ final class GwshareUploader
 			]);
 
 			return $db->lastInsertId();
-			
-			}else{
-				// If upload error move back file
-				rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
-				rmdir('/var/www/encoded/'.$_SESSION['crc32']);
-				die("Undefined nodefiles url => ".$data['upload_url']);
-			}
 		} catch (PDOException $e) {
 			throw new Exception($e->getMessage());
 		}

@@ -1,7 +1,5 @@
 #!/bin/bash
-cd /root
-KOMARU="/var/www/komaru";
-#echo $1;
+. /root/config.sh
 if [[ -f $1 ]]; then
 	exiftool $1 > metadata.txt
 	while read line; do

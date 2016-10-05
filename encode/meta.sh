@@ -1,7 +1,5 @@
 #!/bin/bash
-cd /root
-KOMARU="/var/www/komaru";
-#echo $1;
+. /root/config.sh
 if [[ -f $1 ]]; then
 	ffmpeg -i $1 -f ffmetadata meta.txt >/dev/null 2>&1
 	metaline=`sed -n "2{p;q;}" meta.txt`
@@ -11,10 +9,10 @@ if [[ -f $1 ]]; then
 		rm -f meta.txt
 	else
 		echo "invalid meta [title] => [${metaline}]"
-		FILEN=${1#/var/www/downloads/*}
+		FILEN=${1#${DOWNLOAD}/*}
 		FILEN=${FILEN#.queue/*}
 		mv $1 $KOMARU/$FILEN
-		mv /root/meta.txt $KOMARU/${FILEN}_meta.txt
+		mv ${INSTALL}/meta.txt $KOMARU/${FILEN}_meta.txt
 	fi
 else
 	echo "invalid file ${1}"

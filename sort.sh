@@ -1,8 +1,10 @@
 #!/bin/bash
-cd /var/www/sort; SORT="/var/www/sort"; DOWNLOAD="/var/www/downloads"; TRASH="/var/www/trash"; LAST=""
-#TR_TORRENT_DIR="/var/www/sort"
-#TR_TORRENT_NAME="SampleVideo_1280x720_2mb.mp4"
-TR_DOWNLOADS="/var/www/sort/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
+. /root/config.sh
+cd ${SORT}
+LAST=""
+#TR_TORRENT_DIR="${SORT}"
+#TR_TORRENT_NAME="Bleach"
+TR_DOWNLOADS="${SORT}/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
 # Function die with message
 die() { echo "$@" 1>&2 ; exit 1; }
 # Update downloading.txt if any changes
@@ -10,7 +12,7 @@ die() { echo "$@" 1>&2 ; exit 1; }
 if [ ! -f '/var/www/downloading.txt' ] || pidof -s retrieve.sh > 0; then
 	sleep 5
 fi
-#echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
+echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
 echo 'read downloading.txt' >> $SORT/log.txt
 while read line; do
@@ -72,7 +74,7 @@ while read line; do
 							echo "[${FILEN}]" $FILEN >> $SORT/log.txt
 						fi
 						# Set file title metadata
-						mkvpropedit "$FILEN" -e info -s title="$FTITLE" >> $SORT/log.txt
+						mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
 						# Move to downloads folder
 						filen=${FILEN//"/var/www/sort/"/}
 						echo $filen
@@ -91,21 +93,19 @@ while read line; do
 				echo "directory" >> $SORT/log.txt
 				echo $Basename >> $SORT/log.txt
 				# Rename variable to remove illegal characters
-				FILEN1=${Basename//[^a-zA-Z_0-9]/_}
+				FOLDER=${Basename//[^a-zA-Z_0-9]/_}
 				if [ -d "$FILEN" ]; then
 					# Rename folder to remove illegal characters
-					RENAME=${FILEN1/[^a-zA-Z_0-9]/_}
+					RENAME=${FOLDER/[^a-zA-Z_0-9]/_}
 					mv "$FILEN" "$SORT/$RENAME"
 					# Change working directory into folder
-					cd "$SORT/$FILEN1"
+					cd "$SORT/$FOLDER"
 					# If moved successfully into folder
 					if [ ! $(pwd) == $SORT ]; then
 						echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
 						echo "Working directory" $(pwd) >> $SORT/log.txt
-						# Move files into working directory [Max 1 subfolder]
-						mv ***/*.mkv "$SORT/$FILEN1";
-						mv ***/*.mp4 "$SORT/$FILEN1";
-						mv ***/*.avi "$SORT/$FILEN1";
+						# Move files into working directoryc
+						mv **/*.mkv "$SORT/$FOLDER";mv **/*.mp4 "$SORT/$FOLDER";mv **/*.avi "$SORT/$FOLDER"
 						mkdir -p "$TRASH/$MALID"
 						for file in *.mp4; do
 							# Change mp4 container
@@ -122,27 +122,8 @@ while read line; do
 								echo "MKV ${file}" >> $SORT/log.txt
 							fi
 						done
-						for file in *.avi; do
-							# Change avi container
-							if [[ $file == *"avi" ]]; then
-								echo "detect avi" >> $SORT/log.txt
-								ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
-								# Move file into trash/ID
-								mkdir -p "$TRASH/$MALID"
-								mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
-								# Update file to new file
-								file="${file}.mkv"
-								mv "$file" "${file//.avi/}" >> $SORT/log.txt
-								file=${file//.avi/}
-								echo "MKV " $file >> $SORT/log.txt
-							fi
-						done
 						for file in *.mkv; do
-							# Rename file to remove pipe
-							if [[ $file == *"|"* ]]; then
-								mv "${file}" "${file/|/}"; file=${file//|/};
-							fi
-							
+							music=0
 							# Move OP/ED files into trash folder
 							# filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$file")
 							# mv "${file}" "$SORT/$FILEN1/${filen}"
@@ -155,16 +136,18 @@ while read line; do
 									mv "$SORT/$FILEN1/${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
 								fi
 							done
-							# Set file title metadata
-							mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
-							# Move to downloads folder
-							FILE=${file///var/www/sort//}
-							mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
+							if [[ $music == 0 ]]; then
+								# Set file title metadata
+								mkvpropedit "${file}" -e info -s title="${FTITLE}" >> $SORT/log.txt
+								# Move to downloads folder
+								FILE=${file//${SORT}//}
+								mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
+							fi
 						done
 					else
-						echo "working directory failed change > $SORT/$FILEN1" >> $SORT/log.txt
+						echo "working directory failed change > $SORT/$FOLDER" >> $SORT/log.txt
 					fi
-					sleep 2
+					sleep 1
 					# Move folder into trash/ID
 					mv "$SORT/$FILEN1" "$TRASH/$MALID"
 					nohup /root/bot.sh sort >/dev/null 2>&1 &

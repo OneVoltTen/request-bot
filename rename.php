@@ -25,7 +25,7 @@
 		if ($handle = opendir($path)) {
 			chdir($path);
 			while (false !== ($fileName = readdir($handle))) {
-				if ($fileName != "." && $fileName != ".." && strtolower(substr($fileName, strrpos($fileName, '.') + 1)) == 'mp4' || strpos($fileName, '.mkv'))  {
+				if (strpos($fileName, '_encoded'))  {
 					$str = $fileName;
 					$newName = $str;
 
@@ -48,7 +48,7 @@
 					}
 					$newName = str_replace(".mkv", ".mp4", $newName);
 					$newName = str_replace(".mp4_encoded", "", str_replace(".mkv_encoded", "", str_replace(".avi_encoded", "", $newName)));
-					echo $fileName." => ".$newName."\n\n";
+					//echo $fileName." => ".$newName."\n\n";
 					rename($fileName, $newName);
 
 					unset($str);
@@ -131,7 +131,11 @@
 					$str = str_replace('(1)', '', $str);
 					$str = str_replace('(2)', '', $str);
 					$str = str_replace('(copy)', '', $str);
+					$str = str_replace('x264', '', $str);
+					$str = str_replace('856x480', '', $str);
 					$str = str_replace('x2', '', $str);
+					$str = str_replace('é', 'e', $str);
+					$str = str_replace('à', 'a', $str);
 
 					// Check if file name contains CRC32 and remove it
 					// Only works if crc32 is at end of filename
