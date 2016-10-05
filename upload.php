@@ -11,7 +11,7 @@ if(isset($argv[1])){
 define('DB_HOST', '185.52.2.96');
 define('DB_PASS', 'MaxumX8208G1!');
 
-include_once"app/config.php";
+@include_once"app/config.php";
 
 date_default_timezone_set("UTC");
 session_start();
@@ -86,7 +86,7 @@ try {
 
 	var_dump($upload);
 } catch (Exception $e) {
-	rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
+	rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['basename']);
 	/*
 	// If login exception move back file
 	rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
@@ -166,13 +166,7 @@ final class GwshareUploader
 		}
 
 		$json = json_decode($match[0]);
-		echo "one\n";
-		var_dump($json);
-		echo "two\n";
-		
-		if (in_array("Access denied for", $json)){
-			echo DB_HOST." refused connection\n";
-		}
+		//var_dump($json);
 		
 		return $json->short;
 	}
@@ -202,6 +196,7 @@ final class GwshareUploader
 			$result[] = $this->upload($source);
 		}
 		if(!empty($result)){
+			var_dump($result);
 			return $result;
 		}else{
 			die("Upload queue empty!\n");
@@ -223,7 +218,8 @@ final class GwshareUploader
 		$anime=$fn[0]; // prefix id
 		$crc32 = hash_file('crc32b', $source); // crc32
 		$filesize = filesize($source);
-		$basename1 = str_replace($fn[0], "", $basename);
+		$basename1 = strstr($basename, 'AnimePahe');
+		echo "upload ".str_replace("AnimePahe_","",$basename1)."...";
 		$_SESSION['crc32']=$crc32;
 		$_SESSION['anime']=$anime;
 		$_SESSION['source']=$source;
@@ -233,7 +229,7 @@ final class GwshareUploader
 		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
 			
 		}else{
-			$source=str_replace($fn[0], "", $source);// Remove prefix id from filename
+			$source="/var/www/encoded/".strstr($basename, 'AnimePahe');// Remove prefix id from filename
 			rename('/var/www/encoded/'.$basename, $source);
 			$basename = str_replace($fn[0], "", $basename);
 		}
