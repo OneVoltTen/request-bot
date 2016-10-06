@@ -7,7 +7,6 @@ countencoded=`ls -1 $ENCODED/*.mp4 2>/dev/null | wc -l`
 lastlog=`tail -1 ${INSTALL}/log.txt | head -1`
 
 ERW="execute retieve worker..."
-EUW="execute upload worker..."
 QCF="queue contain files..."
 ER="execute rename..."
 FR="ffmpeg running..."
@@ -16,7 +15,7 @@ FR="ffmpeg running..."
 SY="sabishī yo..."
 
 if [ $countencoded != 0 ]; then
-	echo "${EUW}" >> ${INSTALL}/log.txt;nohup php ${INSTALL}/upload.php >> ${INSTALL}/log.txt &
+	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt &
 fi
 
 if [[ $countsource != 0 ]]; then

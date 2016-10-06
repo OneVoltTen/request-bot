@@ -1,288 +1,130 @@
 <?php
-// commented out crc32 logic due to no error handling if connection interupted
 
 if(isset($argv[1])){
 	$_SESSION["test"] = $argv[1];
-	echo "\nTEST TEST TEST\n\n";
+	echo "\nTEST\n\n";
 	define('DB_HOST', '185.52.2.96');
 	define('DB_PASS', 'MaxumX8208G1!');
+	$uploadUrl = 'test';
+	$shortUrl = 'test';
 }
 
 define('DB_HOST', '185.52.2.96');
 define('DB_PASS', 'MaxumX8208G1!');
 
-@include_once"app/config.php";
+@include"app/config.php";
 
 date_default_timezone_set("UTC");
 session_start();
 
-// test database connection before upload
-mysqli_connect(DB_HOST,DB_USER,DB_PASS,DB_NAME) or die("Unable to connect to ".DB_HOST."\n");
-
-function urlExists($url=NULL){  
-    if($url == NULL) return false;  
-    $ch = curl_init($url);  
-    curl_setopt($ch, CURLOPT_TIMEOUT, 5);  
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);  
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  
-    $data = curl_exec($ch);  
-    $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);  
-    curl_close($ch);  
-	return $httpcode;
-}
-if(urlExists('nodefiles.com')==200 || urlExists('nodefiles.com')==0){
-	die("Nodefiles unavailable\n");
-}
-
-# Delete failed crc32 folder
-$dir = new DirectoryIterator(ENCODED);
-$counter = 0;
-foreach ($dir as $fileinfo) {
-	if ($fileinfo->isDir() && !$fileinfo->isDot()) {
-		//echo $fileinfo->getFilename()."\n";
-		if ($fileinfo->getFilename()=="00000000"){
-			rmdir('/var/www/encoded/00000000');
-		}else{
-		$counter++;
-		}
-	}
-}
-
-if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-	$uploadUrl = 'test';
-	$shortUrl = 'test';
-}else{
-	if($counter==1){
-		die("Max upload workers\n");
-	}
-}
-
-	//if file in dir != mkv,mp4,avi trash
-	$ar=array();
-	$g=array_diff(scandir('/var/www/encoded/'), array('..', '.'));
-	foreach($g as $x){
-		if(is_dir($x)){
-			$ar[$x]=scandir($x);
-		}else{
-			$ar[]=$x;
-		}
-	}
-	//var_dump($ar);
-	foreach($ar as &$itemx){//merge this with above loop
-		$supported = array('mkv','mp4','avi');
-		$ext = strtolower(pathinfo($itemx, PATHINFO_EXTENSION)); // Using strtolower to overcome case sensitive
-		if (in_array($ext, $supported) && is_file($itemx)) {
-			echo "Uploading ".$itemx."...\n";
-			rename('/var/www/encoded/'.$itemx, '/var/www/trash/'.$itemx);
-		}else{
-			//$itemx="";
-		}
-	}
+require_once"app/verify.php";
 
 try {
 	$uploader = new GwshareUploader(GWSHARE_USER, GWSHARE_PASS);
-
 	$upload	= $uploader->uploadBatch();
-
 	var_dump($upload);
 } catch (Exception $e) {
-	rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['basename']);
-	/*
-	// If login exception move back file
-	rename('/var/www/encoded/'.$_SESSION['crc32'].'/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['anime']."".$_SESSION['basename1']);
-	rmdir('/var/www/encoded/'.$_SESSION['crc32']);
-	*/
+	@rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['basename']);
 	die(var_dump($e->getMessage()));
-	
 }
 
-###############################################################################
-###############################################################################
-###############################################################################
+/* -- Nodefiles Uploader -- */
 
-/**
- * Gwshare Uploader.
- *
- * @author Ferri Sutanto <greenhouseprod@gmail.com> <http://ferrisutanto.com>
- *
- * @version 0.0.1
- */
-final class GwshareUploader
-{
-	const URL_SHORTURL				= 'https://lnjt.in/shorten';
-	const URL_LOGIN					 = 'https://nodefiles.com/';
-	const URL_LOGOUT					= 'https://nodefiles.com/?op=logout';
-	// const URL_UPLOAD					= 'https://p1.gwshare.com/cgi-bin/upload.cgi?upload_type=file';
-	const CODE_PARAMETER_TYPE_ERROR	 = 0x10020101;
-	const CODE_FILE_READ_ERROR		= 0x10010101;
-	const CODE_CURL_ERROR			 = 0x10040101;
-	const CODE_LOGIN_ERROR			= 0x10040201;
-	const CODE_UPLOAD_ERROR			 = 0x10040401;
-	const CODE_CURL_EXTENSION_MISSING = 0x10080101;
+	final class GwshareUploader{
+		const URL_SHORTURL				= 'https://lnjt.in/shorten';
+		const URL_LOGIN					 = 'https://nodefiles.com/';
+		const URL_LOGOUT					= 'https://nodefiles.com/?op=logout';
+		const CODE_PARAMETER_TYPE_ERROR	 = 0x10020101;
+		const CODE_FILE_READ_ERROR		= 0x10010101;
+		const CODE_CURL_ERROR			 = 0x10040101;
+		const CODE_LOGIN_ERROR			= 0x10040201;
+		const CODE_UPLOAD_ERROR			 = 0x10040401;
+		const CODE_CURL_EXTENSION_MISSING = 0x10080101;
 
-	protected $username;
-
-	protected $password;
-
-	protected $loggedIn = false;
-
-	protected $cookies = [];
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param string $username
-	 * @param $string $password
-	 */
-	public function __construct($username, $password)
-	{
-		// Check requirements
-		if (! extension_loaded('curl')) {
-			throw new Exception('GwshareUploader requires the cURL extension.', self::CODE_CURL_EXTENSION_MISSING);
-		}
-
-		if (empty($username) || empty($password)) {
-			throw new Exception((empty($username) ? 'Email' : 'Password').' must not be empty.', self::CODE_PARAMETER_TYPE_ERROR);
-		}
-
-		$this->username	= $username;
-		$this->password	= $password;
-	}
-
-	public function shorten($url)
-	{
-		$postData = [
-			'url'		 => $url,
-			'custom'		=> '',
-			'password'	=> '',
-			'description' => '',
-			'multiple'	=> 0,
-		];
-
-		$request = $this->request(self::URL_SHORTURL, $postData);
-
-		if (! preg_match('/{.*}/', $request, $match)) {
-			throw new Exception('Shorten url failed when processing: '.$url);
-		}
-
-		$json = json_decode($match[0]);
-		//var_dump($json);
+		protected $username;
+		protected $password;
+		protected $loggedIn = false;
+		protected $cookies = [];
 		
-		return $json->short;
-	}
-
-	public function uploadBatch()
-	{
+		public function uploadBatch(){
 		$ignoreFiles = [
 			'.gitignore',
 		];
-
 		$encodedFiles = [];
-
-		foreach (new DirectoryIterator(ENCODED) as $item) {
-			if (! $item->isDot()
-				&& $item->isFile()
-				&& ! in_array($item->getFilename(), $ignoreFiles)
-			) {
+		foreach (new DirectoryIterator(ENCODED) as $item){
+			if (! $item->isDot() && $item->isFile() && ! in_array($item->getFilename(), $ignoreFiles)){
 				$encodedFiles[$item->getMTime()] = $item->getPathname();
 			}
 		}
-
-		ksort($encodedFiles);
-
+		asort($encodedFiles);
 		foreach ($encodedFiles as $encodedFile) {
 			$source = $encodedFile;
-
 			$result[] = $this->upload($source);
 		}
 		if(!empty($result)){
-			var_dump($result);
+			//var_dump($result);
 			return $result;
 		}else{
 			die("Upload queue empty!\n");
 		}
 	}
 
-	public function upload($source)
-	{
-		if (! is_file($source) or ! is_readable($source)) {
+	public function upload($source){
+		if (! is_file($source) or !is_readable($source)) {
 			throw new Exception("File '$source' does not exist or is not readable.", self::CODE_FILE_READ_ERROR);
 		}
-
-###############################################################################
-###############################################################################
-###############################################################################
 		
-		$basename = basename($source); // filename
-		$fn=explode('AnimePahe', $basename, 2);
-		$anime=$fn[0]; // prefix id
-		$crc32 = hash_file('crc32b', $source); // crc32
+		$basename = basename($source);
+		$fn=explode(GROUP, $basename, 2);
+		$anime=$fn[0];
+		$crc32 = hash_file('crc32b', $source);
 		$filesize = filesize($source);
-		$basename1 = strstr($basename, 'AnimePahe');
-		echo "upload ".str_replace("AnimePahe_","",$basename1)."...";
+		
+		// verify
+		if(!isset($fn[0]) || empty($fn[0]) || empty($filesize) || $filesize == 0){
+			if (!file_exists(ENCODED.'/0/')) {
+				mkdir(ENCODED.'/0/');
+			}
+			echo "unknown id ".ENCODED.'/0/'.$anime.''.$basename."\n";
+			rename($source, ENCODED.'/0/'.$anime.''.$basename);
+			die();
+		}
+		
+		$basename1 = strstr($basename, GROUP);
+		echo "upload ".str_replace(GROUP."_","",$basename1)."...\n";
 		$_SESSION['crc32']=$crc32;
 		$_SESSION['anime']=$anime;
 		$_SESSION['source']=$source;
 		$_SESSION['basename']=$basename;
 		$_SESSION['basename1']=$basename1;
 		
-		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-			
-		}else{
-			$source="/var/www/encoded/".strstr($basename, 'AnimePahe');// Remove prefix id from filename
+		if(!isset($_SESSION["test"])){
+			$source="/var/www/encoded/".strstr($basename, GROUP);
 			rename('/var/www/encoded/'.$basename, $source);
 			$basename = str_replace($fn[0], "", $basename);
 		}
 		
-		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-			// Don't move to crc32 folder
-			$source="/var/www/encoded/".$basename;
-		}else{
-			/*
-			$source=str_replace("/var/www/encoded/", "/var/www/encoded/".$crc32."/", $source);
-			$basename=str_replace("/var/www/encoded/", $crc32."/", $basename);
-				// Move file to crc32 folder
-			mkdir('/var/www/encoded/'.$crc32, 0700, true);
-			rename('/var/www/encoded/'.$basename, '/var/www/encoded/'.$crc32."/".$basename);
-			
-			echo $source."\n";
-			echo $basename."\n";
-			*/
-		}
-###############################################################################
-###############################################################################
-###############################################################################
-		
-		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-			$uploadUrl = 'test';
-			$shortUrl = 'test';
-		}else{
+		if(!isset($_SESSION["test"])){
 			if (! $this->loggedIn) {
 				$this->login();
 			}
-
 			$getUploadPage = $this->getUploadPage();
-
-			$postData	 = [
-				'sess_id'	=> $this->loggedIn,
-				'utype'		=> $getUploadPage['utype'],
+			$postData = [
+				'sess_id' => $this->loggedIn,
+				'utype' => $getUploadPage['utype'],
 				'file_descr' => '',
-				'file_0'	 => $this->curlFileCreate($source),
+				'file_0' => $this->curlFileCreate($source),
 			];
-
 			$upload = $this->request($getUploadPage['formAction'], $postData);
-
 			if (! preg_match('/(?<=file_code\":\")\w+/', $upload, $match)) {
 				throw new Exception('Upload failed!', self::CODE_UPLOAD_ERROR);
 			}
-
-			// build url
 			$uploadUrl = 'https://nodefiles.com/'.$match[0];
 			$shortUrl = $this->shorten($uploadUrl);
-			
 			$shortUrl = str_replace("https://lnjt.in/", "", $shortUrl);
 		}
 		
+		//filename
 		$disc = "";
 		if (stripos($basename, "_BD_") !== false) {
 			$disc = "1";
@@ -302,8 +144,6 @@ final class GwshareUploader
 				}
 			}
 		}
-		
-		// Get resolution from filename if not set
 		if(!isset($resolution) && stripos($basename,'p_') !== false){
 			if(isset($end) && empty($end)){
 				$resolution = str_replace("_", "", $end);
@@ -317,20 +157,16 @@ final class GwshareUploader
 				
 			}
 		}
-
 		$dash = substr_count($basename, '_-_');
-
 		if (stripos($basename, "p_-__-.mkv") !== false) {
 			$dash = $dash - 1;
 		}
-		
 		$start = "_-_";
 		$namafile = $basename;
 		$ini = $this->strposX($basename, $start, $dash);
 		if ($ini == 0) return "";
 		$ini += strlen($start);
 		$len = strpos($namafile,$end,$ini) - $ini;
-
 		if (substr_count($basename, $start) == "0") {
 			$episode = "";
 		} else if (substr_count(strtoupper($basename), strtoupper("movie")) != "0") {
@@ -345,17 +181,11 @@ final class GwshareUploader
 		} else {
 			$episode = substr($namafile,$ini,$len);
 		}
-
 		if(substr($episode, -1) == '-' || substr($episode, -1) == '_' ) {
 			$episode = substr($episode, 0, -1);
 		}
-		
-		// Clean episode value
 		$episode = str_replace("BD", "", $episode);
 		$episode = str_replace("DVD", "", $episode);
-		
-
-		// Remove trailing
 		$episode = rtrim($episode, '_');
 		$episode = rtrim($episode, 'a');
 		$episode = rtrim($episode, 'b');
@@ -364,11 +194,8 @@ final class GwshareUploader
 		}else{
 			$episode = str_replace("_", "", $episode);
 		}
-		
-		// Clean episode value
 		$episode=preg_replace('/[_]+/','_',$episode);
 		$episode = str_replace("_", "", $episode);
-		
 		if (!is_numeric($episode) && stripos($episode, "-") == false) {
 			$match=0;
 			if(ctype_alpha($episode)){
@@ -394,20 +221,13 @@ final class GwshareUploader
 				}
 			}
 		}
-		
 		if (is_numeric($episode) && strlen($episode) == 1) {
 				$episode="0".$episode;
 		}
-		# Remove leading 0
 		if(substr($episode,0,1)==0 && strlen($episode) > 2){
 			$episode = substr($episode, 1);
 		}
 		
-
-###############################################################################
-###############################################################################
-###############################################################################
-
 		// Revision
 		$revision="";
 		$list = array("v0_", "v1_", "v2_", "v3_", "v4_", "v5_");
@@ -417,11 +237,7 @@ final class GwshareUploader
 				$revision=str_ireplace("v","",$revise);
 			}
 		}
-
-###############################################################################
-###############################################################################
-###############################################################################
-
+		
 		$fansub = "";
 		
 		$start = $end;
@@ -434,10 +250,7 @@ final class GwshareUploader
 		$fansub = substr($namafile,$ini,$len);
 		$fansub = str_replace("_", "", $fansub);
 
-###############################################################################
-###############################################################################
-###############################################################################
-		if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
+		if(isset($_SESSION["test"])){
 			echo "filename - ".$basename."\n";
 			echo "filesize - ".$filesize."\n";
 			echo "crc32 - ".$crc32."\n";
@@ -448,6 +261,20 @@ final class GwshareUploader
 			echo "resolution - ".$resolution."\n";
 			echo "disc - ".$disc."\n";
 		}else{
+			if(empty($filesize) || $filesize == 0 || empty($anime) || $anime == 0 || empty($upload_url) || empty($short_url)){
+				if(isset($filesize) && empty($filesize)){echo"invalid filesize\n";}
+				if(isset($anime) && empty($anime)){echo"invalid anime id\n";}
+				if(isset($upload_url) && empty($upload_url)){echo"invalid upload_url\n";}
+				if(isset($short_url) && empty($short_url)){echo"invalid short_url\n";}
+				
+				if (!file_exists(ENCODED.'/0/')) {
+					mkdir(ENCODED.'/0/');
+				}
+				echo "error ".ENCODED.'/0/'.$anime.''.$basename."\n";
+				rename($source, ENCODED.'/0/'.$anime.''.$basename);
+				die();
+			}
+			
 			$data = [
 				'filename'		=> $basename,
 				'filesize'		=> $filesize,
@@ -478,7 +305,7 @@ final class GwshareUploader
 						if (!file_exists(UPLOADED.'/'.$anime)) {
 							mkdir(UPLOADED.'/'.$anime);
 						}
-						echo UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
+						echo "upload success ".UPLOADED.'/'.$anime.'/'.$anime.''.$basename."\n";
 						@rename($source, UPLOADED.'/'.$anime.'/'.$anime.''.$basename);
 					}else{
 						@rename($source, UPLOADED.'/'.$anime.''.$source);
@@ -493,12 +320,40 @@ final class GwshareUploader
 
 			return $data;
 
-			sleep(4);
+			sleep(2);
 		}
 	}
 
-	protected function login()
+	public function __construct($username, $password)
 	{
+		if (! extension_loaded('curl')) {
+			throw new Exception('uploader require the cURL extension\n', self::CODE_CURL_EXTENSION_MISSING);
+		}
+		if (empty($username) || empty($password)) {
+			throw new Exception((empty($username) ? 'Email' : 'Password').' must not be empt\n.', self::CODE_PARAMETER_TYPE_ERROR);
+		}
+		$this->username	= $username;
+		$this->password	= $password;
+	}
+
+	public function shorten($url){
+		$postData = [
+			'url'=> $url,
+			'custom'=> '',
+			'password'=> '',
+			'description'=> '',
+			'multiple'=> 0,
+		];
+		$request = $this->request(self::URL_SHORTURL, $postData);
+		if (! preg_match('/{.*}/', $request, $match)) {
+			var_dump($json);
+			throw new Exception('shorten url failed: '.$url);
+		}
+		$json = json_decode($match[0]);
+		return $json->short;
+	}
+
+	protected function login(){
 		$postData = [
 			'login'	=> (string) $this->username,
 			'password' => (string) $this->password,
@@ -527,8 +382,7 @@ final class GwshareUploader
 		$this->loggedIn = $cookies['xfss'];
 	}
 
-	protected function getUploadPage()
-	{
+	protected function getUploadPage(){
 		if (! $this->loggedIn) {
 			$this->login();
 		}
@@ -553,8 +407,7 @@ final class GwshareUploader
 		return compact('formAction', 'utype');
 	}
 
-	protected function logout()
-	{
+	protected function logout(){
 		$data = $this->request(self::URL_LOGOUT);
 
 		if (! empty($data) && strpos($data, 'HTTP/1.1 302 FOUND') !== false) {
@@ -562,8 +415,7 @@ final class GwshareUploader
 		}
 	}
 
-	protected function request($url, $postData = null)
-	{
+	protected function request($url, $postData = null){
 		$ch = curl_init();
 
 		curl_setopt($ch, CURLOPT_URL, (string) $url);
@@ -598,7 +450,7 @@ final class GwshareUploader
 			throw new Exception($error, self::CODE_CURL_ERROR);
 		}
 
-		// Store received cookies
+		// store received cookies
 		preg_match_all('/Set-Cookie: ([^=]+)=(.*?);/i', $data, $matches, PREG_SET_ORDER);
 
 		foreach ($matches as $match) {
@@ -611,22 +463,16 @@ final class GwshareUploader
 	protected function curlFileCreate($file)
 	{
 		$filename = basename($file);
-
-		// PHP 5.5 introduced a CurlFile object that deprecates the old @filename syntax
-		// See: https://wiki.php.net/rfc/curl-file-upload
 		if (function_exists('curl_file_create')) {
-			// return curl_file_create($file, null, $filename);
 			return curl_file_create($file, "video/mp4", $filename);
 		}
-
 		// Use the old style if using an older version of PHP
 		$value = "@{$this->filename};filename=".$filename;
 
 		return $value;
 	}
 
-	protected function saveToDb(array $data)
-	{
+	protected function saveToDb(array $data){
 		try {
 			$db = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NAME.';charset=utf8', DB_USER, DB_PASS);
 
@@ -661,7 +507,7 @@ final class GwshareUploader
 
 			if ($data['disc'] !== "") {
 				$sql = 'UPDATE animes SET disc = :disc, published = :published, updated_at = :updated_at WHERE id = :anime';
-			} else if ($data['anime'] !== "")  {
+			} else {
 				$sql = 'UPDATE animes SET published = :published, updated_at = :updated_at WHERE id = :anime';
 			}
 
@@ -704,4 +550,5 @@ final class GwshareUploader
 			$this->logout();
 		}
 	}
+
 }

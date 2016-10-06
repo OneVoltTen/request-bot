@@ -6,11 +6,11 @@ echo "extract subtitle..."
 sub=$(mkvmerge -i "$i" | awk '$4=="subtitles"{print;exit}')
 if [[ $sub ]]; then
 	# Detect subtitle type
-	echo $sub
+	#echo $sub
 	ada_subtitle=true
 	if [[ $sub =~ "SubStationAlpha" ]] || [[ $sub =~ "S_TEXT/ASS" ]]; then
 		ext=ass
-	elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]] || [[ $sub =~ "VobSub" ]]; then
+	elif [[ $sub =~ "S_TEXT/UTF8" ]] || [[ $sub =~ "SubRip/SRT" ]]; then
 		ext=srt
 	elif [[ $sub =~ "PGS" ]] || [[ $sub =~ "S_HDMV/PGS" ]]; then
 		ext=pgs
@@ -18,10 +18,11 @@ if [[ $sub ]]; then
 	track=$(awk -F '[ :]' '{print $3}' <<< "$sub")
 	if (( $subtitle > 0 )); then
 		track=$((track+$subtitle))
+		echo $track;
 	fi
 	#echo $ext
 	#echo $track
 	mkvextract tracks "$i" "$track:${i}.${ext}" >> ${INSTALL}/log.txt
-	mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts/  >> ${INSTALL}/log.txt
+	#@mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts  >> ${INSTALL}/log.txt
 fi
-sleep 2
+sleep 1

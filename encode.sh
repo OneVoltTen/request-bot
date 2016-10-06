@@ -11,6 +11,10 @@ done
 
 for i in `ls -tr $QUEUE/*.mkv`;do
 	if [ -f $i ]; then
+		if [ $i == *"_encoded"* ]; then
+			echo "remove encoded file ${i}"
+			mv ${i} ${TRASH} -f
+		fi
 		filename=${i#${QUEUE}/*}
 		. ${INSTALL}/encode/resize.sh
 		. ${INSTALL}/encode/fonts.sh

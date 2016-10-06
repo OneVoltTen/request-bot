@@ -166,8 +166,8 @@
 							$anime=$fn[0];
 							//echo $anime."\n";
 						}else{
-							echo "id error\n";
-							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
+							echo "id not set [".$fileName."]\n";
+							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/000'.$fileName);
 						}
 						$fansub=$fn[1];
 						//$str = str_replace($fn[0], '', $str);
