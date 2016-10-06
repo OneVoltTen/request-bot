@@ -261,11 +261,9 @@ try {
 			echo "resolution - ".$resolution."\n";
 			echo "disc - ".$disc."\n";
 		}else{
-			if(empty($filesize) || $filesize == 0 || empty($anime) || $anime == 0 || empty($upload_url) || empty($short_url)){
-				if(isset($filesize) && empty($filesize)){echo"invalid filesize\n";}
-				if(isset($anime) && empty($anime)){echo"invalid anime id\n";}
-				if(isset($upload_url) && empty($upload_url)){echo"invalid upload_url\n";}
-				if(isset($short_url) && empty($short_url)){echo"invalid short_url\n";}
+			if(empty($filesize) || $filesize == 0 || empty($anime) || $anime == 0){
+				if(isset($filesize) && empty($filesize) || $filesize == 0){echo"invalid filesize\n";}
+				if(isset($anime) && empty($anime) || $anime == 0){echo"invalid anime id\n";}
 				
 				if (!file_exists(ENCODED.'/0/')) {
 					mkdir(ENCODED.'/0/');

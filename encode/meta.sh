@@ -5,7 +5,7 @@ if [[ -f $1 ]]; then
 	metaline=`sed -n "2{p;q;}" meta.txt`
 	if [[ $metaline == *"title="* && $metaline == *"|"* ]]; then
 		meta=${metaline//title=/}
-		echo $meta
+		#echo $meta
 		rm -f meta.txt
 	else
 		echo "invalid meta [title] => [${metaline}]"
@@ -18,3 +18,4 @@ else
 	echo "invalid file ${1}"
 fi
 rm -f meta.txt
+sleep .5
