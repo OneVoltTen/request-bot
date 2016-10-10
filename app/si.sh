@@ -2,6 +2,8 @@
 . /root/config.sh
 lastlog=`tail -1 ${INSTALL}/log_upload.txt | head -1`
 
+php ${INSTALL}/rename.php 2
+
 PIDS=`ps aux | grep ${1}.php | grep -v grep`
 if [ -z "$PIDS" ]; then
 	if [ "${1}" == "upload" ]; then

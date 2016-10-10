@@ -17,5 +17,5 @@ if [[ -f $1 ]]; then
 else
 	echo "invalid file ${1}"
 fi
-rm -f meta.txt
+#rm -f meta.txt
 sleep .5

@@ -9,7 +9,7 @@ TR_DOWNLOADS="${SORT}/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> 
 die() { echo "$@" 1>&2 ; exit 1; }
 # Update downloading.txt if any changes
 # If downloading.txt being updated
-if [ ! -f '/var/www/downloading.txt' ] || pidof -s retrieve.sh > 0; then
+if [ ! -f '/var/www/downloading.txt' ] || pidof -s retrieve.sh >> $SORT/log.txt; then
 	sleep 5
 fi
 echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
@@ -81,6 +81,7 @@ while read line; do
 						echo $FANSUB
 						echo $MALID
 						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
+						nohup php /root/app/sorted.php $MALID >> $SORT/log-sorted.txt &
 						nohup /root/bot.sh sort  >/dev/null 2>&1 &
 						#die "complete" >> $SORT/log.txt
 					fi
@@ -149,7 +150,8 @@ while read line; do
 					fi
 					sleep 1
 					# Move folder into trash/ID
-					mv "$SORT/$FILEN1" "$TRASH/$MALID"
+					mv $(pwd) "$TRASH/$MALID"
+					nohup php /root/app/sorted.php $MALID >> $SORT/log-sorted.txt &
 					nohup /root/bot.sh sort >/dev/null 2>&1 &
 					#die "complete" >> $SORT/log.txt
 				else

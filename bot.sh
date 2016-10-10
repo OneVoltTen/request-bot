@@ -14,6 +14,8 @@ EE="execute encode..."
 FR="ffmpeg running..."
 SY="sabishī yo..."
 
+nohup ${INSTALL}/app/retrieve.sh >> ${INSTALL}/log_retrieve.txt &
+
 if [ $countencoded != 0 ]; then
 	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt &
 fi
