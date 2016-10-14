@@ -1,10 +1,11 @@
-### AnimePahe Request System
+## AnimePahe Request System
 
 This request system is a web application linked to clients that automate downloading, encoding and uploading of video files. This system was designed to streamline the encoding procedure by easing common tasks, such as downloading, sorting, renaming, queueing, and uploading.
 
-## Under development
+## Maintained by OneVoltTen aka Yubikiri
 
-	This system is under development, the code is not fully tested and is still under revision.
+	This system is largely undocumented, contact the maintainer regarding setup.
+	Requires linux based system.
 
 ## Changes to be made
 
