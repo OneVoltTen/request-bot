@@ -1,4 +1,3 @@
-#!/bin/bash
 . /root/config.sh
 FILENAMEX=""
 die() { echo "$@" 1>&2 ; exit 1; }

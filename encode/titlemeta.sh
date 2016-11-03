@@ -20,8 +20,8 @@ if [[ $meta != *"Lavf"* ]]; then
 		else
 			subtitle=$subx
 		fi
-		echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]"
-		echo "${FILENAMEX} => [${audio_channel}] [${subtitle}]" >> ${INSTALL}/log.txt
+		echo "${FILENAMEX} => [$meta] => [${audio_channel}] [${subtitle}]"
+		echo "${FILENAMEX} => [$meta] => [${audio_channel}] [${subtitle}]" >> ${INSTALL}/log.txt
 	fi
 else
 	echo "CRITICAL > Lavf codec detected; unable to detect title meta [${FILENAMEX}]" >> ${INSTALL}/log.txt

@@ -53,5 +53,5 @@ while read line; do
 	else
 		echo "dupe line" >> $SORT/log.txt
 	fi # LAST
-done <../downloading.txt
+done < "$WWW/downloading.txt"
 echo "end" >> $SORT/log.txt

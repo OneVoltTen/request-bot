@@ -1,5 +1,6 @@
 cd ${INSTALL}
 SEP="FFMPEG start!"
+echo Track [A:$audio_channel] [S:$subtitle] [Scale:$scale]
 
 if [[ $sub =~ "SubStationAlpha" ]] || [[ $sub =~ "S_TEXT/ASS" ]]; then
 	echo "ASS subtitle ~ ${SEP}"

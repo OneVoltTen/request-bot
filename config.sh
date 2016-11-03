@@ -1,16 +1,16 @@
 #!/bin/bash
 
 INSTALL="/root"
-WWW="/var/www"
-DOWNLOAD="/var/www/downloads"
-SECOND="/var/www/downloads/.00" # inactive
-QUEUE="/var/www/queue"
-ENCODED="/var/www/encoded"
-UPLOADED="/var/www/uploaded"
-KOMARU="/var/www/komaru"
-SORT="/var/www/sort"
-LOG="/var/www/logs"
-TRASH="/var/www/trash"
+WWW="/media/yubikiri/bot"
+DOWNLOAD="$WWW/downloads"
+SECOND="$WWW/downloads/.00" # inactive
+QUEUE="$WWW/queue"
+ENCODED="$WWW/encoded"
+UPLOADED="$WWW/uploaded"
+KOMARU="$WWW/komaru"
+SORT="$WWW/sort"
+LOG="$WWW/logs"
+TRASH="$WWW/trash"
 GROUP="AnimePahe"
 
 cd ${INSTALL}

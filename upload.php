@@ -12,19 +12,19 @@ if(isset($argv[1])){
 //define('DB_HOST', '185.52.2.96');
 //define('DB_PASS', 'MaxumX8208G1!');
 
-@include"app/config.php";
+@include"/root/app/config.php";
 
 date_default_timezone_set("UTC");
 session_start();
 
-require_once"app/verify.php";
+require_once"/root/app/verify.php";
 
 try {
 	$uploader = new GwshareUploader(GWSHARE_USER, GWSHARE_PASS);
 	$upload	= $uploader->uploadBatch();
 	var_dump($upload);
 } catch (Exception $e) {
-	@rename('/var/www/encoded/'.$_SESSION['basename1'], '/var/www/encoded/'.$_SESSION['basename']);
+	@rename(ENCODED."/".$_SESSION['basename1'], ENCODED."/".$_SESSION['basename']);
 	die(var_dump($e->getMessage()));
 }
 
@@ -79,15 +79,23 @@ try {
 		$anime=$fn[0];
 		$crc32 = hash_file('crc32b', $source);
 		$filesize = filesize($source);
+
+		// <5MB abort upload
+		if($filesize<5000){
+			if (!file_exists(KOMARU.'/5mb')) {
+				mkdir(KOMARU.'/5mb');
+			}
+			rename($source, KOMARU.'/5mb/'.$anime.''.$basename);
+			die("filesize less than 5mb ".$basename."\n");
+		}
 		
 		// verify
 		if(!isset($fn[0]) || empty($fn[0]) || empty($filesize) || $filesize == 0){
-			if (!file_exists(ENCODED.'/0/')) {
-				mkdir(ENCODED.'/0/');
+			if (!file_exists(KOMARU.'/0')) {
+				mkdir(KOMARU.'/0');
 			}
-			echo "unknown id ".ENCODED.'/0/'.$anime.''.$basename."\n";
-			rename($source, ENCODED.'/0/'.$anime.''.$basename);
-			die();
+			rename($source, KOMARU.'/0/'.$anime.''.$basename);
+			die("unknown id ".KOMARU.'/0/'.$anime.''.$basename."\n");
 		}
 		
 		$basename1 = strstr($basename, GROUP);
@@ -99,8 +107,8 @@ try {
 		$_SESSION['basename1']=$basename1;
 		
 		if(!isset($_SESSION["test"])){
-			$source="/var/www/encoded/".strstr($basename, GROUP);
-			rename('/var/www/encoded/'.$basename, $source);
+			$source=ENCODED."/".strstr($basename, GROUP);
+			rename(ENCODED."/".$basename, $source);
 			$basename = str_replace($fn[0], "", $basename);
 		}
 		
@@ -296,7 +304,7 @@ try {
 				}
 
 				if(isset($_SESSION["test"]) && !empty($_SESSION["test"])){
-					@rename($source, '/var/www/downloads/'.$basename);
+					@rename($source, DOWNLOADS."/".$basename);
 					$_SESSION["test"]="";
 				}else{
 					if(isset($anime) && !empty($anime)){
@@ -309,7 +317,7 @@ try {
 						@rename($source, UPLOADED.'/'.$anime.''.$source);
 					}
 				}
-				//rmdir('/var/www/encoded/'.$crc32);
+				//rmdir(ENCODED."/".$crc32);
 				@unlink($source);
 			} else {
 				// delete file

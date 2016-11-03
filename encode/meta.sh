@@ -18,4 +18,4 @@ else
 	echo "invalid file ${1}"
 fi
 #rm -f meta.txt
-sleep .5
+sleep .2

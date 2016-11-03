@@ -19,7 +19,7 @@ if(urlExists('nodefiles.com')==200 || urlExists('nodefiles.com')==0){
 
 // verify file extension and contain group before upload
 $ar=array();
-$g=array_diff(scandir('/var/www/encoded/'), array('..', '.'));
+$g=array_diff(scandir(ENCODED."/"), array('..', '.'));
 foreach($g as $x){
 	if(is_dir($x)){
 		$ar[$x]=scandir($x);

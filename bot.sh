@@ -17,11 +17,11 @@ SY="sabishī yo..."
 nohup ${INSTALL}/app/retrieve.sh >> ${INSTALL}/log_retrieve.txt &
 
 if [ $countencoded != 0 ]; then
-	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt &
+	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt
 fi
 
 if [[ $countsource != 0 ]]; then
-	php /root/rename.php downloads  >> /root/log.txt; sleep 1
+	php /root/rename.php downloads >> /root/log.txt; sleep 1
 	if [ $countqueue == 0 ]; then
 		php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
 		echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1

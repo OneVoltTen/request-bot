@@ -1,7 +1,8 @@
 <?php
+	@require"/root/app/config.php";
 	# Move all non mkv/mp4/avi move to komaru folder
 	$ar=array();
-	$g=array_diff(scandir('/var/www/downloads/'), array('..', '.'));
+	$g=array_diff(scandir(DOWNLOADS."/"), array('..', '.'));
 	foreach($g as $x){
 		if(is_dir($x))$ar[$x]=scandir($x);
 		else $ar[]=$x;
@@ -10,7 +11,7 @@
 		$supported = array('mkv','mp4','avi');
 		$ext = strtolower(pathinfo($itemx, PATHINFO_EXTENSION));
 		if (!in_array($ext, $supported) && is_file($itemx)) {
-			rename('/var/www/downloads/'.$itemx, '/var/www/komaru/'.$itemx);
+			rename(DOWNLOADS."/".$itemx, KOMARU."/".$itemx);
 		}
 	}
 	
@@ -18,9 +19,9 @@
 
 	if(isset($argv[1])){
 		if($argv[1]=="downloads"||$argv[1]=="downloads"){
-			$path="/var/www/downloads/";
+			$path=DOWNLOADS."/";
 		}elseif($argv[1]=="2"){
-		$path = "/var/www/encoded/";
+		$path = ENCODED."/";
 
 		if ($handle = opendir($path)) {
 			chdir($path);
@@ -63,7 +64,7 @@
 		}elseif($argv[1]=="renametest"){
 			# Start renametest
 			
-			$path = "/var/www/uploaded/";
+			$path = UPLOADED."/";
 			if ($handle = opendir($path)) {
 				chdir($path);
 				while (false !== ($fileName = readdir($handle))) {
@@ -82,7 +83,7 @@
 				}
 			}
 
-			$path = "/var/www/downloads/";
+			$path = DOWNLOADS."/";
 			if ($handle = opendir($path)) {
 				chdir($path);
 			while (false !== ($fileName = readdir($handle))) {
@@ -106,12 +107,12 @@
 			# End renametest
 		
 		}elseif($argv[1]=="00"){
-			$path="/var/www/downloads/.00/";
+			$path=DOWNLOADS."/.00/";
 		}else{
 			$path=$argv[1];
 		}
 	}else{
-		$path="/var/www/downloads/.queue/";
+		$path=QUEUE."/";
 	}
 	if($handle=opendir($path)){
 		chdir($path);
@@ -167,7 +168,7 @@
 							//echo $anime."\n";
 						}else{
 							echo "id not set [".$fileName."]\n";
-							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/000'.$fileName);
+							rename(DOWNLOADS."/".$fileName, KOMARU."/0".$fileName);
 						}
 						$fansub=$fn[1];
 						//$str = str_replace($fn[0], '', $str);
@@ -178,7 +179,7 @@
 						# Both metadata methods have been disabled due to high ram usage
 						/*
 						echo "read meta => ".$fileName."\n";
-						$output = shell_exec('/root/meta.sh /var/www/downloads/'.$fileName);
+						$output = shell_exec('/root/meta.sh '.DOWNLOADS.'/'.$fileName);
 						echo "output => ".$output."\n";
 						if(strpos($output, '|') !== false){
 							$metadata=array_filter(explode('|', $output));
@@ -195,13 +196,13 @@
 						/*
 						require_once('/root/app/getid3/getid3.php');
 						$getID3=new getID3;
-						$path=realpath('/var/www/downloads/'.$fileName);
+						$path=realpath(DOWNLOADS.'/'.$fileName);
 						$ThisFileInfo=$getID3->analyze($path);
 						getid3_lib::CopyTagsToComments($ThisFileInfo);		$metadata=htmlentities(!empty($ThisFileInfo['comments_html']['title'])?implode('<br>',$ThisFileInfo['comments_html']['title']):chr(160));
 						$metadata=array_filter(explode('|', $metadata));
 						if(empty($metadata[0]) || empty($metadata[1])){
 							var_dump($metadata);
-							rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
+							rename(DOWNLOAS."/".$fileName, KOMARU."/".$fileName);
 							echo"CRITICAL > Metadata not set - ".$fileName."\n";
 						}else{# Set metadata
 							$anime=$metadata[0];
@@ -261,7 +262,7 @@
 								}
 							}
 							if($counter==0){
-								rename('/var/www/downloads/'.$fileName, '/var/www/komaru/'.$fileName);
+								rename(DOWNLOADS."/".$fileName, KOMARU."/".$fileName);
 								die("No fansub rewrite rule exists for ".$fileName."\n");
 							}elseif($counter>1){
 								echo"Counter ".$counter." over one fansub rewrite!\n";
