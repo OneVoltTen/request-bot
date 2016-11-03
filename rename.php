@@ -58,7 +58,7 @@
 			}
 			closedir($handle);
 		}
-		die('00end');
+		die('end2');
 		# End 2
 		}elseif($argv[1]=="renametest"){
 			# Start renametest
@@ -121,7 +121,7 @@
 
 				$str=$fileName;
 				if (strpos($str,'AnimePahe') !== false && strpos($str,'|AnimePahe|') == false){
-					echo "> ".$str." has been renamed before...\n";
+					//echo "> ".$str." has been renamed before...\n";
 				} else {
 					// Remove extension
 					$extension=substr($str,-3,3);
@@ -218,7 +218,7 @@
 						}
 						*/
 						// Remove fansub text
-						echo "Before fansub [".$str."]\n";
+						echo "Before fansub [ ".$str." ]\n";
 						$str=str_ireplace($fansub,'',$str);
 						$fansubpath='/root/app/fansub/'.$fansub.'.php';
 						$fansubpath=strtolower($fansubpath);

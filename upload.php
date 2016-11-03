@@ -9,8 +9,8 @@ if(isset($argv[1])){
 	$shortUrl = 'test';
 }
 
-define('DB_HOST', '185.52.2.96');
-define('DB_PASS', 'MaxumX8208G1!');
+//define('DB_HOST', '185.52.2.96');
+//define('DB_PASS', 'MaxumX8208G1!');
 
 @include"app/config.php";
 

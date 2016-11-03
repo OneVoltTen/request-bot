@@ -8,4 +8,4 @@ $fansub="HorribleSubs";
 //Mahoutsukai_no_Yome_-_Hoshi_Matsu_Hito
 $str=str_replace("Mahoutsukai_no_Yome_-_Hoshi_Matsu_Hito","Mahoutsukai_no_Yome",$str);
 $str=str_replace("The_Ancient_Magus'_Bride_-_Those_Awaiting_a_Star_-_","",$str);
-?>
+

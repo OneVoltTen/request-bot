@@ -6,11 +6,10 @@ LAST=""
 #TR_TORRENT_NAME="Bleach"
 TR_DOWNLOADS="${SORT}/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
 # Function die with message
-die() { echo "$@" 1>&2 ; exit 1; }
-# Update downloading.txt if any changes
-# If downloading.txt being updated
-if [ ! -f '/var/www/downloading.txt' ] || pidof -s retrieve.sh >> $SORT/log.txt; then
-	sleep 5
+die() { echo "$@" 1>&2; exit 1; }
+# Update downloading.txt if any changes, if downloading.txt being updated
+if pidof -s retrieve.sh >> $SORT/log.txt; then
+	sleep 10
 fi
 echo 'retrieve...' >> $SORT/log.txt; /root/app/retrieve.sh; sleep 1
 # Read each line in downloading.txt
@@ -19,7 +18,9 @@ while read line; do
 	if [[ ! $LAST == $line ]]; then
 		LAST=${line}
 		# Get meta between colon
-		FILEN=${line%:*:*:*:*:*}; Basename="${FILEN##*/}"; echo $line >> $SORT/log.txt; MALID=${line#*:*:*:*:*:}; VALUES=${line#*:}; TITLE=${VALUES%:*:*:*:*}; FANSUB1=${VALUES%:*:*:*}; FANSUB=${FANSUB1#*:}; NEXT1=${VALUES%:*}; NEXT=${NEXT1#*:*:}; AUDIO=${NEXT%:*}; SUB=${NEXT#*:}
+		FILEN=${line%:*:*:*:*:*}; Basename="${FILEN##*/}"; echo $line >> $SORT/log.txt; MALID=${line#*:*:*:*:*:}; VALUES=${line#*:}; FANSUB1=${VALUES%:*:*:*}; FANSUB=${FANSUB1#*:}; NEXT1=${VALUES%:*}; NEXT=${NEXT1#*:*:}; AUDIO=${NEXT%:*}; SUB=${NEXT#*:}
+		#TITLE=${VALUES%:*:*:*:*}; 
+		TITLE="Text"
 		# File meta title
 		FTITLE="$MALID|$TITLE|$FANSUB|$AUDIO|$SUB"; echo Filetitle $FTITLE >> $SORT/log.txt
 		# Verify meta colon count
@@ -33,130 +34,20 @@ while read line; do
 			done
 			die "invalid colon ${line}" >> $SORT/log.txt
 		else
-			# If file in working directory
 			if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
 				echo "file $FILEN" >> $SORT/log.txt
 				if [[ -f $FILEN ]]; then
-					echo "match!"; echo "match!" >> $SORT/log.txt; echo "$FILEN"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
-					#mediainfo --fullscan "$FILEN"
-					if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]]  || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
-						# Remove pipe if exist
-						if [[ $file == *"|"* ]]; then
-							mv "${FILEN}" "${FILEN/|/}"; file=${file//|/}
-						fi
-						if [[ $file == *" "* ]]; then
-							mv "${FILEN}" "${FILEN/ /_}"; file=${file// /_}
-						fi
-						# Change mp4 container
-						if [[ $FILEN == *".mp4" ]]; then
-							echo "detect mp4 [${FILEN}]" >> $SORT/log.txt
-							ffmpeg -i "${FILEN}" -vcodec copy -acodec copy "${FILEN}.mkv"; sleep 1
-							# Move file into trash/ID
-							mkdir -p "$TRASH/$MALID"
-							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
-							# Update filen to new file
-							FILEN="${FILEN}.mkv"
-							mv "$FILEN" "${FILEN//.mp4/}" >> $SORT/log.txt
-							FILEN=${FILEN//.mp4/}
-							echo "[${FILEN}]" $FILEN >> $SORT/log.txt
-						fi
-						# Change avi container
-						if [[ $FILEN == *".avi" ]]; then
-							echo "detect avi" >> $SORT/log.txt
-							ffmpeg -i "${FILEN}" -vcodec copy -acodec copy "${FILEN}.mkv"; sleep 1
-							# Move file into trash/ID
-							mkdir -p "$TRASH/$MALID"
-							mv "$FILEN" "$TRASH/$MALID" >> $SORT/log.txt
-							# Update filen to new file
-							FILEN="${FILEN}.mkv"
-							mv "$FILEN" "${FILEN//.avi/}" >> $SORT/log.txt
-							FILEN=${FILEN//.avi/}
-							echo "[${FILEN}]" $FILEN >> $SORT/log.txt
-						fi
-						# Set file title metadata
-						mkvpropedit "$file" -e info -s title="$FTITLE" >> $SORT/log.txt
-						# Move to downloads folder
-						filen=${FILEN//"/var/www/sort/"/}
-						echo $filen
-						echo $FANSUB
-						echo $MALID
-						mv "$FILEN" "${DOWNLOAD}/$MALID|$FANSUB|$filen"
-						nohup php /root/app/sorted.php $MALID >> $SORT/log-sorted.txt &
-						nohup /root/bot.sh sort  >/dev/null 2>&1 &
-						#die "complete" >> $SORT/log.txt
-					fi
+					CRC=`crc32 "$FILEN"`
+					mkdir "$SORT/$CRC"
+					mv "$FILEN" "$SORT/$CRC"
+					DIR="$SORT/$CRC"
+					source $INSTALL/app/sortx.sh >> $SORT/log.txt
 				else
 					echo 'no match' >> $SORT/log.txt
 				fi
 			sleep 2
 			else
-				# If file in subdirectory
-				echo "directory" >> $SORT/log.txt
-				echo $Basename >> $SORT/log.txt
-				# Rename variable to remove illegal characters
-				FOLDER=${Basename//[^a-zA-Z_0-9]/_}
-				if [ -d "$FILEN" ]; then
-					# Rename folder to remove illegal characters
-					RENAME=${FOLDER/[^a-zA-Z_0-9]/_}
-					mv "$FILEN" "$SORT/$RENAME"
-					# Change working directory into folder
-					cd "$SORT/$FOLDER"
-					# If moved successfully into folder
-					if [ ! $(pwd) == $SORT ]; then
-						echo "match!"; echo "id["$MALID"] title["$TITLE"] fansub["$FANSUB"] file["$FILEN"]" >> $SORT/log.txt
-						echo "Working directory" $(pwd) >> $SORT/log.txt
-						# Move files into working directoryc
-						mv **/*.mkv "$SORT/$FOLDER";mv **/*.mp4 "$SORT/$FOLDER";mv **/*.avi "$SORT/$FOLDER"
-						mkdir -p "$TRASH/$MALID"
-						for file in *.mp4; do
-							# Change mp4 container
-							if [[ $file == *"mp4" ]]; then
-								echo "detect mp4" >> $SORT/log.txt
-								ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
-								# Move file into trash/ID
-								mkdir -p "$TRASH/$MALID"
-								mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
-								# Update file to new file
-								file="${file}.mkv"
-								mv "$file" "${file//.mp4/}" >> $SORT/log.txt
-								file=${file//.mp4/}
-								echo "MKV ${file}" >> $SORT/log.txt
-							fi
-						done
-						for file in *.mkv; do
-							music=0
-							# Move OP/ED files into trash folder
-							# filen=$(sed 's/[^0-9A-Za-z_.]/ /g' <<< "$file")
-							# mv "${file}" "$SORT/$FILEN1/${filen}"
-							echo "${file,,}"
-							arr=('creditless' 'ending' 'opening' ' ncop' ' nced' ' op1' ' op 1' ' op01' ' op 01' ' op2' ' op 2' ' op02' ' op 02' ' op3' ' op 3' ' op03' ' op 03' ' op4' ' op 4' ' op04' ' op 04' ' =op5' ' op 5' ' op05' ' op 05' ' op6' ' op 6' ' op06' ' op 06' ' op7' ' op 7' ' op07' ' op 07' ' op8' ' op 8' ' op08' ' op 08' ' op9' ' op 9' ' op09' ' op 09' ' op10' ' op 10' ' op10' ' op 10' ' op11' ' op 11' ' op11' ' op 11' ' ed1' ' ed 1' ' ed01' ' ed 01' ' ed2' ' ed 2' ' ed02' ' ed 02' ' ed3' ' ed 3' ' ed03' ' ed 03' ' ed4' ' ed 4' ' ed04' ' ed 04' ' ed5' ' ed 5' ' ed05' ' ed 05' ' ed6' ' ed 6' ' ed06' ' ed 06' ' ed7' ' ed 7' ' ed07' ' ed 07' ' ed8' ' ed 8' ' ed08' ' ed 08' ' ed9' ' ed 9' ' ed09' ' ed 09' ' ed10' ' ed 10' ' ed 10' ' ed11' ' ed 11' ' ed 11')
-							for ((i = 0; i < ${#arr[@]}; i++)); do
-								if [[ ${file,,} == *${arr[$i]}*  ]]; then
-									echo "${file,,} - ${arr[$i]}"
-									echo "[${MALID}] ${file,,} => ${arr[$i]}" >> $SORT/log-music.txt
-									mv "$SORT/$FILEN1/${file}" "$TRASH/$MALID" >> $SORT/log-music.txt
-								fi
-							done
-							if [[ $music == 0 ]]; then
-								# Set file title metadata
-								mkvpropedit "${file}" -e info -s title="${FTITLE}" >> $SORT/log.txt
-								# Move to downloads folder
-								FILE=${file//${SORT}//}
-								mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> $SORT/log.txt
-							fi
-						done
-					else
-						echo "working directory failed change > $SORT/$FOLDER" >> $SORT/log.txt
-					fi
-					sleep 1
-					# Move folder into trash/ID
-					mv $(pwd) "$TRASH/$MALID"
-					nohup php /root/app/sorted.php $MALID >> $SORT/log-sorted.txt &
-					nohup /root/bot.sh sort >/dev/null 2>&1 &
-					#die "complete" >> $SORT/log.txt
-				else
-					echo "file $FILEN" >> $SORT/log.txt
-				fi # dir not exist
+				source $INSTALL/app/sortx.sh >> $SORT/log.txt
 			fi # files
 		fi # :
 	else

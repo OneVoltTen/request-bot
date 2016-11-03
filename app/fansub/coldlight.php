@@ -4,4 +4,4 @@ $str=str_ireplace('v0a','v0',$str);
 $str=str_ireplace('v1a','v1',$str);
 $str=str_ireplace('v2a','v2',$str);
 $str=str_ireplace('v3a','v3',$str);
-?>
+

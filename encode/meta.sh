@@ -10,7 +10,7 @@ if [[ -f $1 ]]; then
 	else
 		echo "invalid meta [title] => [${metaline}]"
 		FILEN=${1#${DOWNLOAD}/*}
-		FILEN=${FILEN#.queue/*}
+		FILEN=${FILEN#$QUEUE/*}
 		mv $1 $KOMARU/$FILEN
 		mv ${INSTALL}/meta.txt $KOMARU/${FILEN}_meta.txt
 	fi

@@ -1,4 +1,7 @@
 <?php
+
+define('DB_HOST','localhost');
+define('DB_PASS', 'MAXUMX8208G1');
 include"/root/app/config.php";
 
 if(!isset($argv[1])){die("undefined arg\n");}

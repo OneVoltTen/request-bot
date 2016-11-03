@@ -12,4 +12,4 @@ $data = array_shift(explode(']', $data));
 print($data)."\n";
 $str=str_ireplace($data,'',$str);
 
-?>
+
