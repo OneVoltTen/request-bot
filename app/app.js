@@ -5,7 +5,8 @@ var cheerio = require('cheerio');
 var Transmission = require('transmission');
 var transmission = new Transmission();
 var count=0;
-var url = 'https://beta.animepahe.com/devrequest/0';
+var url = 'http://localhost/request.php';
+// var url = 'https://beta.animepahe.com/devrequest/0';
 // https://www.nyaa.se/?page=view&tid=607865
 // https://bakabt.me/torrent/148508/07-ghost-720p-hatsuyuki
 
