@@ -2,13 +2,7 @@
 
 This request system is a web application linked to clients that automate downloading, encoding and uploading of video files. This system was designed to streamline the encoding procedure by easing common tasks, such as downloading, sorting, renaming, queueing, and uploading.
 
-## Maintained by OneVoltTen aka Yubikiri
-
-	This system is largely undocumented, contact the maintainer regarding setup.
-	Requires linux based system.
-
 ## Changes to be made
-
 	Move renamed files to folder, send to web interface:
 		Web interface to rename filenames:
 			Rename multiple files at once with rewrite rule.
@@ -17,4 +11,4 @@ This request system is a web application linked to clients that automate downloa
 
 ## Usage
 
-[Animepahe website](http://animepahe.com) after a user has submitted a request an admin will be notified. An admin will check the source files and define which track the correct subtitle and audio language are, then mark the request as accepted. [Dashboard](http://animepahe.com/dashboard) is used to monitor active requests. Depending on which client was marked to process the request, a manager must check the files renamed correctly before queuing them for encoding. After the encoded files have been uploaded and verfied the request will be marked as completed and user that requested it will be notified.
+[Website interface](http://animepahe.com/request) submitted a request, verified request and define which track for subtitle/audio, then accept. [Dashboard](http://animepahe.com/dashboard) monitor requests. After the encoded files have been uploaded and verfied the request will be marked as completed and user that requested it will be notified.
