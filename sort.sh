@@ -5,8 +5,6 @@ LAST=""
 #TR_TORRENT_DIR="${SORT}"
 #TR_TORRENT_NAME="Bleach"
 TR_DOWNLOADS="${SORT}/$TR_TORRENT_NAME"; echo "TR_DOWNLOADS > $TR_DOWNLOADS" >> $SORT/log.txt
-# Function die with message
-die() { echo "$@" 1>&2; exit 1; }
 # Update downloading.txt if any changes, if downloading.txt being updated
 if pidof -s retrieve.sh >> $SORT/log.txt; then
 	sleep 10

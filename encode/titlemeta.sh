@@ -5,7 +5,6 @@ metaa=`${INSTALL}/encode/meta.sh $QUEUE/$FILENAMEX`
 meta=${metaa#*|*|*|}
 subx=${meta#*|}; audio=${meta%|*}
 function is_int() { return $(test "$@" -eq "$@" > /dev/null 2>&1); }
-
 if [[ $meta != *"Lavf"* ]]; then
 	if [[ ! $subx -eq $subx && ! $audio -eq $audio ]]; then
 		die "meta failed - ${meta}" >> ${INSTALL}/log.txt

@@ -13,4 +13,6 @@ LOG="$WWW/logs"
 TRASH="$WWW/trash"
 GROUP="AnimePahe"
 
+die() { echo "$@" 1>&2 ; exit 1; }
+
 cd ${INSTALL}
