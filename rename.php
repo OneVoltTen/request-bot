@@ -289,29 +289,22 @@
 						$resolution="720p";
 					}
 					
-					// Replaces final
-					$str=str_ireplace('final','',$str);
-
-					// Replaces 24fps
-					$str=str_ireplace('24fps','',$str);
-					
 					// Replaces multiple spaces with a space
 					$str=preg_replace('/\s+/',' ',$str);
-
 					// Replaces all spaces with an underscore
 					$str=str_replace(' ','_',$str);
-
 					// Replaces long dash with normal dash
 					$str=str_replace('‒','-',$str);
-
 					// Replaces all & with an "and"
 					$str=str_replace('&','and',$str);
-					
 					// Remove delimiter
 					$dash=substr_count($str,'_-_');
-
 					// Replaces all weird characters with an underscore
 					$str=preg_replace('/[^A-Za-z0-9@\_+.,-]/','_',$str);
+
+					$str=str_ireplace('final','',$str);
+					$str=str_ireplace('24fps','',$str);
+					$str=str_ireplace('dual_audio','',$str);
 
 					// Check BD version
 					if (strpos($str,'_BD')==true || stripos($str,'bluray')==true || stripos($str,'blu-ray')==true || stripos($str,'bdrip')==true || stripos($str,'brip')==true || stripos($str,'brrip')==true || stripos($str,'bray')==true){

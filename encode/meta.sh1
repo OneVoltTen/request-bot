@@ -1,0 +1,16 @@
+#!/bin/bash
+. /root/config.sh
+if [[ -f $1 ]]; then
+	id=4
+	curl -s 'http://localhost/request.php' | python -c "import json,sys;obj=json.load(sys.stdin);print obj[0]['id']"
+
+	#if [[ meta unknown ]]; then
+	#	FILEN=${1#${DOWNLOAD}/*}
+	#	FILEN=${FILEN#$QUEUE/*}
+	#	mv $1 $KOMARU/$FILEN
+	#fi
+else
+	echo "invalid file ${1}"
+fi
+#rm -f meta.txt
+sleep .2

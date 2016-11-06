@@ -1,20 +1,15 @@
 . /root/config.sh
 
-# Retrieve file
-for i in `ls -tr $QUEUE/*.mkv | sort -rh`; do
-	FILENAMEX=${i#*${QUEUE}/}
-done
-
-
 for i in `ls -tr $QUEUE/*.mkv`;do
+	# Retrieve file
+	for i in `ls -tr $QUEUE/*.mkv | sort -rh`; do
+		FILENAMEX=${i#*${QUEUE}/}
+	done
 	if [ -f $i ]; then
-		if [ $i == *"_encoded"* ]; then
-			echo "remove encoded file ${i}"
-			mv ${i} ${TRASH} -f
-		fi
-		# Retrieve file meta
-		. ${INSTALL}/encode/titlemeta.sh
 		filename=${i#${QUEUE}/*}
+		animeid=${filename%AnimePahe*}
+		#echo $animeid
+		. ${INSTALL}/encode/titlemeta.sh
 		. ${INSTALL}/encode/resize.sh
 		. ${INSTALL}/encode/fonts.sh
 		. ${INSTALL}/encode/ffmpeg.sh
@@ -23,16 +18,15 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 		mv ${LOG}/progress.txt ${LOG}/progress_$(date +%F_%H-%M).txt
 		# Remove temp subtitle file after processing
 		rm -rf ${INSTALL}/.fonts/*
-		echo "move to encoded folder..."
-		mv ${i}_encoded.mp4 ${ENCODED} -f
-		# If file moved to encoded folder
-		count=`ls -1 $ENCODED/*_encoded.mp4 2>/dev/null | wc -l`
-		# If file not moved to encode folder
+		echo "move to verify folder..."
+		mv ${i}.mp4 ${VERIFY} -f
+		# trash
 		if [[ ${FILENAMEX%${GROUP}*} > 0 ]];then
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%${GROUP}*}"; mv $i "${TRASH}/${FILENAMEX%${GROUP}*}" -f
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
+		unset i;unset filename;unset animeid;unset metaa;unset meta;unset subx;unset audio;unset FILENAMEX;unset FILENAMEXX;unset Basename;unset ext;unset count;
 	fi
 done
 # Remove temp file

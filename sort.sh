@@ -16,11 +16,11 @@ while read line; do
 	if [[ ! $LAST == $line ]]; then
 		LAST=${line}
 		# Get meta between colon
-		FILEN=${line%:*:*:*:*:*}; Basename="${FILEN##*/}"; echo $line >> $SORT/log.txt; MALID=${line#*:*:*:*:*:}; VALUES=${line#*:}; FANSUB1=${VALUES%:*:*:*}; FANSUB=${FANSUB1#*:}; NEXT1=${VALUES%:*}; NEXT=${NEXT1#*:*:}; AUDIO=${NEXT%:*}; SUB=${NEXT#*:}
+		FILEN=${line%:*:*:*:*:*}; Basename="${FILEN##*/}"; FILEN="${SORT}/${Basename}"; MALID=${line#*:*:*:*:*:}; VALUES=${line#*:}; FANSUB1=${VALUES%:*:*:*}; FANSUB=${FANSUB1#*:}; NEXT1=${VALUES%:*}; NEXT=${NEXT1#*:*:}; AUDIO=${NEXT%:*}; SUB=${NEXT#*:}
 		#TITLE=${VALUES%:*:*:*:*}; 
 		TITLE="Text"
 		# File meta title
-		FTITLE="$MALID|$TITLE|$FANSUB|$AUDIO|$SUB"; echo Filetitle $FTITLE >> $SORT/log.txt
+		FTITLE="$MALID|$TITLE|$FANSUB|$AUDIO|$SUB"
 		# Verify meta colon count
 		colon_count=$(grep -o ":" <<< "$line" | wc -l)
 		if [[ ! $colon_count == 5 ]]; then
@@ -34,18 +34,22 @@ while read line; do
 		else
 			if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
 				echo "file $FILEN" >> $SORT/log.txt
-				if [[ -f $FILEN ]]; then
+				if [[ -f "$FILEN" ]]; then
 					CRC=`crc32 "$FILEN"`
 					mkdir "$SORT/$CRC"
 					mv "$FILEN" "$SORT/$CRC"
 					DIR="$SORT/$CRC"
 					source $INSTALL/app/sortx.sh >> $SORT/log.txt
 				else
-					echo 'no match' >> $SORT/log.txt
+					echo "no match [file] $FILEN" >> $SORT/log.txt
 				fi
-			sleep 2
+				sleep 1
 			else
-				source $INSTALL/app/sortx.sh >> $SORT/log.txt
+				if [[ -d "$FILEN" ]]; then
+					source $INSTALL/app/sortx.sh >> $SORT/log.txt
+				else
+					echo "no match [directory] $FILEN" >> $SORT/log.txt
+				fi
 			fi # files
 		fi # :
 	else

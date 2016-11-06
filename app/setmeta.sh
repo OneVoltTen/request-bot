@@ -1,12 +1,12 @@
 #!/bin/bash
 . /root/config.sh
 
-cd /var/www/sort/
-meta="666|title|Fansub|1|1"
+cd "/media/yubikiri/bot/sort/this"
+meta="405|title|fansub|0|0"
 
 for file in *.mkv; do
 	if [[ -f $file ]]; then
-		ffmpeg -i "$file" -metadata title="$meta" -c copy -map 0 "/var/www/queue/$file"
+		ffmpeg -i "$file" -metadata title="$meta" -c copy -map 0 "/media/yubikiri/bot/queue/$file"
 	fi
 done
 

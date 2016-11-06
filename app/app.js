@@ -5,7 +5,7 @@ var cheerio = require('cheerio');
 var Transmission = require('transmission');
 var transmission = new Transmission();
 var count=0;
-var url = 'http://localhost/request.php';
+var url = 'https://animepahe.com/request.php';
 // var url = 'https://beta.animepahe.com/devrequest/0';
 // https://www.nyaa.se/?page=view&tid=607865
 // https://bakabt.me/torrent/148508/07-ghost-720p-hatsuyuki
@@ -33,7 +33,7 @@ function getTorrentFile(url, cb) {
         });
     }
     function getNyaa() {
-		if (url.href.indexOf("page=download") == -1){
+		if (url.href.indexOf("page=download") == -1){8
 			return cb(null, 'https://www.nyaa.se/?page=download&tid=' + url.query.tid);
 		}else{
 			return cb(null, url.href);
@@ -54,7 +54,7 @@ getTorrentsToDL(function(err, torrents) {
     if (err) throw err;
     torrents.forEach(function(torrent) {
 		//console.log(torrent);
-		if(torrent.id) {
+		if(torrent.id && torrent.hidden==0) {
 			count++;
 			//console.log('MAL: ' + torrent.id + ' Title: ' + torrent.title);
 			var torarray = torrent.url.split("\r\n");
@@ -65,10 +65,10 @@ getTorrentsToDL(function(err, torrents) {
 					getTorrentFile(torarray[index], function(err, torrentFileUrl) {
 						var urlt = torrentFileUrl;
 						console.log('id: ' + torrent.id + ' title: ' + torrent.title + ' fansub: ' + torrent.fansub + ' audio: ' + torrent.audio + ' sub: ' + torrent.sub + ' url: ' + urlt);
-						transmission.addUrl(torrentFileUrl, {"download-dir": "/media/yubikiri/storage/bot/sort"}, function(err, arg) {
+						transmission.addUrl(torrentFileUrl, {"download-dir": "/media/yubikiri/bot/sort"}, function(err, arg) {
 							if (err) {throw err;process.exit(1);}
-							fs.appendFile('/media/yubikiri/bot/downloading.txt', '/media/yubikiri/storage/bot/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
-								if (err) {throw err;process.exit(1);}
+							fs.appendFile('/media/yubikiri/bot/downloading.txt', '/media/yubikiri/bot/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
+								if (err) {console.log("error!");throw err;process.exit(1);}
 							});
 						});
 					});
@@ -76,9 +76,5 @@ getTorrentsToDL(function(err, torrents) {
 			}
 		}
 	});
-    /* unnecessary
-    if(count){
-		process.stdout.write(count + " request found\n");
-	}
-	*/
+	process.stdout.write(count + " request(s) found\n");
 });
