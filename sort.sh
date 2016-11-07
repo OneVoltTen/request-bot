@@ -39,14 +39,14 @@ while read line; do
 					mkdir "$SORT/$CRC"
 					mv "$FILEN" "$SORT/$CRC"
 					DIR="$SORT/$CRC"
-					source $INSTALL/app/sortx.sh >> $SORT/log.txt
+					source $INSTALL/sort/sortx.sh >> $SORT/log.txt
 				else
 					echo "no match [file] $FILEN" >> $SORT/log.txt
 				fi
 				sleep 1
 			else
 				if [[ -d "$FILEN" ]]; then
-					source $INSTALL/app/sortx.sh >> $SORT/log.txt
+					source $INSTALL/sort/sortx.sh >> $SORT/log.txt
 				else
 					echo "no match [directory] $FILEN" >> $SORT/log.txt
 				fi

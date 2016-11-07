@@ -1,5 +1,9 @@
 <?php
 	@require"/root/app/config.php";
+
+	$running = exec("ps aux|grep ". basename(__FILE__) ."|grep -v grep|wc -l");
+	if($running > 1) {die("rename already running");}
+
 	# Move all non mkv/mp4/avi move to komaru folder
 	$ar=array();
 	$g=array_diff(scandir(DOWNLOADS."/"), array('..', '.'));
@@ -167,8 +171,8 @@
 							$anime=$fn[0];
 							//echo $anime."\n";
 						}else{
-							echo "id not set [".$fileName."]\n";
 							rename(DOWNLOADS."/".$fileName, KOMARU."/0".$fileName);
+							echo "id not set [".$fileName."]\n";
 						}
 						$fansub=$fn[1];
 						//$str = str_replace($fn[0], '', $str);
@@ -263,7 +267,7 @@
 							}
 							if($counter==0){
 								rename(DOWNLOADS."/".$fileName, KOMARU."/".$fileName);
-								die("No fansub rewrite rule exists for ".$fileName."\n");
+								echo"No fansub rewrite rule exists for ".$fileName."\n";
 							}elseif($counter>1){
 								echo"Counter ".$counter." over one fansub rewrite!\n";
 							}
@@ -390,6 +394,7 @@
 					$str=str_ireplace('h_265','',$str);
 					$str=str_ireplace('x265','',$str);
 					$str=str_ireplace('hevc','',$str);
+					$str=str_ireplace('xvid','',$str);
 
 					// Removes audio codec
 					$str=str_ireplace('aac','',$str);
@@ -398,6 +403,13 @@
 					$str=str_ireplace('opus','',$str);
 					$str=str_ireplace('ogg','',$str);
 					$str=str_ireplace('vorbis','',$str);
+
+					// Removes fansub(s)
+					$str = str_replace('-fansubs', '', $str);
+					$str = str_replace('fansubs', '', $str);
+					$str = str_replace('fansub', '', $str);
+					$str = str_replace('_copy', '', $str);
+					$str = str_replace('_remastered', '', $str);
 
 					// Removes tv station
 					$str=str_ireplace('BS11','',$str);

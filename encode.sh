@@ -19,14 +19,14 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 		# Remove temp subtitle file after processing
 		rm -rf ${INSTALL}/.fonts/*
 		echo "move to verify folder..."
-		mv ${i}.mp4 ${VERIFY} -f
+		mv ${i}_encoded.mp4 ${VERIFY} -f
 		# trash
-		if [[ ${FILENAMEX%${GROUP}*} > 0 ]];then
+		if [[ ${FILENAMEX%${GROUP}*} > 0 ]]; then
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%${GROUP}*}"; mv $i "${TRASH}/${FILENAMEX%${GROUP}*}" -f
 		else
 			echo "no id set"; echo "move to trash..."; mv $i ${TRASH} -f
 		fi
-		unset i;unset filename;unset animeid;unset metaa;unset meta;unset subx;unset audio;unset FILENAMEX;unset FILENAMEXX;unset Basename;unset ext;unset count;
+		unset i;unset filename;unset animeid;unset metaa;unset meta;unset audio;unset FILENAMEX;unset FILENAMEXX;unset Basename;unset ext;unset count
 	fi
 done
 # Remove temp file

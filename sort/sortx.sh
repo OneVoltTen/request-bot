@@ -31,6 +31,21 @@ if [[ $(pwd) != $SORT ]]; then
 			echo "MKV ${file}" >> $SORT/log.txt
 		fi
 	done
+	for file in *.avi; do
+		# Change avi container
+		if [[ $file == *"avi" ]]; then
+			echo "detect avi" >> $SORT/log.txt
+			ffmpeg -i $file -vcodec copy -acodec copy $file.mkv; sleep 1
+			# Move file into trash/ID
+			mkdir -p "$TRASH/$MALID"
+			mv "$file" "$TRASH/$MALID" >> $SORT/log.txt
+			# Update file to new file
+			file="${file}.mkv"
+			mv "$file" "${file//.avi/}" >> $SORT/log.txt
+			file=${file//.avi/}
+			echo "MKV ${file}" >> $SORT/log.txt
+		fi
+	done
 	for file in *.mkv; do
 		music=0
 		# Move OP/ED files into trash folder
@@ -61,6 +76,6 @@ else
 	echo "working directory failed change > $SORT/$FOLDER" >> $SORT/log.txt
 fi
 sleep 1
-nohup php /root/app/sorted.php $MALID >> $SORT/log-sorted.txt &
+nohup php /root/sort/sorted.php $MALID >> $SORT/log-sorted.txt &
 nohup /root/bot.sh sort >/dev/null 2>&1 &
 #die "complete" >> $SORT/log.txt

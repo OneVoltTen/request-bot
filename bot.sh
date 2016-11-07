@@ -10,6 +10,7 @@ ERW="execute retieve worker..."
 QCF="queue contain files..."
 ER="execute rename..."
 FR="ffmpeg running..."
+PR="php running..."
 EE="execute encode..."
 FR="ffmpeg running..."
 SY="sabishī yo..."
@@ -20,17 +21,14 @@ if [ $countencoded != 0 ]; then
 	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt
 fi
 
-if [[ $countsource != 0 ]]; then
+if [[ $countsource != 0 || $countqueue == 0 ]]; then
 	php /root/rename.php downloads >> /root/log.txt; sleep 1
-	if [ $countqueue == 0 ]; then
+	if [[ $countqueue==0 ]]; then
 		php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
-		echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
-		if pidof -s ffmpeg > /dev/null; then
-			if [[ ! $lastlog == "${FR}" ]]; then
-				echo "${FR}" >> ${INSTALL}/log.txt
-			fi
+		if pidof -s php > /dev/null; then
+			echo "${PR}"
 		else
-			echo "${EE}" >> ${INSTALL}/log.txt; nohup ${INSTALL}/encode.sh >> ${INSTALL}/log.txt &
+			echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
 		fi
 	else
 		if [[ ! $lastlog == "${QCF}" ]]; then
@@ -53,5 +51,19 @@ elif [[ $countqueue != 0 ]]; then
 else
 	if [[ ! $lastlog == "${SY}" ]]; then
 		echo "${SY}" >> ${INSTALL}/log.txt
+	fi
+fi
+
+if ! pgrep ffmpeg >/dev/null; then
+	if [[ ! $lastlog == "${FR}" ]]; then
+		echo "${FR}" >> ${INSTALL}/log.txt
+	fi
+else
+	sleep 15
+	if ! pidof ffmpeg >/dev/null; then
+		sleep 10
+		if ! pidof ffmpeg >/dev/null; then
+			echo "${EE}" >> ${INSTALL}/log.txt; nohup ${INSTALL}/encode.sh >> ${INSTALL}/log.txt &
+		fi
 	fi
 fi
