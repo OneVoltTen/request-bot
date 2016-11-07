@@ -21,32 +21,18 @@ if [ $countencoded != 0 ]; then
 	nohup ${INSTALL}/app/si.sh upload >> ${INSTALL}/log_upload.txt
 fi
 
-if [[ $countsource != 0 || $countqueue == 0 ]]; then
-	php /root/rename.php downloads >> /root/log.txt; sleep 1
-	if [[ $countqueue==0 ]]; then
-		php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
-		#if pidof -s php > /dev/null; then
-		#	echo "${PR}"
-		#else
-		#	echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
-		#fi
-	else
-		if [[ ! $lastlog == "${QCF}" ]]; then
-			echo "${QCF}" >> ${INSTALL}/log.txt
-		fi
-	fi
-elif pidof -s ffmpeg > /dev/null; then
-	if [[ ! $lastlog == "${FR}" ]]; then
-		echo "${FR}" >> ${INSTALL}/log.txt
-	fi
+if $countsource != 0; then
+	nohup  php ${INSTALL}/rename.php downloads >> ${INSTALL}/log.txt &
+fi
+
+if [[ pidof -s ffmpeg > /dev/null && ! $lastlog == "${FR}" ]]; then
+	echo "${FR}" >> ${INSTALL}/log.txt
 elif [[ $countqueue != 0 ]]; then
-	sleep 15
+	sleep 10
 	if pidof -s ffmpeg > /dev/null; then
 		echo "${FR}"
 	else
-		if [[ ! $lastlog == "${QCF}" ]]; then
-			echo "${QCF}" >> ${INSTALL}/log.txt
-		fi
+		nohup ${INSTALL}/encode.sh >> ${INSTALL}/log.txt &
 	fi
 else
 	if [[ ! $lastlog == "${SY}" ]]; then
