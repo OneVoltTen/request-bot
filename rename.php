@@ -126,7 +126,8 @@
 
 				$str=$fileName;
 				if (strpos($str,'AnimePahe') !== false && strpos($str,'|AnimePahe|') == false){
-					//echo "> ".$str." has been renamed before...\n";
+					echo "> ".$str." has been renamed before... moving\n";
+					rename(DOWNLOADS."/".$fileName, QUEUE."/".$fileName);
 				} else {
 					// Remove extension
 					$extension=substr($str,-3,3);
@@ -471,6 +472,7 @@
 					$newName=$str;
 					echo $fileName." =>\n".$newName."\n";
 					rename($fileName,$newName);
+					rename(DOWNLOADS."/".$newName, QUEUE."/".$newName);
 
 					unset($str);
 					unset($disc);

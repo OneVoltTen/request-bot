@@ -25,11 +25,11 @@ if [[ $countsource != 0 || $countqueue == 0 ]]; then
 	php /root/rename.php downloads >> /root/log.txt; sleep 1
 	if [[ $countqueue==0 ]]; then
 		php ${INSTALL}/rename.php downloads  >> ${INSTALL}/log.txt; sleep 1
-		if pidof -s php > /dev/null; then
-			echo "${PR}"
-		else
-			echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
-		fi
+		#if pidof -s php > /dev/null; then
+		#	echo "${PR}"
+		#else
+		#	echo "${ER}" >> ${INSTALL}/log.txt; mv ${DOWNLOAD}/*.mkv ${QUEUE}; sleep 1
+		#fi
 	else
 		if [[ ! $lastlog == "${QCF}" ]]; then
 			echo "${QCF}" >> ${INSTALL}/log.txt
