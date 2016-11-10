@@ -1,0 +1,19 @@
+#!/bin/bash
+. /root/app/config.sh
+
+ffmpeg -i "$1" -f ffmetadata meta.txt
+metaline=`sed -n "2{p;q;}" meta.txt`
+sleep .5
+if [[ $metaline == *"title="* && $metaline == *"|"* ]]; then
+	meta=${metaline//title=/}
+	echo $meta
+	sleep .5
+	rm -f meta.txt
+else
+	echo "invalid meta [title] => [${metaline}]"
+	FILEN=${1#${DOWNLOAD}/*}
+	FILEN=${FILEN#$QUEUE/*}
+	mv $1 $KOMARU/$FILEN
+	mv ${INSTALL}/meta.txt $KOMARU/${FILEN}_meta.txt
+fi
+rm -f meta.txt

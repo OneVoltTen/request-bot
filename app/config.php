@@ -12,7 +12,8 @@ define('GWSHARE_PASS', 'Anime');
 define('WWW', '/media/yubikiri/bot');
 define('DOWNLOADS', WWW.'/downloads');
 define('QUEUE', WWW.'/queue');
-define('ENCODED', WWW.'/encoded');
+define('VERIFY', WWW.'/verify');
+define('UPLOAD', WWW.'/upload');
 define('UPLOADED', WWW.'/uploaded');
 define('KOMARU', WWW.'/komaru');
 

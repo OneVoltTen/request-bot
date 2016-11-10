@@ -1,4 +1,4 @@
-tail -f /root/log.txt # Main
-tail -f /var/www/logs/progress.txt # Encode
-tail -f /var/www/downloading.txt # Devrequest
-tail -f /var/www/sort/log.txt # Sort
+tail -f /root/log/main.log # Main
+tail -f /root/log/encode/progress.log # Encode
+tail -f /root/log/torrent.log # Devrequest
+tail -f /root/log/sort.log # Sort

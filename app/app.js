@@ -67,7 +67,7 @@ getTorrentsToDL(function(err, torrents) {
 						console.log('id: ' + torrent.id + ' title: ' + torrent.title + ' fansub: ' + torrent.fansub + ' audio: ' + torrent.audio + ' sub: ' + torrent.sub + ' url: ' + urlt);
 						transmission.addUrl(torrentFileUrl, {"download-dir": "/media/yubikiri/bot/sort"}, function(err, arg) {
 							if (err) {throw err;process.exit(1);}
-							fs.appendFile('/media/yubikiri/bot/downloading.txt', '/media/yubikiri/bot/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
+							fs.appendFile('/root/log/torrent.log', '/media/yubikiri/bot/sort/'+arg.name + ':' + torrent.title + ':' + torrent.fansub + ':' + torrent.audio + ':' + torrent.sub + ':' + torrent.id + '\n', function(err) {
 								if (err) {console.log("error!");throw err;process.exit(1);}
 							});
 						});

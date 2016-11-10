@@ -1,5 +1,7 @@
 <?php
 
+#Updates request database with datetime on completed torrent sort and publishes anime
+
 include"/root/app/config.php";
 
 if(!isset($argv[1])){die("undefined arg\n");}

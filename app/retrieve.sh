@@ -1,7 +1,8 @@
 #!/bin/bash
-. /root/config.sh
-server_status=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "animepahe.com")
+. /root/app/config.sh
+server_status=$(curl --write-out "%{http_code}\n" --silent --output /dev/null "$GROUP.com")
 
+# if transmission-daemon not running as root restart
 if ! ps ax | grep -v grep | grep transmission-daemon > /dev/null; then
 	runuser -l root -c 'transmission-daemon'; sleep 2
 else
@@ -12,14 +13,10 @@ else
 		runuser -l root -c 'transmission-daemon'; sleep 2
 	fi		
 fi
+# if destination server connects
 if [ $server_status == 301 ]; then
-	if [[ $1 = "keep" ]]; then
-		echo "keep"
-	else
-		echo "delete"
-		if [ -f "${WWW}/downloading.txt" ]; then
-			rm "${WWW}/downloading.txt"
-		fi
+	if [ -f "$LOG/torrent.log" ]; then
+		rm "$LOG/torrent.log"
 	fi
 	sudo node /root/app/app.js; sleep 1
 else
