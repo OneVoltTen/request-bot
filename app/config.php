@@ -9,7 +9,7 @@ define('DB_PASS', 'y@nGsu5ah2o16');
 define('GWSHARE_USER', 'Anime');
 define('GWSHARE_PASS', 'Anime');
 
-define('WWW', '/media/yubikiri/bot');
+define('WWW', '/run/media/onevoltten/bot');
 define('DOWNLOADS', WWW.'/downloads');
 define('QUEUE', WWW.'/queue');
 define('VERIFY', WWW.'/verify');

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INSTALL="/root"
-WWW="/media/yubikiri/bot"
+WWW="/run/media/onevoltten/bot"
 SORT="$WWW/sort"
 DOWNLOAD="$WWW/downloads"
 KOMARU="$WWW/komaru"
