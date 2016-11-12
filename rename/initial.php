@@ -33,7 +33,7 @@
 					if (strpos($fileName, '_encoded'))  {
 						$str = $fileName;
 						$newName = $str;
-						$str = str_replace(array('.mkv_encoded', ".mp4_encoded", ".avi_encoded", ".mkv"), '', $str);
+						$str = str_replace(array(".mkv_encoded", ".mp4_encoded"), '.mkv', $str);
 						$str = preg_replace('/\\.[^.\\s]{3,4}$/', '', $str);
 						if (strpos($str,'.mkv') !== false) {
 							$str = substr($str, 0, strpos($str, ".mkv"));
@@ -46,5 +46,6 @@
 				}
 				closedir($handle);
 			}
+			die();
 		}else{$path=$argv[1];}
 	}

@@ -3,7 +3,7 @@
 	$extension=substr($str,-3,3);
 	$str=substr($str,0,-4);
 
-	include "main/baseid.php";
+	include "/root/rename/main/baseid.php";
 
 	// Linux filename dupe/copy test remove (tests)
 	$str = str_replace(array("(1)","(2)", "(copy)", "x264", "856x480", "|"), "", $str);
@@ -32,8 +32,8 @@
 
 	$str = str_ireplace(array("~"," ",".","_ep","24fps"), '_', $str);
 	
-	include "main/fansub.php";
-	include "main/resolution.php";
+	include "/root/rename/main/fansub.php";
+	include "/root/rename/main/resolution.php";
 
 	// remove delimiter
 	$dash=substr_count($str,'_-_');
@@ -41,7 +41,7 @@
 	$str=preg_replace('/[^A-Za-z0-9@\_+.,-]/','_',$str);
 	$str=str_ireplace(array("final","dual_audio"),$str);
 
-	include "main/bluray.php";
+	include "/root/rename/main/bluray.php";
 
 	// Removes year, video depth/codec, audio codec, misc
 	$str=str_ireplace(array("2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","8bit","8-bit","10bit","10-bit","Hi10p","Hi10","H10P","Hi444PP","h264","h.264","h_264","x264","x.264","x_264","h265","h.265","h_265","x265","hevc","xvid","aac","flac","ac3","opus","ogg","vorbis","-fansubs","fansubs","fansub","_copy","_remastered","BS11","_Web_"),"",$str);
@@ -59,7 +59,7 @@
 	// Replaces multiple
 	//$str=preg_replace('/[_-_]+/','_-_',$str);
 
-	include "main/revision.php";
+	include "/root/rename/main/revision.php";
 	
 	$str = str_replace("_s_", "s_", $str);
 

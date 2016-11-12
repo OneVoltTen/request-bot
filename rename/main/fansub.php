@@ -63,5 +63,4 @@
 
 	if(!isset($fansub)){
 		rename(DOWNLOADS."/".$fileName, KOMARU."/".$fileName);
-		continue;
 	}
