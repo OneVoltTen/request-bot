@@ -1,4 +1,6 @@
-cd ${INSTALL}/.fonts
+
+mkdir "${INSTALL}/.fonts" 2>/dev/null
+cd "${INSTALL}/.fonts"
 echo "extract attachment..."; ffmpeg -dump_attachment:t "" -i $i -y  >> ${LOG}/main.log; sleep 1
 echo "install font..."
 fc-cache -f -v ${INSTALL}/.fonts >> ${LOG}/main.log
@@ -23,6 +25,6 @@ if [[ $sub ]]; then
 	#echo $ext
 	#echo $track
 	mkvextract tracks "$i" "$track:${i}.${ext}" >> ${LOG}/main.log
-	mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts  2>/dev/null
+	mv -f $i.{ass,srt,sub,idx} ${INSTALL}/.fonts 2>/dev/null
 fi
 sleep 2
