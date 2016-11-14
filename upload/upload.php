@@ -1,14 +1,5 @@
 <?php
 
-if(isset($argv[1])){
-	$_SESSION["test"] = $argv[1];
-	echo "\nTEST\n\n";
-	define('DB_HOST', '185.52.2.96');
-	define('DB_PASS', 'MaxumX8208G1!');
-	$uploadUrl = 'test';
-	$shortUrl = 'test';
-}
-
 //define('DB_HOST', '185.52.2.96');
 //define('DB_PASS', 'MaxumX8208G1!');
 
@@ -25,7 +16,7 @@ if ($handle = opendir($path)) {
 			$str = str_replace('.mkv_encoded', '', $str);
 			$str = str_replace('.mp4_encoded', '', $str);
 			$str = str_replace('.avi_encoded', '', $str);
-			$str = str_replace('.mkv', '', $str);
+			$str = str_replace('.mkv.mp4', '', $str);
 
 			$str = preg_replace('/\\.[^.\\s]{3,4}$/', '', $str);
 			if (strpos($str,'.mkv') !== false) {
@@ -484,7 +475,10 @@ try {
 		curl_close($ch);
 
 		if (! $data) {
+			echo "error connect ".UPLOAD.'/'.$anime.''.$basename."\n";
+			rename($source, UPLOAD.'/'.$anime.''.$basename);
 			throw new Exception($error, self::CODE_CURL_ERROR);
+			die();
 		}
 
 		// store received cookies
