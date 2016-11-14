@@ -1,3 +1,2 @@
 <?php
-
-
+$fansub="sspcorp";
