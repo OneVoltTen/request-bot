@@ -31,13 +31,14 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 
 		allowarr=('3' '4')
 		if [[ "${allowarr[@]}" =~ "$animeid" ]]; then
-			echo "move to upload..."
+			echo "move to upload..." >> ${LOG}/main.log &
 			mv "${i}_encoded.mp4" "$UPLOAD" -f >> ${LOG}/main.log &
+			nohup php ${INSTALL}/rename/rename.php upload >> ${LOG}/main.log &
 		else
-			echo "move to verify..."
+			echo "move to verify..." >> ${LOG}/main.log &
 			mv "${i}_encoded.mp4" $VERIFY -f >> ${LOG}/main.log &
+			nohup php ${INSTALL}/rename/rename.php verify >> ${LOG}/main.log &
 		fi
-		nohup php ${INSTALL}/rename/rename.php verify >> ${LOG}/main.log &
 		# trash
 		if [[ ${FILENAMEX%${GROUP}*} > 0 ]]; then
 			echo "move to trash..."; mkdir -p "${TRASH}/${FILENAMEX%${GROUP}*}"; mv $i "${TRASH}/${FILENAMEX%${GROUP}*}" -f

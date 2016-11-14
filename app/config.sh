@@ -1,5 +1,7 @@
 #!/bin/bash
 
+if [ "$EUID" -ne 0 ]; then echo "please run as root"; exit; fi
+
 INSTALL="/root"
 WWW="/run/media/onevoltten/bot"
 SORT="$WWW/sort"

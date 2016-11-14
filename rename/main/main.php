@@ -7,6 +7,7 @@
 
 	// Linux filename dupe/copy test remove (tests)
 	$str = str_replace(array("(1)","(2)", "(copy)", "x264", "856x480", "|"), "", $str);
+	$str = str_replace('SS-Eclipse', 'Eclipse', $str);
 	$str = str_replace('é', 'e', $str);
 	$str = str_replace('à', 'a', $str);
 	$str = str_replace('μ', 'u', $str);
