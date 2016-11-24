@@ -1,20 +1,21 @@
 <?php
-	@require"/root/app/config.php";
+	require"/root/app/config.php";
 	include '/root/rename/initial.php';
 
 	if($handle=opendir($path)){
 		chdir($path);
+		echo "initiate rename [".$path."]...\n";
 		while(false!==($fileName=readdir($handle))){
 			if (file_exists($fileName) && !is_dir($fileName)) {
 				if (($fileName != "." && $fileName != ".." && (strtolower(substr($fileName,strrpos($fileName,'.') + 1))=='mkv' || strtolower(substr($fileName,strrpos($fileName,'.') + 1))=='mp4'))){
 
+					echo "file found [".$fileName."]\n";
 					$str=$fileName;
-					if (strpos($str,'AnimePahe') !== false && strpos($str,'|AnimePahe|') == false){
-						#echo "> ".$str." has been renamed before... moving\n";
+					if(strpos($str,'AnimePahe') !== false && strpos($str,'|AnimePahe|') == false){
+						echo "> ".$fileName." has been renamed before... moving\n";
 						@rename(DOWNLOADS."/".$str, QUEUE."/".$str);
 						continue;
 						}
-					}else {
 						include '/root/rename/main/main.php';
 					}
 			}
