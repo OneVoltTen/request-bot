@@ -92,4 +92,8 @@ cp /root/ffmpeg_build/bin/x265 /usr/bin
 cp /root/ffmpeg_build/bin/yasm /usr/bin
 cp /root/ffmpeg_build/bin/ytasn /usr/bin
 
+chattr +i '/root/.config/transmission-daemon/settings.json' # prevent modify
+#chattr -i '/root/.config/transmission-daemon/settings.json' # allow modify
+
+echo "Run command as non-root: yaourt -S perl-archive-zip-crc32"
 echo "Schedule periodic execute /root/bot.sh"
