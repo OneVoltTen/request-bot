@@ -9,7 +9,7 @@ define('DB_PASS', 'y@nGsu5ah2o16');
 define('GWSHARE_USER', 'Anime');
 define('GWSHARE_PASS', 'Anime');
 
-define('WWW', '/run/media/onevoltten/bot');
+define('WWW', '/var/www');
 define('DOWNLOADS', WWW.'/downloads');
 define('QUEUE', WWW.'/queue');
 define('VERIFY', WWW.'/verify');
@@ -18,4 +18,3 @@ define('UPLOADED', WWW.'/uploaded');
 define('KOMARU', WWW.'/komaru');
 
 define('GROUP','AnimePahe');
-?>

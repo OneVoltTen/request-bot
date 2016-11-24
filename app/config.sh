@@ -3,7 +3,7 @@
 if [ "$EUID" -ne 0 ]; then echo "please run as root"; exit; fi
 
 INSTALL="/root"
-WWW="/run/media/onevoltten/bot"
+WWW="/var/www"
 SORT="$WWW/sort"
 DOWNLOAD="$WWW/downloads"
 KOMARU="$WWW/komaru"
