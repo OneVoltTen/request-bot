@@ -1,4 +1,6 @@
 <?php
+
+	if(empty($str)){die("initial string empty [".$str."]\n");}
 	// Remove extension
 	$extension=substr($str,-3,3);
 	$str=substr($str,0,-4);
@@ -40,7 +42,7 @@
 	$dash=substr_count($str,'_-_');
 	// Replaces all weird characters with an underscore
 	$str=preg_replace('/[^A-Za-z0-9@\_+.,-]/','_',$str);
-	$str=str_ireplace(array("final","dual_audio"),$str);
+	$str=str_ireplace(array("final","dual_audio"), "",$str);
 
 	include "/root/rename/main/bluray.php";
 
@@ -64,6 +66,8 @@
 	
 	$str = str_replace("_s_", "s_", $str);
 
+	if(empty($str)){die("string empty [".$str."]\n");}
+	
 	if (isset($disc)){
 		$str=$anime."AnimePahe_".$str."_".$disc."_".$resolution."_".$fansub.".".$extension;
 	} else {

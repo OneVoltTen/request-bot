@@ -1,6 +1,6 @@
 <?php
 	require"/root/app/config.php";
-	include '/root/rename/initial.php';
+	include "/root/rename/initial.php";
 
 	if($handle=opendir($path)){
 		chdir($path);
