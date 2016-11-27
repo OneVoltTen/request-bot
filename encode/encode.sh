@@ -1,7 +1,6 @@
 . /root/app/config.sh
 
-# create lockfile with process id
-LOCKFILE=/tmp/lock.txt
+LOCKFILE=/tmp/lock.txt # create lockfile with process id
 if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
     echo "encode.sh already running" >> ${LOG}/main.log
     exit
