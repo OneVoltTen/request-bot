@@ -1,7 +1,7 @@
 #!/bin/bash
 . /root/app/config.sh
 
-LOCKFILE=/tmp/lock.txt # create lockfile
+LOCKFILE=/tmp/lockbot.txt # create lockfile
 if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
     echo "bot.sh already running" >> ${LOG}/main.log
     exit

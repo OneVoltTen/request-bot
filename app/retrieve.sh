@@ -1,7 +1,7 @@
 #!/bin/bash
 . /root/app/config.sh
 
-LOCKFILE=/tmp/lock.txt # create lockfile with process id
+LOCKFILE=/tmp/lockretrieve.txt # create lockfile with process id
 if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
     echo "retrieve.sh already running" >> ${LOG}/main.log
     exit
