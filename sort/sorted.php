@@ -31,6 +31,12 @@ if($con->query($sql) === TRUE) {
 	else{die("request last_sort failed\n");}
 }else{echo "error updating record: ".$cnn->error."\n";}
 
+$sql="UPDATE `request` SET `hidden`=1 WHERE `mal`=".$argv[1];
+if($con->query($sql) === TRUE) {
+	if(mysqli_affected_rows($con)!=0){echo "request hidden updated\n";}
+	else{die("request hidden failed\n");}
+}else{echo "error updating record: ".$cnn->error."\n";}
+
 $sql="UPDATE `animes` SET `published`=1 WHERE `id`=".$argv[1];
 if($con->query($sql) === TRUE) {
 	echo "animes published updated\n";
