@@ -1,2 +1,2 @@
 <?php
-$fansub="SSEclipse"
+$fansub="Eclipse";
