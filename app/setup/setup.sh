@@ -98,6 +98,6 @@ systemctl enable mysqld.service
 chattr +i '/root/.config/transmission-daemon/settings.json' # prevent modify
 #chattr -i '/root/.config/transmission-daemon/settings.json' # allow modify
 
-echo "Run command as non-root: yaourt -S perl-archive-zip-crc32"
+echo "Run command as non-root: yaourt -S perl-archive-zip-crc32 --noconfirm"
 echo "Edit '/etc/php/php.ini', remove semicolon from ';extension=mysqli.so'"
 echo "Schedule periodic execute /root/bot.sh"
