@@ -161,6 +161,9 @@ cp /root/ffmpeg_build/bin/ytasn /usr/bin
 systemctl enable httpd.service
 systemctl enable mysqld.service
 
+systemctl start cronie
+systemctl enable cronie
+
 chattr +i '/root/.config/transmission-daemon/settings.json' # prevent modify
 #chattr -i '/root/.config/transmission-daemon/settings.json' # allow modify
 
