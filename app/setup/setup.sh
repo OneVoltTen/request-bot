@@ -13,7 +13,7 @@ mkdir /var/www/verify
 mkdir /root/log
 mkdir /root/log/encode
 
-pacman -S transmission-gtk nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake build-essential yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus --noconfirm
+pacman -S transmission-gtk nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus --noconfirm
 
 mkdir ~/ffmpeg_sources
 
