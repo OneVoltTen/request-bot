@@ -24,7 +24,7 @@ else
 	fi		
 fi
 # if destination server connects
-if [[ $server_status == 301  || $server_status == 200 ]]; then
+if [[ $server_status == 301 || $server_status == 200 ]]; then
 	if [ -f "$LOG/torrent.log" ]; then
 		rm "$LOG/torrent.log"
 	fi

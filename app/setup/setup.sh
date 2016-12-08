@@ -13,7 +13,7 @@ mkdir /var/www/verify
 mkdir /root/log
 mkdir /root/log/encode
 
-pacman -S transmission-gtk nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus
+pacman -S transmission-gtk transmission-cli nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus
 
 mkdir ~/ffmpeg_sources
 
@@ -161,10 +161,12 @@ cp /root/ffmpeg_build/bin/ytasn /usr/bin
 systemctl enable httpd.service
 systemctl enable mysqld.service
 
+systemctl start cronie
+systemctl enable cronie
+
 chattr +i '/root/.config/transmission-daemon/settings.json' # prevent modify
 #chattr -i '/root/.config/transmission-daemon/settings.json' # allow modify
 
-echo "Run command as non-root: yaourt -S perl-archive-zip-crc32 --noconfirm"
 echo "Edit '/etc/php/php.ini', remove semicolon from ';extension=mysqli.so'"
 echo "Schedule periodic execute /root/bot.sh"
 echo "Define working dir in /root/app/appdir.txt, also replace '/var/www/' with the directory in '/root/.config/transmission-daemon/data.json'"
