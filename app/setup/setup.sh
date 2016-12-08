@@ -13,7 +13,7 @@ mkdir /var/www/verify
 mkdir /root/log
 mkdir /root/log/encode
 
-pacman -S transmission-gtk nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake build-essential yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus
+pacman -S transmission-gtk nodejs php mediainfo mkvtoolnix-gui mysql patch autoconf automake yasm wget libx264 cmake mercurial libfdk-aac lame nasm opus
 
 mkdir ~/ffmpeg_sources
 
@@ -26,6 +26,17 @@ make
 make install
 make distclean
 
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
+
 cd ~/ffmpeg_sources
 wget http://download.videolan.org/pub/x264/snapshots/last_x264.tar.bz2
 tar xjvf last_x264.tar.bz2
@@ -35,6 +46,17 @@ PATH="$HOME/bin:$PATH" make
 make install
 make distclean
 
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
+
 cd ~/ffmpeg_sources
 hg clone https://bitbucket.org/multicoreware/x265
 cd ~/ffmpeg_sources/x265/build/linux
@@ -42,6 +64,17 @@ PATH="$HOME/bin:$PATH" cmake -G "Unix Makefiles" -DCMAKE_INSTALL_PREFIX="$HOME/f
 make
 make install
 make distclean
+
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
 
 cd ~/ffmpeg_sources
 wget -O fdk-aac.tar.gz https://github.com/mstorsjo/fdk-aac/tarball/master
@@ -53,6 +86,17 @@ make
 make install
 make distclean
 
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
+
 cd ~/ffmpeg_sources
 wget http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz
 tar xzvf lame-3.99.5.tar.gz
@@ -62,6 +106,17 @@ make
 make install
 make distclean
 
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
+
 cd ~/ffmpeg_sources
 wget http://downloads.xiph.org/releases/opus/opus-1.1.2.tar.gz
 tar xzvf opus-1.1.2.tar.gz
@@ -70,6 +125,17 @@ cd opus-1.1.2
 make
 make install
 make clean
+
+cp /root/ffmpeg_build/bin/ffmpeg /usr/bin
+cp /root/ffmpeg_build/bin/ffplay /usr/bin
+cp /root/ffmpeg_build/bin/ffprobe /usr/bin
+cp /root/ffmpeg_build/bin/ffserver /usr/bin
+cp /root/ffmpeg_build/bin/lame /usr/bin
+cp /root/ffmpeg_build/bin/vstasm /usr/bin
+cp /root/ffmpeg_build/bin/x264 /usr/bin
+cp /root/ffmpeg_build/bin/x265 /usr/bin
+cp /root/ffmpeg_build/bin/yasm /usr/bin
+cp /root/ffmpeg_build/bin/ytasn /usr/bin
 
 cd ~/ffmpeg_sources
 wget http://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
@@ -98,6 +164,7 @@ systemctl enable mysqld.service
 chattr +i '/root/.config/transmission-daemon/settings.json' # prevent modify
 #chattr -i '/root/.config/transmission-daemon/settings.json' # allow modify
 
-echo "Run command as non-root: yaourt -S perl-archive-zip-crc32"
+echo "Run command as non-root: yaourt -S perl-archive-zip-crc32 --noconfirm"
 echo "Edit '/etc/php/php.ini', remove semicolon from ';extension=mysqli.so'"
 echo "Schedule periodic execute /root/bot.sh"
+echo "Define working dir in /root/app/appdir.txt, also replace '/var/www/' with the directory in '/root/.config/transmission-daemon/data.json'"
