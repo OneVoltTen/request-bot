@@ -2,14 +2,15 @@
 
 if [ "$EUID" -ne 0 ]; then echo "please run as root"; exit; fi
 
-INSTALL="/root"
-WWW="/var/www"
+appdir=`cat "/root/app/appdir.txt"`
+WWW=$appdir
 SORT="$WWW/sort"
 DOWNLOAD="$WWW/downloads"
 KOMARU="$WWW/komaru"
 QUEUE="$WWW/queue"
 VERIFY="$WWW/verify"
 UPLOAD="$WWW/upload"
+INSTALL="/root"
 UPLOADED="$INSTALL/uploaded"
 
 # log message
