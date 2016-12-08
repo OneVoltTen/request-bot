@@ -1,8 +1,5 @@
 <?php
 
-//define('DB_HOST', '185.52.2.96');
-//define('DB_PASS', 'MaxumX8208G1!');
-
 @include"/root/app/config.php";
 
 $path = UPLOAD."/";
@@ -93,7 +90,7 @@ try {
 
 	public function upload($source){
 		if (! is_file($source) or !is_readable($source)) {
-			throw new Exception("File '$source' does not exist or is not readable.", self::CODE_FILE_READ_ERROR);
+			throw new Exception("File '$source' does not exist or is not readable.\nmultiple upload instances running?", self::CODE_FILE_READ_ERROR);
 		}
 		
 		$basename = basename($source);
@@ -131,7 +128,7 @@ try {
 		if(!isset($_SESSION["test"])){
 			$source=UPLOAD."/".strstr($basename, GROUP);
 			rename(UPLOAD."/".$basename, $source);
-			$basename = str_replace($fn[0], "", $basename);
+			$basename = str_ireplace($fn[0]."AnimePahe", "AnimePahe", $basename);
 		}
 		
 		if(!isset($_SESSION["test"])){
@@ -583,3 +580,4 @@ try {
 	}
 
 }
+
