@@ -46,18 +46,18 @@ while read line; do
 			if [[ $TR_TORRENT_NAME == *".mkv" ]] || [[ $TR_TORRENT_NAME == *".mp4" ]] || [[ $TR_TORRENT_NAME == *".avi" ]] || [[ $Basename == *".mkv" ]] || [[ $Basename == *".mp4" ]] || [[ $Basename == *".avi" ]]; then
 				echo "file $FILEN" >> ${LOG}/sort.log
 				if [[ -f "$FILEN" ]]; then
-					CRC=`crc32 "$FILEN"`
+					CRC=`crc32 "${FILEN}"`
 					mkdir "$SORT/$CRC"
 					mv "$FILEN" "$SORT/$CRC"
 					DIR="$SORT/$CRC"
-					source $INSTALL/sort/sortx.sh >> ${LOG}/sort.log
+					source $INSTALL/sort/sortx.sh >> ${LOG}/sortx.log
 				else
 					echo "no match [file] $FILEN" >> ${LOG}/sort.log
 				fi
 				sleep 1
 			else
 				if [[ -d "$FILEN" ]]; then
-					source $INSTALL/sort/sortx.sh >> ${LOG}/sort.log
+					source $INSTALL/sort/sortx.sh >> ${LOG}/sortx.log
 				else
 					echo "no match [directory] $FILEN" >> ${LOG}/sort.log
 				fi
