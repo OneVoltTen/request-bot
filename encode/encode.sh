@@ -28,7 +28,7 @@ for i in `ls -tr $QUEUE/*.mkv`;do
 		# Remove temp subtitle file after processing
 		rm -rf ${INSTALL}/.fonts/*
 
-		allowarr=('3' '4')
+		allowarr=('666') # add filename id to move to upload folder
 		if [[ "${allowarr[@]}" =~ "$animeid" ]]; then
 			echo "move to upload..." >> ${LOG}/main.log &
 			mv "${i}_encoded.mp4" "$UPLOAD" -f >> ${LOG}/main.log &
