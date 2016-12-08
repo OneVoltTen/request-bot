@@ -19,6 +19,8 @@ if [[ $(pwd) != $SORT ]]; then
 	mv **/*.mp4 "$SORT/$FOLDER" 2>/dev/null >> ${LOG}/sort.log
 	mv **/*.avi "$SORT/$FOLDER" 2>/dev/null >> ${LOG}/sort.log
 
+	sleep 5 # wait for file move complete
+
 	for file in *.{"avi","mp4","mkv"}; do
 		if [[ ! -f $file ]]; then
 			continue
@@ -50,16 +52,18 @@ if [[ $(pwd) != $SORT ]]; then
 				mkdir -p "$TRASH/$MALID"
 				mv "$file" "$TRASH/$MALID" >> ${LOG}/sort.log
 				file="$file.mkv" >> ${LOG}/sort.log
-				mv "$file" "${file//.mp4/}"; mv "$file" "${file//.avi/}"
-				file="${file//.mp4/}"; file="${file//.avi/}"
-				echo "converted ${file}"
+				mv "${file}" "${file//.mp4/}" >> ${LOG}/sort.log
+				mv "${file}" "${file//.avi/}" >> ${LOG}/sort.log
+				file="${file//.mp4/}"
+				file="${file//.avi/}"
+				echo "converted ${file}" >> ${LOG}/sort.log
 			fi
 			
 			# Set file title metadata
 			mkvpropedit "${file}" -e info -s title="${FTITLE}" >> ${LOG}/sort.log
 			# Move to downloads folder
 			FILE="${file//${SORT}//}"
-			mv "${file}" "${DOWNLOAD}/$MALID|$FANSUB|$FILE" >> ${LOG}/sort.log
+			mv "${file}" "${DOWNLOAD}/$MALID|${FANSUB}|${FILE}" >> ${LOG}/sort.log
 		fi
 		
 	done
