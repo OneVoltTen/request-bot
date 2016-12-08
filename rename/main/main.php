@@ -79,5 +79,5 @@
 	rename($fileName,$newName);
 	rename(DOWNLOADS."/".$newName, QUEUE."/".$newName);
 
-	unset($str);unset($disc);unset($resolution);unset($resX);unset($resY);unset($scaledResX);unset($scaledResY);unset($extension);
-	sleep(.2);
+	unset($str);unset($disc);unset($resolution);unset($resX);unset($resY);unset($scaledResX);unset($scaledResY);unset($extension);unset($fansub);
+
